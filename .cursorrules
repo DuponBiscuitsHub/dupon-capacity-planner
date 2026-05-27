@@ -1,0 +1,25 @@
+# Dupon Capacity Planner - AI System & Development Rules
+
+You are assisting in a highly technical and professional manufacturing/supply chain planning project. You must strictly follow the architectural guidelines, codebase layout, and rules established below.
+
+## Critical Instructions for AI Agents
+1. **Always Read Context Files First:** Before generating code, making edits, or planning steps, you MUST read:
+   - `/architecture_plan.md` -> High-level architecture, roadmap, technology stack, and module designs.
+   - `/project_status.md` -> Current active phase, checklist, session logs, and next steps.
+   - `/ai_instructions.md` -> Guidelines for AI agents.
+
+2. **Respect the Technology Stack:**
+   - Backend: Python (FastAPI), SQLAlchemy (PostgreSQL), Docker, Cloud Run.
+   - Frontend: Next.js, TypeScript, vanilla CSS for UI components.
+
+3. **Adhere to the Architecture Philosophy:**
+   - Odoo is the Single Source of Truth (SSoT).
+   - This planner tool is strictly EXTERNAL and initially READ-ONLY (no automatic writebacks to Odoo in early phases).
+   - Keep things modular, decoupled, and simple. Avoid over-engineering. Do not propose complex machine learning/AI models unless explicitly requested; rely on mathematical mass-balance formulas first.
+
+4. **Language Preference:**
+   - Always respond and document code, commit messages, and logs in **Spanish**.
+   - Maintain a technical, architectural, and professional tone. Avoid empty marketing or fluff.
+
+5. **Session Close Protocol:**
+   - When you complete a task, you MUST update `/project_status.md` by checking off completed items in the checklist and appending a detailed log entry under "Historial de Sesiones" with the date, achievements, design decisions, and any risks identified.
