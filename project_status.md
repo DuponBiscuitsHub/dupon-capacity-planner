@@ -7,7 +7,7 @@ Este documento es la bitácora viva del proyecto. Debe ser actualizado al finali
 *   **Fase Activa:** FASE 0 - Diagnóstico y Calidad de Datos (Configuración de Infraestructura Base)
 *   **Rama de Trabajo Activa:** `Beta` (Desarrollo y Pruebas)
 *   **Fecha de Última Modificación:** 27 de Mayo de 2026
-*   **Último Operador:** Antigravity (Staff Software Architect & Industrial Planning Agent)
+*   **Último Operador:** Antigravity (Staff Software Architect & Security Auditor)
 *   **Salud del Repositorio:** 🟢 Inicializado (Entorno virtual configurado, Git en rama Beta y publicado en GitHub)
 *   **Integración Odoo:** ⚪ No Iniciada (En fase de diseño de contratos API)
 
@@ -53,13 +53,31 @@ Este documento es la bitácora viva del proyecto. Debe ser actualizado al finali
 
 
 ### FASE 0: Diagnóstico y Calidad de Datos (Backend & DB Replica)
-- [ ] Configurar el entorno Docker Compose (`docker-compose.yml`) local con la base de datos PostgreSQL.
-- [ ] Inicializar la estructura física del módulo `/backend` y configurar dependencias en `requirements.txt`.
-- [ ] Diseñar y crear los modelos ORM de SQLAlchemy para la réplica de Odoo y configuraciones locales.
-- [ ] Configurar las migraciones automáticas con Alembic y aplicarlas a la base de datos PostgreSQL local.
+- [x] Configurar el entorno Docker Compose (`docker-compose.yml`) local con la base de datos PostgreSQL.
+- [x] Inicializar la estructura física del módulo `/backend` y configurar dependencias en `requirements.txt`.
+- [x] Diseñar y crear los modelos ORM de SQLAlchemy para la réplica de Odoo y configuraciones locales.
+- [x] Configurar las migraciones automáticas con Alembic y aplicarlas a la base de datos PostgreSQL local.
 - [ ] Implementar el motor de sincronización `sync_engine.py` vía XML-RPC conectando a Odoo Staging mediante API Key.
 - [ ] Crear el script validador recursivo de consistencia de BOMs y stock (*BOM Integrity Checker*).
 - [ ] Configurar los endpoints REST en FastAPI expuestos a través de la API v1.
+
+
+### 🔐 Seguridad Pendiente (Auditoría Sesión 5) — Bloqueantes antes de datos reales
+
+> **IMPORTANTE:** Las tareas CS-AUTH-001 y CS-AUTH-002 son **bloqueantes absolutos**. Mientras estén abiertas, cualquier usuario con acceso al navegador puede entrar al dashboard sin credenciales.
+
+- [ ] **CS-AUTH-001** — Implementar `POST /auth/login` en FastAPI: validar usuario/contraseña contra `users` en PostgreSQL, emitir JWT firmado con `security.py`, retornar cookie `HttpOnly; Secure; SameSite=Strict` desde el servidor.
+  - *Criterio de aceptación:* Login con credenciales incorrectas devuelve `401`. Cookie seteada por servidor, no por `document.cookie`.
+- [ ] **CS-AUTH-002** — Eliminar `document.cookie = "dcp_session=active_token..."` del frontend. El token debe venir exclusivamente del servidor (BFF pattern). Actualizar `layout.tsx` para verificar sesión contra el backend, no solo la existencia de la cookie.
+  - *Criterio de aceptación:* Sin llamada a backend activa, el dashboard redirige a `/login`.
+- [ ] **CS-RBAC-001** — Implementar dependency `require_role(role: str)` en FastAPI. Aplicar en todos los endpoints v1 antes de exponerlos con datos reales.
+  - *Criterio de aceptación:* Usuario con rol `commercial` recibe `403` al llamar endpoints de `planner` o `admin`.
+- [ ] **CS-INPUT-001** — Validar `company_id` en servidor contra los permisos del usuario autenticado en cada petición a la API. Evitar que un usuario de France acceda a datos de Iberica manipulando `localStorage`.
+  - *Criterio de aceptación:* Petición con `company_id` no autorizado devuelve `403`.
+- [ ] **CS-SECRETS-002 (RS256)** — Migrar JWT de HS256 a RS256 antes del despliegue en Cloud Run. Generar par de claves RSA-2048 o Ed25519, almacenar clave privada en GCP Secret Manager.
+  - *Criterio de aceptación:* Tokens validables con clave pública sin exponer clave privada al Sync Engine.
+- [ ] **CS-DEPS-001** — Migrar `requirements.txt` a `pip-compile --generate-hashes` antes del primer despliegue en Cloud Run.
+  - *Criterio de aceptación:* `pip install -r requirements.txt --require-hashes` sin errores.
 
 
 ### Suite de Pruebas Automatizadas (Fase A - QA)
@@ -155,7 +173,27 @@ Este documento es la bitácora viva del proyecto. Debe ser actualizado al finali
 
 ---
 
-## 🛠️ 5. Instrucciones para Nuevos Agentes / Desarrolladores
+### Sesión 5: 27 de Mayo de 2026
+*   **Operador:** Antigravity (AI Security Auditor)
+*   **Hitos:**
+    *   **Auditoría Completa de Seguridad y Calidad:** Análisis manual de 18 archivos fuente. Identificación de 11 hallazgos (3 críticos, 4 altos, 3 medios, 1 informativo). Informe entregado como `walkthrough.md`.
+    *   **CS-SECRETS-001 Remediado:** Sanitizado completo de `.env.example`. Eliminadas credenciales reales (contraseña DB y JWT_SECRET). Reemplazadas por placeholders con instrucciones de generación segura (`openssl rand -hex 32`). Reducido `ACCESS_TOKEN_EXPIRE_MINUTES` de 1440 a 60 minutos como valor de referencia seguro.
+    *   **CS-LOGGING-001 Remediado:** Endpoint `/health` de `main.py` corregido. El `str(e)` de SQLAlchemy ya no se expone en la respuesta pública. Los errores se registran internamente con `exc_info=True` para trazabilidad completa sin fuga de información.
+    *   **CS-CORS-001 Remediado:** Configurado `CORSMiddleware` en `main.py` con whitelist explícita `["http://localhost:3000", "http://127.0.0.1:3000"]`. Previene el antipatrón `allow_origins=["*"]` durante la integración futura.
+    *   **CS-DATETIME-001 Remediado:** Reemplazado `datetime.utcnow()` (deprecado en Python 3.12+) por `datetime.now(timezone.utc)` en `planner.py` (2 columnas) y `odoo_replica.py` (3 referencias). Columnas migradas a `DateTime(timezone=True)` para que PostgreSQL almacene `timestamptz`.
+    *   **CS-DOCKER-001 Remediado:** `docker-compose.yml` refactorizado con advertencia `SOLO ENTORNO DE DESARROLLO LOCAL`. Credenciales movidas a `env_file: .env` referenciando `DB_USER` y `DB_PASSWORD` como single source of truth.
+    *   **Logging Estructurado Implementado:** Añadido `logging.basicConfig` con formato nominado `dcp.backend` para filtrado por componente.
+*   **Decisiones Clave:**
+    *   Se mantiene HS256 en desarrollo local por simplicidad justificada. La migración a RS256 (exigida por `architecture_plan.md` sección 6.2) se pospone explícitamente para staging/producción en Cloud Run.
+    *   Se usa `env_file` en docker-compose en lugar de `docker-compose.override.yml` por simplicidad: el `.env` ya está en `.gitignore` y contiene exactamente las variables necesarias.
+    *   La variable `DB_PASSWORD` en docker-compose usa la sintaxis `:?` para fallar explícitamente si no está definida, forzando al desarrollador a configurarla deliberadamente.
+*   **Bloqueos / Riesgos Detectados:**
+    *   **CS-AUTH-001 y CS-AUTH-002 pendientes (bloqueantes para datos reales):** El login del frontend sigue siendo simulado. Cualquier usuario puede acceder al dashboard. Bloqueantes antes de conectar datos reales de Odoo.
+    *   **CS-SECRETS-002 pendiente:** JWT usa HS256 en todos los entornos. Migrar a RS256 antes de despliegue en Cloud Run.
+    *   **CS-RBAC-001 pendiente:** RBAC definido en modelos ORM pero sin enforcement en ningún endpoint FastAPI.
+
+---
+
 
 Si acabas de entrar al proyecto, por favor sigue estos pasos rigurosamente:
 1.  Lee el archivo [architecture_plan.md](file:///home/pakipy/dupon-dev/dupon-capacity-planner/architecture_plan.md) para comprender la arquitectura de la solución, los módulos de negocio y el stack tecnológico.

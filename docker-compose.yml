@@ -1,12 +1,22 @@
+# =============================================================================
+# SOLO ENTORNO DE DESARROLLO LOCAL — NO USAR EN STAGING/PRODUCCIÓN
+# En producción, usar Cloud SQL con IAM Auth (sin contraseñas) o
+# inyectar secretos desde GCP Secret Manager mediante Cloud Run.
+# =============================================================================
 version: '3.8'
 
 services:
   dcp_db:
     image: postgres:15-alpine
     container_name: dcp_postgres_local
+    # Las credenciales se leen desde el archivo .env local (no versionado).
+    # Asegúrate de haber copiado .env.example como .env y rellenado los valores.
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: dcp_admin
-      POSTGRES_PASSWORD: dcp_local_password123
+      # Mapear variables del .env a las esperadas por la imagen de PostgreSQL
+      POSTGRES_USER: ${DB_USER:-dcp_admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?La variable DB_PASSWORD es obligatoria en .env}
       POSTGRES_DB: dcp_db_dev
     ports:
       - "5435:5432"
@@ -17,3 +27,4 @@ services:
 volumes:
   dcp_postgres_data:
     name: dcp_postgres_data
+

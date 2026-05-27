@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Numeric, Boolean, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone
 from app.models.base import Base
 
 class User(Base):
@@ -17,7 +17,8 @@ class User(Base):
     hashed_password = Column(String(255), nullable=False)
     role = Column(String(32), nullable=False)  # admin, planner, commercial, viewer
     is_active = Column(Boolean, default=True, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    # CS-DATETIME-001: timezone=True persiste el offset en PostgreSQL; lambda evita captura en tiempo de definición.
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
 class SiloConfig(Base):
     """
@@ -47,7 +48,7 @@ class SimulationScenario(Base):
     name = Column(String(255), nullable=False)
     parameters = Column(JSONB, nullable=False)  # Config sliders state JSON
     created_by = Column(Integer, ForeignKey("dcp_app.users.id"), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     creator = relationship("User", foreign_keys=[created_by])
 
