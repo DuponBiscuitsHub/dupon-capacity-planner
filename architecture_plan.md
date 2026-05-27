@@ -80,6 +80,8 @@ El sistema se diseña bajo un patrón de **Arquitectura Desacoplada de Lectura O
 *   **Diseño Cloud-Native y Serverless:** El backend y el frontend se empaquetan en contenedores Docker y se despliegan en **Google Cloud Run**. Esto garantiza alta disponibilidad, escalabilidad a cero cuando no se usa (reducción de costes de infraestructura) y despliegues atómicos sin fricción.
 *   **Modularidad Estricta y Desacoplamiento (DDD):** El backend se estructura siguiendo principios de *Domain-Driven Design (DDD)* simplificado. El dominio de "Aluminios" y el de "Silos" son independientes en lógica de negocio, compartiendo únicamente la capa de infraestructura y datos base de Odoo a través de contratos e interfaces bien definidas.
 *   **Simplicidad sobre Complejidad:** Se prioriza la legibilidad del código. Los motores de cálculo iniciales utilizarán ecuaciones algebraicas deterministas explícitas antes de delegar en motores de optimización matemática complejos (como solucionadores MILP o heurísticas avanzadas).
+*   **Soporte Multicompañía Nativo (Multi-company):** Dado que el entorno Odoo opera con múltiples razones sociales/fábricas, el DCP es multicompañía por diseño. Toda transacción, stock, BOM o MO replicada se asocia a su respectivo `company_id`. El backend segmenta los cálculos por compañía y el frontend ofrece un selector global en el cabezal para conmutar el contexto operacional dinámicamente.
+*   **Arquitectura de Internacionalización (i18n) desde el Origen:** El sistema provee soporte nativo para los seis idiomas definidos: **Español (es), Inglés (en), Francés (fr), Alemán (de), Belga (nl-be) y Catalán (ca)**. El Frontend implementa un `LanguageProvider` basado en contexto para conmutar diccionarios de traducción de forma instantánea sin penalizar la velocidad de renderizado.
 
 ---
 
@@ -88,12 +90,20 @@ El sistema se diseña bajo un patrón de **Arquitectura Desacoplada de Lectura O
 Aplicamos de forma estricta el orden de precedencia establecido: **Seguridad > Correctitud > Simplicidad > Mantenibilidad > Elegancia > Optimización**.
 
 1.  **Cero Modificaciones Críticas en Odoo:** No se instalarán módulos customizados pesados dentro de Odoo para el funcionamiento del planificador. Toda la lógica analítica se ejecuta fuera del ERP. Odoo solo expone sus APIs estándar (XML-RPC o REST nativa).
-2.  **Seguridad en el Límite de Datos:**
-    *   Toda comunicación entre el DCP y Odoo, y entre el DCP Backend y Frontend, se realiza bajo cifrado TLS (HTTPS).
-    *   No se almacenan contraseñas en texto plano ni secretos en el repositorio. Se utiliza **GCP Secret Manager** para inyectar credenciales en tiempo de ejecución.
-    *   Control de acceso basado en roles (RBAC) en el Frontend para asegurar que solo los usuarios autorizados (Planners, Directores de Planta, Comerciales) puedan acceder a módulos específicos o realizar simulaciones.
-3.  **Read-Only por Diseño Fases Iniciales:** Bajo ningún concepto el MVP realizará escrituras destructivas ni modificaciones directas en el inventario o producción de Odoo. Cualquier recomendación del planificador será ejecutada manualmente por el operador en Odoo, garantizando el control humano (*human-in-the-loop*).
-4.  **Consistencia del Balance de Masas:** Los cálculos de consumo de silos deben respetar la ley de conservación de la materia, teniendo en cuenta factores de merma estocásticos parametrizables (scrap) y eficiencias reales por línea, evitando la subestimación de consumo.
+2.  **Seguridad Industrial y de Datos (Security by Design):**
+    *   **Cifrado en Tránsito:** Toda comunicación entre el DCP y Odoo, y entre el DCP Backend y Frontend, se realiza bajo cifrado estricto TLS 1.3 (HTTPS / WSS).
+    *   **Gestión de Secretos:** No se almacenan contraseñas en texto plano, tokens de Odoo ni secretos en el repositorio ni en archivos de entorno del contenedor. Se utiliza **GCP Secret Manager** para inyectar credenciales de base de datos y APIs en tiempo de ejecución.
+    *   **Autenticación Robusta:** El Backend de FastAPI autentica las sesiones mediante tokens JWT (*JSON Web Tokens*) firmados con algoritmos asimétricos (RS256) o HMAC-SHA256 con claves rotativas de 256 bits.
+    *   **Manejo Seguro de Cookies (Seguridad Web Obligatoria):** Las sesiones se gestionan mediante cookies de estado protegidas con las banderas **`HttpOnly`** (evitando robos por scripts XSS), **`Secure`** (restringiendo el envío solo sobre HTTPS) y **`SameSite=Strict`** (mitigando ataques de falsificación de peticiones en sitios cruzados o CSRF).
+    *   **Validación y Sanitización en Fronteras:** Todo input recibido en los endpoints de FastAPI se valida estrictamente mediante esquemas **Pydantic** para bloquear cargas maliciosas. Las consultas a PostgreSQL se parametrizan obligatoriamente a través del ORM (SQLAlchemy) para erradicar cualquier vector de inyección SQL.
+3.  **Control de Acceso Basado en Roles (RBAC):**
+    El sistema restringe privilegios basándose en roles explícitos definidos en la base de datos de usuarios del DCP:
+    *   `admin`: Control total del sistema, administración de credenciales de Odoo, y configuraciones del Sync Engine.
+    *   `planner`: Acceso operativo a Silos y Aluminios, capacidad de crear simulaciones Sandbox y modificar eficiencias teóricas.
+    *   `commercial`: Visibilidad exclusiva del Dashboard general e interfaz de consulta CTP (Capable-to-Promise) para verificar fechas factibles de entrega de ventas.
+    *   `viewer`: Vista de lectura estricta de paneles y pantallas en planta (diseñado para monitores informativos).
+4.  **Read-Only por Diseño Fases Iniciales:** Bajo ningún concepto el MVP realizará escrituras destructivas ni modificaciones directas en el inventario o producción de Odoo. Cualquier recomendación del planificador será ejecutada manualmente por el operador en Odoo, garantizando el control humano (*human-in-the-loop*).
+5.  **Consistencia del Balance de Masas:** Los cálculos de consumo de silos deben respetar la ley de conservación de la materia, teniendo en cuenta factores de merma estocásticos parametrizables (scrap) y eficiencias reales por línea, evitando la subestimación de consumo.
 
 ---
 

@@ -33,7 +33,7 @@ Este documento es la bitácora viva del proyecto. Debe ser actualizado al finali
 - [x] Redactar y guardar el Documento de Contexto y Arquitectura de Referencia ([architecture_plan.md](file:///home/pakipy/dupon-dev/dupon-capacity-planner/architecture_plan.md)).
 - [x] Crear el Tablero de Control y Estado General del Proyecto (`project_status.md`).
 - [/] Inicializar la estructura de carpetas física del repositorio (Monorepo: `frontend/` completado, `backend/` pendiente).
-- [x] Definir los archivos de configuración base (`.gitignore`, `.cursorrules`, `ai_instructions.md`).
+- [x] Definir los archivos de configuración base (`.gitignore`, `.cursorrules`, `ai_instructions.md`, `run_frontend.py`).
 - [x] Crear el entorno virtual de Python (`.venv`) e inicializar el repositorio local Git.
 - [x] Inicializar Next.js en `/frontend` con TypeScript y sistema de diseño Vanilla CSS.
 - [x] Implementar layout de navegación interactiva (Sidebar + Header) y vista general del Dashboard `/`.
