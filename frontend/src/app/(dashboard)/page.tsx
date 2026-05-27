@@ -9,10 +9,10 @@ export default function DashboardPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
       
-      {/* 1. Tarjetas de KPIs Generales (Grid de Alta Densidad Localizado) */}
+      {/* 1. General KPI Cards (High-Density Localized Grid) */}
       <section className={styles.metricsGrid}>
         
-        {/* KPI: OEE Global */}
+        {/* KPI: Global OEE */}
         <div className={`${styles.kpiCard} glass-panel glass-panel-hover`}>
           <div className={styles.kpiHeader}>
             <span>{t("oeeGlobal")}</span>
@@ -22,7 +22,7 @@ export default function DashboardPage() {
           <div className={styles.kpiSubtext}>{t("oeeSubtext")}</div>
         </div>
 
-        {/* KPI: Autonomía de Harina */}
+        {/* KPI: Flour Autonomy */}
         <div className={`${styles.kpiCard} glass-panel glass-panel-hover`}>
           <div className={styles.kpiHeader}>
             <span>{t("siloCritical")}</span>
@@ -35,7 +35,7 @@ export default function DashboardPage() {
           <div className={styles.kpiSubtext}>{t("siloSubtext")}</div>
         </div>
 
-        {/* KPI: Carga de Troqueles */}
+        {/* KPI: Die Load */}
         <div className={`${styles.kpiCard} glass-panel glass-panel-hover`}>
           <div className={styles.kpiHeader}>
             <span>{t("aluminumLoad")}</span>
@@ -45,7 +45,7 @@ export default function DashboardPage() {
           <div className={styles.kpiSubtext}>{t("aluminumSubtext")}</div>
         </div>
 
-        {/* KPI: Riesgo de Pedidos */}
+        {/* KPI: Order Risk */}
         <div className={`${styles.kpiCard} glass-panel glass-panel-hover`}>
           <div className={styles.kpiHeader}>
             <span>{t("ordersInRisk")}</span>
@@ -60,10 +60,10 @@ export default function DashboardPage() {
 
       </section>
 
-      {/* 2. Sección Inferior (Líneas Activas + Alertas de Fábrica Localizadas) */}
+      {/* 2. Bottom Section (Active Lines + Localized Plant Alerts) */}
       <div className={styles.bottomSection}>
         
-        {/* Panel Izquierdo: Estado de Líneas de Producción */}
+        {/* Left Panel: Production Line Status */}
         <section className={`${styles.linesCard} glass-panel`}>
           <h3 className={styles.sectionTitle}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--color-primary)" }}>
@@ -77,7 +77,7 @@ export default function DashboardPage() {
           
           <div className={styles.linesList}>
             
-            {/* Línea 1 */}
+            {/* Line 1 */}
             <div className={styles.lineRow}>
               <div className={styles.lineInfo}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -94,7 +94,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Línea 2 */}
+            {/* Line 2 */}
             <div className={styles.lineRow}>
               <div className={styles.lineInfo}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -111,7 +111,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Línea 3 */}
+            {/* Line 3 */}
             <div className={styles.lineRow} style={{ opacity: 0.65 }}>
               <div className={styles.lineInfo}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -131,7 +131,7 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {/* Panel Derecho: Alertas del Planificador (Silos & Aluminio) */}
+        {/* Right Panel: Planner Alerts (Silos & Aluminum) */}
         <section className={`${styles.alertsCard} glass-panel`}>
           <h3 className={styles.sectionTitle}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--color-danger)" }}>
@@ -144,7 +144,7 @@ export default function DashboardPage() {
           
           <div className={styles.alertsList}>
             
-            {/* Alerta de Harina (Fase 1) */}
+            {/* Flour Alert (Phase 1) */}
             <div className={styles.alertItem}>
               <span className={styles.alertIcon} style={{ color: "var(--color-warning)" }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -161,8 +161,8 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Alerta de Aluminio / CTP (Fase 2 & 3) */}
-            <div className={`${styles.alertItem} styles.alertItemDanger`}>
+            {/* Aluminum / CTP Alert (Phase 2 & 3) */}
+            <div className={`${styles.alertItem} ${styles.alertItemDanger}`}>
               <span className={styles.alertIcon} style={{ color: "var(--color-danger)" }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10" />
