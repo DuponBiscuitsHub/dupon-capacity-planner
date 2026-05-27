@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  dcp_db:
+    image: postgres:15-alpine
+    container_name: dcp_postgres_local
+    environment:
+      POSTGRES_USER: dcp_admin
+      POSTGRES_PASSWORD: dcp_local_password123
+      POSTGRES_DB: dcp_db_dev
+    ports:
+      - "5435:5432"
+    volumes:
+      - dcp_postgres_data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  dcp_postgres_data:
+    name: dcp_postgres_data

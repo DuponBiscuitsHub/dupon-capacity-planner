@@ -516,5 +516,31 @@ El backend resolverá los cálculos matemáticos de balance de masa y la sincron
 
 ---
 
+## 22. Infraestructura de Desarrollo Local (Docker Compose & DB)
+
+Para agilizar el desarrollo local y garantizar el aislamiento de datos, se establece el uso de contenedores Docker para la persistencia del Capacity Planner.
+
+### A. Orquestación Local (PostgreSQL en Docker)
+* **Archivo de Configuración:** `docker-compose.yml` en la raíz del repositorio.
+* **Detalle del Contenedor:**
+  * **Servicio:** `dcp_db`
+  * **Motor:** `postgres:15-alpine` (Ligero, seguro y de alta disponibilidad).
+  * **Persistencia:** Volumen nombrado `dcp_postgres_data` mapeado a `/var/lib/postgresql/data`.
+  * **Puerto de Exposición:** `5432:5432` en localhost.
+
+### B. Conectividad Segura con Odoo Staging (API Keys)
+El sistema consumirá las APIs tradicionales XML-RPC del staging oficial del cliente mediante el uso de tokens/API keys.
+* **Gestión de Entorno:** Un archivo `.env` en `/backend` (basado en `.env.example`) contendrá los secretos de conexión. Este archivo local queda estrictamente excluido del repositorio Git (`.gitignore`).
+* **Variables de Entorno Clave:**
+  * `DATABASE_URL`: Conexión JDBC/SQLAlchemy a la réplica PostgreSQL.
+  * `ODOO_URL`: URL del entorno Odoo Staging del cliente.
+  * `ODOO_DB`: Nombre del esquema Odoo.
+  * `ODOO_USER`: Email o usuario autenticado.
+  * `ODOO_API_KEY`: API Key o password de sincronización.
+  * `SYNC_INTERVAL_MINUTES`: Intervalo de sincronización dinámica (Fijado en **30 minutos**).
+
+---
+
 *Fin del Documento de Contexto y Arquitectura.*
+
 

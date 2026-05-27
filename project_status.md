@@ -52,11 +52,15 @@ Este documento es la bitácora viva del proyecto. Debe ser actualizado al finali
 - [x] Compilar y verificar el build de producción del Frontend con Turbopack.
 
 
-### FASE 0: Diagnóstico y Calidad de Datos (Próximos Pasos)
-- [ ] Configurar el módulo cliente XML-RPC/REST en el Backend para testear la conectividad con Odoo.
-- [ ] Diseñar el esquema de Base de Datos PostgreSQL inicial para réplica de datos (tablas de stock, BOM y rutas).
-- [ ] Crear el script base del validador de consistencia de datos de Odoo (*BOM & Stock Integrity Checker*).
-- [ ] Desarrollar la primera vista básica en el Frontend de diagnóstico de datos.
+### FASE 0: Diagnóstico y Calidad de Datos (Backend & DB Replica)
+- [ ] Configurar el entorno Docker Compose (`docker-compose.yml`) local con la base de datos PostgreSQL.
+- [ ] Inicializar la estructura física del módulo `/backend` y configurar dependencias en `requirements.txt`.
+- [ ] Diseñar y crear los modelos ORM de SQLAlchemy para la réplica de Odoo y configuraciones locales.
+- [ ] Configurar las migraciones automáticas con Alembic y aplicarlas a la base de datos PostgreSQL local.
+- [ ] Implementar el motor de sincronización `sync_engine.py` vía XML-RPC conectando a Odoo Staging mediante API Key.
+- [ ] Crear el script validador recursivo de consistencia de BOMs y stock (*BOM Integrity Checker*).
+- [ ] Configurar los endpoints REST en FastAPI expuestos a través de la API v1.
+
 
 ### Suite de Pruebas Automatizadas (Fase A - QA)
 - [ ] Configurar el entorno de pruebas en Next.js con `Vitest`, `React Testing Library` y `jsdom`.
