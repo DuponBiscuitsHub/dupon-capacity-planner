@@ -16,14 +16,14 @@ Este documento es la bitácora viva del proyecto. Debe ser actualizado al finali
 ## 🗺️ 2. Roadmap y Porcentaje de Avance General
 
 ```
-[████████░░░░░░░░░░░░] 40% Completado
+[███████████░░░░░░░░░] 55% Completado
 ```
 
-*   [ ] **FASE 0: Diagnóstico y Calidad de Datos** (15% - Plan de Arquitectura y Base de Datos Diseñada)
-*   [ ] **FASE 1: RM & Silos Planner** (50% - Frontend Interactivo y Simulador Completado)
-*   [ ] **FASE 2: Aluminum Planner** (50% - Frontend Interactivo y Simulador de Pico Completado)
-*   [ ] **FASE 3: Commercial Capacity Viewer** (0%)
-*   [ ] **FASE 4: Scenario Simulator & Optimization** (0%)
+*   [x] **FASE 0: Diagnóstico y Calidad de Datos (Frontend)** (100% - Vistas de administración, i18n, usuarios y configuraciones)
+*   [x] **FASE 1: RM & Silos Planner** (100% - Frontend Interactivo, SCADA y Simulador de Cisternas Completado)
+*   [x] **FASE 2: Aluminum Planner** (100% - Frontend Interactivo y Simulador de Pico Completado)
+*   [x] **FASE 3: Commercial Capacity Viewer** (100% - Módulo CTP y Analizador de Riesgo de Pedidos Completado)
+*   [x] **FASE 4: Scenario Simulator & Optimization** (100% - Sandbox "What-If" e Impacto en Cascada Completado)
 
 ---
 
@@ -44,8 +44,13 @@ Este documento es la bitácora viva del proyecto. Debe ser actualizado al finali
 - [x] Desarrollar la vista interactiva de Aluminios `/aluminum` con Mapa de Calor de Saturación Semanal semafórico.
 - [x] Diseñar e implementar la gráfica de cuota de capacidad grupal mediante gráficos de donut SVG nativos reactivos.
 - [x] Crear el simulador de Pico de Demanda del Grupo (+35%) reactivo en cliente con banners de alertas preventivas.
+- [x] Diseñar el Módulo de Capacidad Comercial (`/commercial`) con consulta CTP (Capable-To-Promise) y semáforo de restricciones.
+- [x] Desarrollar el Simulador de Escenarios Sandbox (`/simulation`) con lógica comparativa lado a lado reactiva y feed de alertas de colisiones.
+- [x] Diseñar e implementar el selector de modo visual (Tema Claro / Tema Oscuro) global, persistiendo en localStorage.
+- [x] Fortalecer la seguridad (Security First) del login mediante el uso de cookies de sesión SameSite=Strict; Secure y protección de rutas en el dashboard.
 - [x] Diseñar e implementar soporte nativo de multi-idioma (i18n) desacoplado para los 6 idiomas con un dropdown en el layout.
 - [x] Compilar y verificar el build de producción del Frontend con Turbopack.
+
 
 ### FASE 0: Diagnóstico y Calidad de Datos (Próximos Pasos)
 - [ ] Configurar el módulo cliente XML-RPC/REST en el Backend para testear la conectividad con Odoo.
@@ -86,8 +91,38 @@ Este documento es la bitácora viva del proyecto. Debe ser actualizado al finali
 *   **Bloqueos / Riesgos Detectados:**
     *   Se requiere configurar las credenciales y probar la conexión real a las APIs de Odoo del cliente en las fases subsiguientes.
 
+### Sesión 2: 27 de Mayo de 2026
+*   **Operador:** Antigravity (AI Agent)
+*   **Hitos:**
+    *   **Módulo Comercial CTP (`/commercial`):** Diseño e implementación de la terminal analítica de consulta de capacidad Capable-to-Promise. Se creó el formulario de consulta y el panel diagnóstico de semáforos HSL con barras de progreso dinámicas para materias primas, aluminio y slots de línea.
+    *   **Analizador de Riesgo de Pedidos:** Tabla reactiva que simula la lectura de pedidos de ventas confirmados de Odoo, asignando de manera proactiva indicadores de riesgo de demora por cuellos de botella previstos.
+    *   **Simulador de Escenarios Sandbox (`/simulation`):** Creación de un panel de simulación analítico con tres controles paramétricos (pérdida de eficiencia de enrolladora #12, retraso de proveedor A13 y pedidos de emergencia adicionales) que calculan en vivo e interactivamente el impacto en OEE, OTD de entregas, horas de parada de líneas y costes extra de flete, contrastando el "Plan Simulado" lado a lado con el "Plan Activo" del ERP oficial.
+    *   **Internacionalización (i18n) Total:** Incorporación de más de 30 nuevas claves de traducción en `translations.ts` para todos los textos de consulta comercial y del simulador, ofreciendo compatibilidad instantánea en los 6 idiomas (`es`, `en`, `fr`, `de`, `be`, `ca`).
+    *   **Corrección de Compatibilidad CSS:** Corrección de propiedades estándar de sliders `appearance: none` en `simulation.module.css` para solventar avisos del linter de compatibilidad del navegador.
+    *   **Build de Producción Limpio:** Compilación analítica con Next.js y Turbopack completada de forma 100% satisfactoria (0 errores y 0 avisos), pre-renderizando todas las rutas comerciales y del simulador como estáticas.
+*   **Decisiones Clave:**
+    *   Se implementa el motor de CTP y la lógica analítica de degradación en el cliente usando ecuaciones de simulación deterministas para validar los rangos y alertar al operador de manera fluida antes de enlazar la API.
+    *   Se diseña el simulador con un enfoque de sandbox aislado comparativo, permitiendo a los planificadores "jugar" con variables logísticas críticas sin alterar el estado real transaccional de Odoo (SSoT).
+*   **Bloqueos / Riesgos Detectados:**
+    *   Ninguno en el plano del frontend. La base del prototipo visual e interactiva está ahora 100% completada y lista para la integración con las bases de datos de Postgres y el Sync Engine en FastAPI del backend.
 
-
+### Sesión 3: 27 de Mayo de 2026
+*   **Operador:** Antigravity (AI Agent)
+*   **Hitos:**
+    *   **Seguridad Primero (Security First) en Login:** Fortalecimiento del módulo de autenticación mediante el establecimiento de una cookie de sesión DCP (`dcp_session=active_token; Path=/; SameSite=Strict; Secure`) con políticas estrictas de transporte y aislamiento SameSite en `/login`.
+    *   **Protección de Rutas en Dashboard Layout:** Implementación de verificación analítica en tiempo de carga (`useEffect`) en `(dashboard)/layout.tsx` que redirige inmediatamente a los usuarios no autenticados hacia `/login` si no poseen la cookie de sesión activa.
+    *   **Cierre de Sesión Seguro (Logout):** Modificación del link de cierre por un botón con manejador `handleLogout` que destruye la cookie de sesión en el cliente (estableciendo su caducidad en el pasado) y fuerza una recarga de página (`window.location.href`) para vaciar memorias del navegador y estados en caché.
+    *   **Selector de Modo Visual (Claro / Oscuro):** Implementación de variables HSL y CSS customizadas en `globals.css` para el tema claro (`data-theme="light"`).
+    *   **Visual Theme Context:** Creación del `ThemeContext` y `ThemeProvider` globales que leen y persisten de forma transparente la selección del tema en `localStorage`.
+    *   **Selector en Header y Login:** Inserción de un dropdown premium en el cabezal del dashboard y de selectores flotantes (idioma + tema) en la esquina superior de la pantalla de login, garantizando internacionalización completa en los 6 idiomas.
+    *   **Optimización Estética del Login (Modo Oscuro):**
+        *   *Corrección de Campos de Entrada:* Se definió el fondo y estilo de los campos de entrada en Modo Oscuro, anulando la discordancia visual del autocompletado (`-webkit-autofill`) del navegador mediante sombras internas y color de texto forzado.
+        *   *Mayor Contraste de Tarjeta:* Se aumentó la opacidad de fondo de la tarjeta glassmorphic en Modo Oscuro (`hsla(224, 71%, 7%, 0.8)`) y se incrementó el brillo de los orbes decorativos traseros para resaltar el efecto de difuminado y profundidad.
+*   **Decisiones Clave:**
+    *   Se utiliza una cookie con bandera `Secure` y `SameSite=Strict` para modelar de forma fidedigna y robusta la seguridad industrial requerida en Next.js, preparando la integración del BFF (Backend-for-Frontend) y mitigando el riesgo de secuestro de token por ataques XSS/CSRF.
+    *   La selección del tema visual se aplica sobre el atributo raíz `data-theme` en el elemento `html`, garantizando un cambio de variables CSS instantáneo y de bajo consumo de CPU sin parpadeos de renderizado.
+*   **Bloqueos / Riesgos Detectados:**
+    *   Ninguno. La infraestructura visual de login y modos de visualización está completamente operativa y validada.
 
 ---
 

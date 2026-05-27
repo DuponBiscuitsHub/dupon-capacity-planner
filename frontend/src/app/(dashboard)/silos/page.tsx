@@ -3,16 +3,17 @@
 import { useState } from "react";
 import styles from "./silos.module.css";
 import { Silo, TruckDelivery } from "@/types/silos";
+import { formatNumber } from "@/app/utils/format";
 
 export default function SilosPage() {
-  // 1. Estado de Silos Inicial (Fiel al Contexto de la Fábrica)
+  // 1. Initial Silos State (aligned with factory physical specs)
   const [silos, setSilos] = useState<Silo[]>([
     {
       id: "silo-h1",
       name: "Silo Harina #1",
       material: "harina",
       capacityKg: 25000,
-      currentLevelKg: 9200, // Silo crítico (autonomía ~18h)
+      currentLevelKg: 9200, // Critical silo (autonomy ~18h)
       safetyLevelKg: 5000,
       hourlyConsumptionKg: 500,
     },
@@ -54,7 +55,7 @@ export default function SilosPage() {
     },
   ]);
 
-  // 2. Estado de Camiones Programados desde Odoo / Logística
+  // 2. State of Inbound Trucks Scheduled from Odoo Logistics
   const [trucks, setTrucks] = useState<TruckDelivery[]>([
     {
       id: "tr-001",
@@ -82,14 +83,14 @@ export default function SilosPage() {
     },
   ]);
 
-  // 3. Simulación Interactiva de Descarga de Camión
+  // 3. Interactive Unloading Simulation of Inbound Trucks
   const handleSimulateUnload = (truckId: string, material: string, quantityKg: number) => {
-    // Buscar silos compatibles con el material
+    // Find compatible silos based on material
     const compatibleSilos = silos.filter((s) => s.material === material);
     
     if (compatibleSilos.length === 0) return;
 
-    // Algoritmo logístico básico: Encontrar el silo compatible con mayor espacio disponible (Headspace)
+    // Logistics algorithm: Find the compatible silo with maximum headspace (available space)
     let selectedSilo = compatibleSilos[0];
     let maxHeadspace = selectedSilo.capacityKg - selectedSilo.currentLevelKg;
 
@@ -101,7 +102,7 @@ export default function SilosPage() {
       }
     }
 
-    // Actualizar el volumen del silo seleccionado (sin desbordar la capacidad física)
+    // Update level of selected silo without exceeding physical capacity limit
     setSilos((prevSilos) =>
       prevSilos.map((s) => {
         if (s.id === selectedSilo.id) {
@@ -112,7 +113,7 @@ export default function SilosPage() {
       })
     );
 
-    // Marcar el camión como completado
+    // Set truck status as completed
     setTrucks((prevTrucks) =>
       prevTrucks.map((t) => {
         if (t.id === truckId) {
@@ -123,7 +124,7 @@ export default function SilosPage() {
     );
   };
 
-  // Helper: Obtener clase CSS de color según autonomía del silo
+  // Helper: Resolve color styling according to silo autonomy
   const getSiloStatusClasses = (currentLevel: number, capacity: number, autonomyHours: number) => {
     const percentage = (currentLevel / capacity) * 100;
     
@@ -154,7 +155,7 @@ export default function SilosPage() {
   return (
     <div className={styles.container}>
       
-      {/* 📊 SECCIÓN 1: Cuadro SCADA - Estado de Silos en Vivo */}
+      {/* SECTION 1: SCADA Board - Live Silo Status */}
       <section className={styles.silosGrid}>
         {silos.map((silo) => {
           const percentage = (silo.currentLevelKg / silo.capacityKg) * 100;
@@ -166,7 +167,7 @@ export default function SilosPage() {
               <span className={styles.siloMaterialLabel}>{silo.material.replace("_", " ")}</span>
               <h3 className={styles.siloTitle}>{silo.name}</h3>
               
-              {/* Tanque Animado */}
+              {/* Animated Tank Graphic */}
               <div className={styles.tankOuter}>
                 <div 
                   className={`${styles.tankFluid} ${status.fluidClass}`} 
@@ -174,11 +175,11 @@ export default function SilosPage() {
                 ></div>
               </div>
 
-              {/* Métricas Numéricas */}
+              {/* Volume metrics */}
               <div className={styles.siloInfo}>
                 <span className={styles.siloPercentage}>{percentage.toFixed(0)}%</span>
                 <span className={styles.siloVolume}>
-                  {silo.currentLevelKg.toLocaleString()} / {silo.capacityKg.toLocaleString()} kg
+                  {formatNumber(silo.currentLevelKg)} / {formatNumber(silo.capacityKg)} kg
                 </span>
                 <div style={{ marginTop: "0.25rem" }}>
                   <span className={`badge ${status.badgeClass}`} style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}>
@@ -192,10 +193,10 @@ export default function SilosPage() {
         })}
       </section>
 
-      {/* 🔌 SECCIÓN 2: Split Layout (Curva de Decaimiento + Planificador Cisternas) */}
+      {/* SECTION 2: Split Layout (Predictive Decay Curve + cisterna scheduler) */}
       <div className={styles.splitLayout}>
         
-        {/* Panel Izquierdo: Curva de Decaimiento Predictiva (Gráfica SVG) */}
+        {/* Left Panel: Predictive Decay Curve (SVG chart) */}
         <section className={`${styles.chartCard} glass-panel`}>
           <h3 className={styles.sectionTitle}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--color-primary)" }}>
@@ -209,34 +210,34 @@ export default function SilosPage() {
             Muestra el vaciado predictivo del Silo #1 en función de la velocidad y merma teórica de las líneas de galletas.
           </p>
 
-          {/* Gráfica SVG Nativa Premium */}
+          {/* Premium Native SVG Chart */}
           <div className={styles.svgContainer}>
             <svg viewBox="0 0 500 180" width="100%" height="100%">
-              {/* Ejes y Cuadrícula */}
+              {/* Grid axes */}
               <line x1="40" y1="20" x2="40" y2="150" stroke="var(--border-light)" strokeWidth="1" />
               <line x1="40" y1="150" x2="480" y2="150" stroke="var(--border-light)" strokeWidth="1" />
               
               <line x1="40" y1="60" x2="480" y2="60" stroke="var(--border-light)" strokeWidth="1" strokeDasharray="3 3" />
               <line x1="40" y1="110" x2="480" y2="110" stroke="var(--border-light)" strokeWidth="1" strokeDasharray="3 3" />
 
-              {/* Leyenda y Marcadores de Eje Y (Volumen) */}
+              {/* Y Axis Legend (Volume) */}
               <text x="10" y="25" fill="var(--text-muted)" fontSize="9">100%</text>
               <text x="15" y="85" fill="var(--text-muted)" fontSize="9">50%</text>
               <text x="15" y="145" fill="var(--text-muted)" fontSize="9">0%</text>
 
-              {/* Marcadores de Eje X (Tiempo) */}
+              {/* X Axis Labels (Time) */}
               <text x="35" y="165" fill="var(--text-muted)" fontSize="9">Ahora</text>
               <text x="140" y="165" fill="var(--text-muted)" fontSize="9">+12h</text>
               <text x="250" y="165" fill="var(--text-muted)" fontSize="9">+24h (Mañana)</text>
               <text x="360" y="165" fill="var(--text-muted)" fontSize="9">+48h</text>
               <text x="450" y="165" fill="var(--text-muted)" fontSize="9">+72h</text>
 
-              {/* Línea Roja de Stock Mínimo de Seguridad (20% del Silo) */}
+              {/* Red Line: Safety Stock threshold (20% silo capacity) */}
               <line x1="40" y1="124" x2="480" y2="124" stroke="var(--color-danger)" strokeWidth="1.5" strokeDasharray="4 2" />
               <text x="400" y="120" fill="var(--color-danger)" fontSize="8" fontWeight="600">Límite de Seguridad (5,000 kg)</text>
 
-              {/* Curva de Decaimiento Proyectada (Con desfase dinámico) */}
-              {/* Harina #1: 9,200kg (37% en t=0) -> Vaciado estimado en 18h (cruza límite de seguridad) */}
+              {/* Projected Decay Trendline (with dynamic offset) */}
+              {/* Silo #1: 9,200kg (37% t=0) -> Projected shutdown in ~18h */}
               <path 
                 d="M 40 102 L 150 124 L 200 150 L 480 150" 
                 fill="none" 
@@ -245,7 +246,7 @@ export default function SilosPage() {
                 strokeLinecap="round" 
               />
               
-              {/* Punto de Ruptura (Cruce de la curva) */}
+              {/* Anomaly intersection node */}
               <circle cx="150" cy="124" r="5" fill="var(--color-danger)" />
               <text x="160" y="120" fill="var(--color-danger)" fontSize="9" fontWeight="700">Ruptura: +18.4h</text>
             </svg>
@@ -263,7 +264,7 @@ export default function SilosPage() {
           </div>
         </section>
 
-        {/* Panel Derecho: Logística de Entrada - Camiones Cisterna (Odoo) */}
+        {/* Right Panel: Inbound Logistics - Tanker Trucks (Odoo POs) */}
         <section className={`${styles.trucksCard} glass-panel`}>
           <h3 className={styles.sectionTitle}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--color-success)" }}>
@@ -298,7 +299,7 @@ export default function SilosPage() {
                         {truck.material.replace("_", " ")}
                       </span>
                     </td>
-                    <td className={styles.td}><strong>{truck.quantityKg.toLocaleString()} kg</strong></td>
+                    <td className={styles.td}><strong>{formatNumber(truck.quantityKg)} kg</strong></td>
                     <td className={styles.td} style={{ color: "var(--text-secondary)" }}>{truck.scheduledTime}</td>
                     <td className={styles.td} style={{ color: "var(--color-success)", fontWeight: 600 }}>{truck.recommendedTime}</td>
                     <td className={styles.td}>

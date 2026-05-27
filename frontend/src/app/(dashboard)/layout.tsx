@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import styles from "./layout.module.css";
 import { useLanguage } from "../i18n/context";
 import { LanguageType } from "../i18n/translations";
+import { useCompany, CompanyType } from "../context/CompanyContext";
 
-// Definición de interfaces para los ítems de navegación
+// Define interfaces for navigation items
 interface NavItem {
   labelKey: string;
   href: string;
@@ -19,9 +21,34 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { language, setLanguage, t } = useLanguage();
+  const { selectedCompany, setSelectedCompany } = useCompany();
 
-  // Lista de rutas principales con sus respectivas claves de traducción e iconos SVG
+  // SECURITY FIRST: Check client-side active session cookie
+  useEffect(() => {
+    const getCookie = (name: string) => {
+      if (typeof document === "undefined") return null;
+      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]*)'));
+      return match ? match[2] : null;
+    };
+    const session = getCookie("dcp_session");
+    if (!session) {
+      // TODO(security): BFF will validate HttpOnly Secure cookies in production
+      router.push("/login");
+    }
+  }, [router]);
+
+  // Handle secure sign out
+  const handleLogout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Invalidate session cookie
+    document.cookie = "dcp_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Strict; Secure";
+    // Force refresh to clear client memory caches
+    window.location.href = "/login";
+  };
+
+  // Primary navigation routes with i18n keys and SVG icons
   const navItems: NavItem[] = [
     {
       labelKey: "navDashboard",
@@ -81,9 +108,30 @@ export default function DashboardLayout({
         </svg>
       ),
     },
+    {
+      labelKey: "navUsers",
+      href: "/users",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      ),
+    },
   ];
 
-  // Resolver título de cabecera dinámicamente según la ruta y traducir usando i18n
+  // BUSINESS RULE: Aluminum planner is strictly restricted to Dupon Ibèrica
+  // Filter out this option from the navigation list if another company is active
+  const filteredNavItems = navItems.filter((item) => {
+    if (item.href === "/aluminum") {
+      return selectedCompany === "iberica";
+    }
+    return true;
+  });
+
+  // Dynamically resolve and translate dashboard header titles
   const getHeaderTitle = () => {
     switch (pathname) {
       case "/":
@@ -96,6 +144,8 @@ export default function DashboardLayout({
         return t("titleCommercial");
       case "/simulation":
         return t("titleSimulation");
+      case "/users":
+        return t("titleUsers");
       default:
         return "Consola Operativa";
     }
@@ -103,7 +153,7 @@ export default function DashboardLayout({
 
   return (
     <div className={styles.container}>
-      {/* Sidebar Izquierda */}
+      {/* Left Sidebar */}
       <aside className={styles.sidebar}>
         <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
           <header className={styles.logoSection}>
@@ -112,7 +162,7 @@ export default function DashboardLayout({
           </header>
 
           <nav className={styles.navSection}>
-            {navItems.map((item) => {
+            {filteredNavItems.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link
@@ -128,32 +178,45 @@ export default function DashboardLayout({
           </nav>
         </div>
 
-        {/* Sección Logout */}
+        {/* Logout Section */}
         <div className={styles.logoutSection}>
-          <Link href="/login" className={styles.logoutLink}>
+          <button onClick={handleLogout} className={styles.logoutLink} style={{ width: "100%", cursor: "pointer", border: "none", background: "none" }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
               <polyline points="16 17 21 12 16 7" />
               <line x1="21" y1="12" x2="9" y2="12" />
             </svg>
             <span>{t("navLogout")}</span>
-          </Link>
+          </button>
         </div>
       </aside>
 
-      {/* Panel Principal */}
+      {/* Main Workspace Area */}
       <div className={styles.mainArea}>
-        {/* Cabezal de Estado */}
+        {/* Floating Header Panel */}
         <header className={styles.header}>
           <h2 className={styles.headerTitle}>{getHeaderTitle()}</h2>
           <div className={styles.headerStatusGroup}>
-            {/* Estado de Odoo API */}
+            {/* Odoo API Status Indicator */}
             <div className={styles.statusIndicator}>
-              <span className={`${styles.pulseDot} badge-success`} style={{ animation: "pulse-alert-glow 2s infinite" }}></span>
+              <span className={styles.pulseDot}></span>
               <span>{t("odooConnected")}</span>
             </div>
             
-            {/* Selector de Idioma Dropdown en sustitución del tag Turno */}
+            {/* Multicompany Dropdown Selector */}
+            <div className={styles.languageSelectorWrapper}>
+              <select
+                value={selectedCompany}
+                onChange={(e) => setSelectedCompany(e.target.value as CompanyType)}
+                className={styles.languageSelect}
+              >
+                <option value="iberica">Dupon Ibèrica 🇪🇸</option>
+                <option value="france">Dupon France 🇫🇷</option>
+                <option value="belgica">Dupon Belgique 🇧🇪</option>
+              </select>
+            </div>
+
+            {/* Language Selector Dropdown */}
             <div className={styles.languageSelectorWrapper}>
               <select
                 value={language}
@@ -171,7 +234,7 @@ export default function DashboardLayout({
           </div>
         </header>
 
-        {/* Contenido Dinámico de la Página */}
+        {/* Dynamic Page Content */}
         <main className={styles.content}>
           {children}
         </main>

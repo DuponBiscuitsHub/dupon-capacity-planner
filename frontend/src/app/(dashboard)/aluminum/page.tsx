@@ -3,9 +3,14 @@
 import { useState } from "react";
 import styles from "./aluminum.module.css";
 import { Machine, FormatSaturation, PlantAllocation } from "@/types/aluminum";
+import { useCompany } from "../../context/CompanyContext";
+import { useLanguage } from "../../i18n/context";
 
 export default function AluminumPage() {
-  // 1. Estado para encender/apagar el simulador de pico de demanda externa
+  const { selectedCompany } = useCompany();
+  const { t } = useLanguage();
+
+  // 1. Estado para el simulador de pico de demanda externa
   const [isSimulatorActive, setIsSimulatorActive] = useState(false);
 
   // 2. Datos de los 5 Troqueles Físicos de Planta
@@ -17,26 +22,49 @@ export default function AluminumPage() {
     { id: "tr-05", name: "Troquel #05", type: "troquel", status: "maintenance", activeFormat: "-", weeklyCapacityPacks: 100000, weeklyLoadPacks: 0 },
   ]);
 
-  // 3. Lógica Reactiva: Cargas y Mapa de Calor Dinámicos según el estado del simulador
+  // RESTRICTION CHECK: Aluminios es exclusivo de Dupon Ibèrica
+  // Si la compañía activa no es 'iberica', bloqueamos la interfaz con un candado elegante
+  if (selectedCompany !== "iberica") {
+    return (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "70vh" }}>
+        <div className="glass-panel" style={{ maxWidth: "500px", padding: "3rem 2.5rem", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "1.5rem", boxShadow: "var(--shadow-premium)" }}>
+          <div className="pulse-danger" style={{ width: "64px", height: "64px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-primary)" }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+          </div>
+          <h2 style={{ fontSize: "1.35rem", fontWeight: "700", letterSpacing: "-0.02em" }}>
+            {t("aluminumRestrictedTitle")}
+          </h2>
+          <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", lineHeight: "1.6" }}>
+            {t("aluminumRestrictedDesc")}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // 3. Cargas y Mapa de Calor Dinámicos según el estado del simulador
   const formatSaturations: FormatSaturation[] = isSimulatorActive
     ? [
         { format: "F1", name: "F1 (Individual)", troquelLoadPercent: 62, enrolladoraLoadPercent: 68 },
         { format: "F2", name: "F2 (Minipack)", troquelLoadPercent: 78, enrolladoraLoadPercent: 72 },
-        { format: "F3", name: "F3 (Familiar)", troquelLoadPercent: 96, enrolladoraLoadPercent: 98 }, // Saturación Crítica
+        { format: "F3", name: "F3 (Familiar)", troquelLoadPercent: 96, enrolladoraLoadPercent: 98 },
         { format: "F4", name: "F4 (Tubular)", troquelLoadPercent: 45, enrolladoraLoadPercent: 48 },
-        { format: "F5", name: "F5 (Tripack)", troquelLoadPercent: 92, enrolladoraLoadPercent: 86 }, // Saturación Crítica
+        { format: "F5", name: "F5 (Tripack)", troquelLoadPercent: 92, enrolladoraLoadPercent: 86 },
         { format: "F6", name: "F6 (Especial)", troquelLoadPercent: 82, enrolladoraLoadPercent: 78 },
       ]
     : [
         { format: "F1", name: "F1 (Individual)", troquelLoadPercent: 45, enrolladoraLoadPercent: 52 },
         { format: "F2", name: "F2 (Minipack)", troquelLoadPercent: 58, enrolladoraLoadPercent: 60 },
-        { format: "F3", name: "F3 (Familiar)", troquelLoadPercent: 80, enrolladoraLoadPercent: 82 }, // Alerta Media
+        { format: "F3", name: "F3 (Familiar)", troquelLoadPercent: 80, enrolladoraLoadPercent: 82 },
         { format: "F4", name: "F4 (Tubular)", troquelLoadPercent: 30, enrolladoraLoadPercent: 35 },
         { format: "F5", name: "F5 (Tripack)", troquelLoadPercent: 68, enrolladoraLoadPercent: 58 },
         { format: "F6", name: "F6 (Especial)", troquelLoadPercent: 65, enrolladoraLoadPercent: 55 },
       ];
 
-  // 4. Lógica Reactiva: Reparto de Capacidad de Producción (Iberica vs Otras Plantas)
+  // 4. Reparto de Capacidad de Producción (Iberica vs Otras Plantas)
   const allocations: PlantAllocation[] = isSimulatorActive
     ? [
         { plantName: "Planta Iberica (Local A17)", sharePercent: 45, volumePacks: 180000 },
@@ -49,14 +77,12 @@ export default function AluminumPage() {
         { plantName: "Planta Bélgica (Externo)", sharePercent: 10, volumePacks: 40000 },
       ];
 
-  // Helper: Clase de color HSL para celdas del Mapa de Calor
   const getHeatmapClass = (percent: number) => {
     if (percent >= 90) return styles.heatmapCellDanger;
     if (percent >= 75) return styles.heatmapCellWarning;
     return styles.heatmapCellGreen;
   };
 
-  // Helper: Colores de los troqueles individuales
   const getMachineStatusBadge = (status: string) => {
     switch (status) {
       case "running":
@@ -70,7 +96,6 @@ export default function AluminumPage() {
     }
   };
 
-  // Cálculos dinámicos del gráfico SVG (reparto Iberica vs Otros)
   const ibericaShare = allocations[0].sharePercent;
   const externalShare = allocations[1].sharePercent + allocations[2].sharePercent;
 
@@ -205,10 +230,8 @@ export default function AluminumPage() {
               {/* Gráfico circular SVG Reactivo */}
               <div className={styles.svgWrapper}>
                 <svg viewBox="0 0 100 100" width="100%" height="100%">
-                  {/* Círculo base de Fondo */}
                   <circle cx="50" cy="50" r="40" fill="none" stroke="var(--border-light)" strokeWidth="15" />
                   
-                  {/* Segmento Iberica (Local A17) - Verde */}
                   <circle 
                     cx="50" 
                     cy="50" 
@@ -222,7 +245,6 @@ export default function AluminumPage() {
                     style={{ transition: "stroke-dasharray 0.8s ease" }}
                   />
 
-                  {/* Segmento Grupo (Externos) - Azul */}
                   <circle 
                     cx="50" 
                     cy="50" 
@@ -236,7 +258,6 @@ export default function AluminumPage() {
                     style={{ transition: "stroke-dasharray 0.8s ease, stroke-dashoffset 0.8s ease" }}
                   />
                   
-                  {/* Texto central */}
                   <text x="50" y="47" textAnchor="middle" fill="var(--text-primary)" fontSize="10" fontWeight="700">IBERICA</text>
                   <text x="50" y="60" textAnchor="middle" fill="var(--color-success)" fontSize="11" fontWeight="800">
                     {ibericaShare}%

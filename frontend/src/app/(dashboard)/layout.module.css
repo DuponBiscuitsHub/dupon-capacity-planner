@@ -1,37 +1,45 @@
-/* Estilos para el Layout del Dashboard Operativo (CSS Modules) */
+/* Estilos para el Layout del Dashboard Operativo (Estilo Synetica Premium SaaS) */
 
 .container {
-  display: grid;
-  grid-template-columns: 240px 1fr;
+  display: flex;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
   background-color: var(--bg-base);
+  padding: 1.25rem; /* Margen general flotante estilo Synetica */
+  gap: 1.25rem; /* Separación de paneles */
+  box-sizing: border-box;
 }
 
-/* Sidebar Estilo Industrial Premium */
+/* Sidebar Estilo Synetica - Tarjeta Flotante Premium y Redondeada */
 .sidebar {
   display: flex;
   flex-direction: column;
+  width: 260px;
+  min-width: 260px;
   height: 100%;
-  border-right: 1px solid var(--border-light);
-  background: hsla(224, 71%, 5%, 0.8);
+  border: 1px solid var(--border-light);
+  border-radius: 16px; /* Súper curvado premium */
+  background: hsla(0, 0%, 100%, 0.85); /* Blanco translúcido nítido */
   backdrop-filter: var(--blur-glass);
   -webkit-backdrop-filter: var(--blur-glass);
-  padding: 1.5rem 1rem;
+  padding: 1.75rem 1.25rem;
   justify-content: space-between;
+  box-shadow: var(--shadow-premium);
+  transition: var(--transition-smooth);
+  box-sizing: border-box;
 }
 
 .logoSection {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.35rem;
   padding: 0.5rem 0.75rem;
   margin-bottom: 2rem;
 }
 
 .logoSub {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--color-primary);
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -39,41 +47,46 @@
 }
 
 .logoTitle {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   color: var(--text-primary);
+  background: linear-gradient(135deg, var(--text-primary) 30%, var(--text-secondary) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
 .navSection {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.5rem;
   flex: 1;
 }
 
 .navLink {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
+  gap: 0.85rem;
+  padding: 0.85rem 1.15rem;
+  border-radius: 12px; /* Esquinas suaves */
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-secondary);
+  border: 1px solid transparent;
   transition: var(--transition-smooth);
 }
 
 .navLink:hover {
-  background: hsla(224, 71%, 12%, 0.5);
+  background: hsla(220, 20%, 93%, 0.5);
   color: var(--text-primary);
-  transform: translateX(2px);
+  transform: translateX(4px);
 }
 
 .activeNavLink {
-  background: hsla(210, 100%, 50%, 0.1);
+  background: hsla(210, 100%, 45%, 0.05); /* Azul sutil de Synetica */
   color: var(--color-primary);
-  border: 1px solid hsla(210, 100%, 50%, 0.2);
+  border: 1px solid hsla(210, 100%, 45%, 0.12);
+  box-shadow: 0 4px 12px -5px rgba(0, 118, 255, 0.1);
 }
 
 .logoutSection {
@@ -85,50 +98,59 @@
 .logoutLink {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
+  gap: 0.85rem;
+  padding: 0.85rem 1.15rem;
+  border-radius: 12px;
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-danger);
   transition: var(--transition-smooth);
 }
 
 .logoutLink:hover {
-  background: hsla(346, 84%, 49%, 0.08);
-  transform: translateX(2px);
+  background: hsla(346, 84%, 45%, 0.06);
+  transform: translateX(4px);
 }
 
-/* Área Principal (Header + Contenido) */
+/* Área Principal - Organizada en una columna flexible */
 .mainArea {
   display: flex;
   flex-direction: column;
+  flex: 1;
   height: 100%;
   overflow: hidden;
+  gap: 1.25rem; /* Separación de la cabecera flotante y el contenido */
+  box-sizing: border-box;
 }
 
-/* Header Superior de Estado de Planta */
+/* Cabecera Superior Flotante - Óvalo / Pill Minimalista */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-height: 70px;
   height: 70px;
-  padding: 0 2rem;
-  border-bottom: 1px solid var(--border-light);
-  background: hsla(224, 71%, 4%, 0.7);
+  padding: 0 1.75rem;
+  border: 1px solid var(--border-light);
+  border-radius: 16px; /* Cabecera curvada */
+  background: hsla(0, 0%, 100%, 0.82);
   backdrop-filter: var(--blur-glass);
   -webkit-backdrop-filter: var(--blur-glass);
+  box-shadow: var(--shadow-premium);
+  box-sizing: border-box;
 }
 
 .headerTitle {
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 
 .headerStatusGroup {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .statusIndicator {
@@ -136,23 +158,30 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.8rem;
+  font-weight: 600;
   color: var(--text-secondary);
+  background: hsla(142, 70%, 40%, 0.06);
+  padding: 0.4rem 0.85rem;
+  border-radius: 9999px;
+  border: 1px solid hsla(142, 70%, 40%, 0.12);
 }
 
 .pulseDot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
+  background-color: var(--color-success);
 }
 
 /* Contenido Principal con Desplazamiento */
 .content {
   flex: 1;
   overflow-y: auto;
-  padding: 2rem;
+  padding-right: 0.25rem; /* Espacio para el scrollbar */
+  box-sizing: border-box;
 }
 
-/* Selector de Idiomas Dropdown Estilizado */
+/* Selectores Dropdown Estilizados en Pill de Synetica */
 .languageSelectorWrapper {
   display: flex;
   align-items: center;
@@ -160,24 +189,40 @@
 }
 
 .languageSelect {
-  background: hsla(224, 71%, 10%, 0.6);
+  background: #ffffff;
   border: 1px solid var(--border-light);
-  border-radius: 6px;
+  border-radius: 12px; /* Redondeado Synetica */
   color: var(--text-primary);
   font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.35rem 0.75rem;
+  font-weight: 700;
+  padding: 0.45rem 1rem;
   cursor: pointer;
   outline: none;
   transition: var(--transition-smooth);
+  box-shadow: 0 4px 10px -5px rgba(100, 115, 130, 0.05);
+  appearance: none; /* Quitar flecha nativa */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 2rem; /* Espacio para flecha custom si se deseara, o simple padding amplio */
+  background-image: url("data:image/svg+xml;utf8,<svg fill='none' stroke='rgb(100, 110, 120)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' height='10' width='10' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
 }
 
 .languageSelect:hover {
   border-color: var(--color-primary);
-  background: hsla(224, 71%, 12%, 0.8);
+  background-color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px -5px rgba(100, 115, 130, 0.08);
 }
 
 .languageSelect:focus {
   border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px hsla(210, 100%, 45%, 0.15);
 }
 
+.languageSelect option {
+  background-color: #ffffff;
+  color: var(--text-primary);
+  font-weight: 600;
+}

@@ -18,6 +18,7 @@ Si eres una IA trabajando en este repositorio, debes adherirte estrictamente a l
 2.  **Modularidad Estricta:** El sistema se organiza de forma desacoplada. Backend en Python (`FastAPI`) y Frontend en `Next.js` con TypeScript. No mezcles lógica de negocio del módulo de Silos con el de Aluminios.
 3.  **Simplicidad Primero:** Evita la sobreingeniería. Prioriza algoritmos deterministas claros y balance de masas algebraico antes de proponer optimizadores matemáticos complejos.
 4.  **Idioma de Desarrollo:** La documentación, comentarios de código y respuestas al usuario deben ser redactados en **Español**, manteniendo un tono altamente técnico y profesional.
+5.  **Internacionalización Mandatoria (i18n):** Cada vez que agregues, edites o modifiques textos, etiquetas, botones o títulos visuales en la interfaz del Frontend, **BETA prohibido hardcodear cadenas**. DEBES añadir la entrada correspondiente con su clave en el diccionario desacoplado `/frontend/src/app/i18n/translations.ts` conteniendo traducciones válidas para los 6 idiomas requeridos (`es`, `en`, `fr`, `de`, `be`, `ca`).
 
 ---
 

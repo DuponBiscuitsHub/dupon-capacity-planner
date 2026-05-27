@@ -1,9 +1,11 @@
-/* Estilos para el Módulo de Silos y Materias Primas (CSS Modules) */
+/* Estilos para el Módulo de Silos y Materias Primas (CSS Modules - Estilo Synetica Modo Claro) */
 
 .container {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Rejilla de los 5 Silos de Planta */
@@ -15,7 +17,7 @@
 }
 
 .siloCard {
-  padding: 1.5rem;
+  padding: 1.75rem 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -34,20 +36,21 @@
 
 .siloTitle {
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 
-/* Representación Gráfica del Tanque Industrial */
+/* Representación Gráfica del Tanque Industrial - Estilo Claro Synetica */
 .tankOuter {
   width: 90px;
   height: 160px;
-  border: 2px solid var(--border-light);
-  border-radius: 16px 16px 4px 4px;
-  background: hsla(224, 71%, 15%, 0.15);
+  border: 1px solid var(--border-light);
+  border-radius: 16px 16px 6px 6px;
+  background: hsla(220, 20%, 92%, 0.45); /* Fondo claro suave */
   position: relative;
   overflow: hidden;
-  box-shadow: inset 0 8px 16px 0 rgba(0, 0, 0, 0.4);
+  box-shadow: inset 0 4px 12px 0 rgba(100, 110, 120, 0.12); /* Sombra interior suave */
   margin: 0.5rem 0;
 }
 
@@ -61,29 +64,29 @@
 
 /* Colores de fluido dinámicos en base al estado */
 .tankFluidGreen {
-  background: linear-gradient(180deg, hsl(142, 70%, 45%) 0%, hsl(142, 70%, 30%) 100%);
-  box-shadow: 0 -4px 10px 0 hsla(142, 70%, 45%, 0.3);
+  background: linear-gradient(180deg, hsl(142, 70%, 45%) 0%, hsl(142, 70%, 35%) 100%);
+  box-shadow: 0 -2px 6px 0 hsla(142, 70%, 45%, 0.2);
 }
 
 .tankFluidWarning {
-  background: linear-gradient(180deg, hsl(38, 92%, 50%) 0%, hsl(38, 92%, 35%) 100%);
-  box-shadow: 0 -4px 10px 0 hsla(38, 92%, 50%, 0.3);
+  background: linear-gradient(180deg, hsl(38, 92%, 50%) 0%, hsl(38, 92%, 40%) 100%);
+  box-shadow: 0 -2px 6px 0 hsla(38, 92%, 50%, 0.2);
 }
 
 .tankFluidDanger {
-  background: linear-gradient(180deg, hsl(346, 84%, 49%) 0%, hsl(346, 84%, 34%) 100%);
-  box-shadow: 0 -4px 10px 0 hsla(346, 84%, 49%, 0.3);
+  background: linear-gradient(180deg, hsl(346, 84%, 49%) 0%, hsl(346, 84%, 39%) 100%);
+  box-shadow: 0 -2px 6px 0 hsla(346, 84%, 49%, 0.2);
 }
 
 /* Indicadores Numéricos y Tiempo de Autonomía */
 .siloInfo {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.35rem;
 }
 
 .siloPercentage {
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -91,6 +94,7 @@
 .siloVolume {
   font-size: 0.8rem;
   color: var(--text-secondary);
+  font-weight: 600;
 }
 
 .siloTimeLeft {
@@ -102,44 +106,61 @@
   display: inline-flex;
 }
 
-/* Sección Inferior */
+/* Sección Inferior - Split Layout */
 .splitLayout {
   display: grid;
-  grid-template-columns: 1.3fr 1.1fr;
-  gap: 1.5rem;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 1.75rem;
+}
+
+@media (max-width: 1024px) {
+  .splitLayout {
+    grid-template-columns: 1fr;
+  }
 }
 
 .chartCard {
-  padding: 1.5rem;
+  padding: 1.75rem;
   display: flex;
   flex-direction: column;
 }
 
 .sectionTitle {
   font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.65rem;
+  color: var(--text-primary);
+  letter-spacing: -0.015em;
 }
 
-/* Gráfica de decaimiento SVG */
+/* Gráfica de decaimiento SVG - Fondo Claro Blando de Synetica */
 .svgContainer {
   width: 100%;
   height: 180px;
   margin-top: 1rem;
-  background: hsla(224, 71%, 10%, 0.2);
+  background: hsla(220, 20%, 97%, 0.65); /* Fondo claro blando */
   border: 1px solid var(--border-light);
-  border-radius: 8px;
-  padding: 0.5rem;
+  border-radius: 12px; /* Redondeado Synetica */
+  padding: 0.75rem;
+  transition: var(--transition-smooth);
+  box-sizing: border-box;
+}
+
+.svgContainer:hover {
+  background: #ffffff; /* Iluminación blanca en hover */
+  border-color: hsla(210, 100%, 45%, 0.15);
+  box-shadow: var(--shadow-premium);
 }
 
 .legend {
   display: flex;
-  gap: 1rem;
+  gap: 1.25rem;
   font-size: 0.75rem;
-  margin-top: 0.5rem;
+  font-weight: 600;
+  margin-top: 0.85rem;
   justify-content: center;
   color: var(--text-secondary);
 }
@@ -147,17 +168,19 @@
 .legendItem {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.45rem;
 }
 
 /* Tabla de Camiones */
 .trucksCard {
-  padding: 1.5rem;
+  padding: 1.75rem;
 }
 
 .tableWrapper {
   overflow-x: auto;
-  margin-top: 0.5rem;
+  margin-top: 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
 }
 
 .truckTable {
@@ -166,39 +189,47 @@
 }
 
 .th {
-  padding: 0.75rem 0.5rem;
+  padding: 0.85rem;
+  background-color: hsla(220, 20%, 97%, 0.8); /* Cabecera perla */
   border-bottom: 1px solid var(--border-light);
   font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-muted);
+  font-weight: 700;
+  color: var(--text-secondary);
   text-transform: uppercase;
+  letter-spacing: 0.05em;
   text-align: left;
 }
 
 .td {
-  padding: 0.75rem 0.5rem;
+  padding: 0.85rem;
   border-bottom: 1px solid var(--border-light);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  color: var(--text-primary);
   vertical-align: middle;
+  font-weight: 500;
+}
+
+.truckTable tr:last-child .td {
+  border-bottom: none;
 }
 
 /* Botón interactivo de descarga */
 .simulateBtn {
-  background: hsla(210, 100%, 50%, 0.12);
+  background: hsla(210, 100%, 50%, 0.08);
   color: var(--color-primary);
-  border: 1px solid hsla(210, 100%, 50%, 0.25);
+  border: 1px solid hsla(210, 100%, 50%, 0.15);
   font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.35rem 0.75rem;
-  border-radius: 6px;
+  font-weight: 700;
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
   transition: var(--transition-smooth);
 }
 
 .simulateBtn:hover {
   background: var(--color-primary);
-  color: var(--text-primary);
+  color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px 0 rgba(0, 118, 255, 0.2);
+  box-shadow: 0 4px 12px 0 rgba(0, 118, 255, 0.2);
 }
 
 .simulateBtn:active {

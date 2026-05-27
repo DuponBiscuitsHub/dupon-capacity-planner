@@ -1,32 +1,32 @@
-/* Dupon Capacity Planner - Sistema de Diseño Premium (Vanilla CSS) */
+/* Dupon Capacity Planner - Premium Design System (Vanilla CSS) */
 
-/* 1. Definición de Variables y Tokens de Diseño */
+/* 1. Design Tokens and Global Variables */
 :root {
-  /* Paleta HSL Oscura (Pizarra Deep Industrial) */
-  --bg-base: hsl(224, 71%, 4%);
-  --bg-card: hsla(224, 71%, 7%, 0.65);
-  --bg-card-hover: hsla(224, 71%, 10%, 0.8);
-  --border-light: hsla(224, 71%, 15%, 0.5);
-  --border-focus: hsl(210, 100%, 50%);
+  /* Light Theme (Synetica Premium SaaS Style) */
+  --bg-base: hsl(220, 24%, 96%); /* Soft pearl light grey screen background */
+  --bg-card: hsla(0, 0%, 100%, 0.82); /* Semi-transparent pure white for cards */
+  --bg-card-hover: hsla(0, 0%, 100%, 0.95);
+  --border-light: hsla(220, 20%, 88%, 0.45); /* Very thin, clean borders */
+  --border-focus: hsl(210, 100%, 45%); /* Sharp primary electric blue */
   
-  /* Colores de Texto */
-  --text-primary: hsl(224, 71%, 95%);
-  --text-secondary: hsl(224, 20%, 65%);
-  --text-muted: hsl(224, 15%, 45%);
+  /* Text Color Palette */
+  --text-primary: hsl(224, 40%, 12%); /* Deep slate primary text */
+  --text-secondary: hsl(224, 20%, 38%); /* Slate grey secondary text */
+  --text-muted: hsl(224, 12%, 58%); /* Muted light grey text */
 
-  /* Colores de Acento y Estado Operativo */
-  --color-primary: hsl(210, 100%, 50%); /* Azul Eléctrico - Actividad / Seleccionado */
-  --color-success: hsl(142, 70%, 45%); /* Verde Esmeralda - Silo Seguro / OTD OK */
-  --color-warning: hsl(38, 92%, 50%);  /* Ámbar - Alerta / Nivel Medio */
-  --color-danger: hsl(346, 84%, 49%);   /* Rojo Rubí - Rotura de Stock / Bloqueo */
+  /* Operational Status Acentuation */
+  --color-primary: hsl(210, 100%, 45%); /* Electric Blue */
+  --color-success: hsl(142, 70%, 40%); /* Emerald Green */
+  --color-warning: hsl(38, 92%, 45%);  /* Amber Alert */
+  --color-danger: hsl(346, 84%, 45%);   /* Ruby Red */
   
-  /* Variables de Transición y Efectos */
-  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  --blur-glass: blur(12px);
-  --shadow-premium: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  /* Layout Transitions & Motion Blur */
+  --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --blur-glass: blur(16px);
+  --shadow-premium: 0 12px 30px -10px rgba(100, 115, 130, 0.08), 0 4px 12px -5px rgba(100, 115, 130, 0.03);
 }
 
-/* 2. Reset Global y Estilos del Navegador */
+/* 2. Global Reset and Browser Normalization */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -44,7 +44,7 @@ html, body {
   overflow-x: hidden;
 }
 
-/* Scrollbar Personalizado Estilo Premium */
+/* Custom Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -63,7 +63,7 @@ html, body {
   background: var(--color-primary);
 }
 
-/* 3. Estilos Base para Elementos Comunes */
+/* 3. Base Element Typography and Controls */
 a {
   color: inherit;
   text-decoration: none;
@@ -94,24 +94,25 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 0 2px hsla(210, 100%, 50%, 0.2);
 }
 
-/* 4. Clases Utilitarias Globales (Layout y Glassmorphism) */
+/* 4. Global Glassmorphic Utility Classes */
 .glass-panel {
   background: var(--bg-card);
   backdrop-filter: var(--blur-glass);
   -webkit-backdrop-filter: var(--blur-glass);
   border: 1px solid var(--border-light);
-  border-radius: 12px;
+  border-radius: 16px; /* Synetica standard rounded corners */
   box-shadow: var(--shadow-premium);
   transition: var(--transition-smooth);
 }
 
 .glass-panel-hover:hover {
   background: var(--bg-card-hover);
-  border-color: hsla(224, 71%, 25%, 0.6);
-  transform: translateY(-2px);
+  border-color: hsla(210, 100%, 45%, 0.2); /* Soft blue border accent */
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px -15px rgba(100, 115, 130, 0.12), 0 5px 15px -5px rgba(100, 115, 130, 0.05);
 }
 
-/* Animación de Pulso de Alerta Industrial */
+/* Industrial Alarm Pulse Keyframes */
 @keyframes pulse-alert-glow {
   0% {
     box-shadow: 0 0 0 0 hsla(346, 84%, 49%, 0.4);
@@ -146,7 +147,7 @@ input:focus, select:focus, textarea:focus {
   background-color: var(--color-warning);
 }
 
-/* 5. Estilos de Tipografía y Layout Semántico */
+/* 5. Typography and Badge Helpers */
 h1, h2, h3, h4 {
   font-weight: 600;
   letter-spacing: -0.025em;

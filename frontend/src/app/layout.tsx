@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "./i18n/context";
+import { CompanyProvider } from "./context/CompanyContext";
 
-// Carga optimizada de la tipografía Google Font Outfit
+// Optimized loading of Google Font Outfit
 const outfit = Outfit({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
@@ -12,7 +13,7 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   title: "Dupon Capacity Planner",
-  description: "Advanced Planning System (APS) externo e interactivo conectado a Odoo ERP para la simulación y análisis de capacidad de planta en tiempo real.",
+  description: "Advanced Planning System (APS) external console connected to Odoo ERP for real-time capacity simulation and analysis.",
 };
 
 export default function RootLayout({
@@ -23,9 +24,11 @@ export default function RootLayout({
   return (
     <html lang="es" className={outfit.variable}>
       <body>
-        {/* Proveedor global de traducción i18n */}
+        {/* Global i18n translation and multicompany contexts */}
         <LanguageProvider>
-          {children}
+          <CompanyProvider>
+            {children}
+          </CompanyProvider>
         </LanguageProvider>
       </body>
     </html>
