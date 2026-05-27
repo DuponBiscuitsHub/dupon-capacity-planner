@@ -16,12 +16,12 @@ Este documento es la bitácora viva del proyecto. Debe ser actualizado al finali
 ## 🗺️ 2. Roadmap y Porcentaje de Avance General
 
 ```
-[█████░░░░░░░░░░░░░░░] 25% Completado
+[████████░░░░░░░░░░░░] 40% Completado
 ```
 
 *   [ ] **FASE 0: Diagnóstico y Calidad de Datos** (15% - Plan de Arquitectura y Base de Datos Diseñada)
 *   [ ] **FASE 1: RM & Silos Planner** (50% - Frontend Interactivo y Simulador Completado)
-*   [ ] **FASE 2: Aluminum Planner** (0%)
+*   [ ] **FASE 2: Aluminum Planner** (50% - Frontend Interactivo y Simulador de Pico Completado)
 *   [ ] **FASE 3: Commercial Capacity Viewer** (0%)
 *   [ ] **FASE 4: Scenario Simulator & Optimization** (0%)
 
@@ -41,6 +41,9 @@ Este documento es la bitácora viva del proyecto. Debe ser actualizado al finali
 - [x] Desarrollar la vista interactiva de Silos `/silos` con tanques animados en HSL según autonomía.
 - [x] Diseñar e implementar la curva de decaimiento interactiva de silos con gráficos SVG vectoriales nativos.
 - [x] Desarrollar la consola de cisternas inbound con simulador de descarga de camión (balance de masas en vivo en el cliente).
+- [x] Desarrollar la vista interactiva de Aluminios `/aluminum` con Mapa de Calor de Saturación Semanal semafórico.
+- [x] Diseñar e implementar la gráfica de cuota de capacidad grupal mediante gráficos de donut SVG nativos reactivos.
+- [x] Crear el simulador de Pico de Demanda del Grupo (+35%) reactivo en cliente con banners de alertas preventivas.
 - [x] Compilar y verificar el build de producción del Frontend con Turbopack.
 
 ### FASE 0: Diagnóstico y Calidad de Datos (Próximos Pasos)
@@ -65,16 +68,21 @@ Este documento es la bitácora viva del proyecto. Debe ser actualizado al finali
     *   **Inicialización y construcción del Frontend** en la carpeta `/frontend` usando Next.js, TypeScript y Vanilla CSS.
     *   Implementación de la interfaz corporativa premium (modo oscuro, glassmorphism, pulse alerts) en el Login, Sidebar Layout, y el Dashboard principal.
     *   **Desarrollo del Módulo Predictivo de Silos (`/silos`):** Creación del cuadro SCADA con tanques interactivos animados, cálculo de autonomía en base a tasa de consumo y coloreado HSL dinámico.
-    *   **Gráfica de Decaimiento Predictiva:** Implementación de la proyección temporal de consumo a 72h del Silo #1 de Harina mediante curvas vectoriales SVG nativas.
-    *   **Consola de Cisternas Inbound & Simulador:** Creación del panel de compras de camiones y del motor de simulación de descarga (balance de masas dinámico en el navegador con reasignación inteligente al silo con mayor headspace libre y actualización de autonomías).
+    *   **Gráfica de Decaimiento Predictiva:** Proyección de consumo a 72h del Silo #1 de Harina mediante curvas vectoriales SVG nativas.
+    *   **Consola de Cisternas Inbound & Simulador:** Creación del panel de compras de camiones y del motor de simulación de descarga en vivo.
+    *   **Desarrollo del Módulo de Aluminios (`/aluminum`):** Creación de la consola operativa del taller con monitor físico de los 5 troqueles, su formato de corte activo y estado de marcha.
+    *   **Mapa de Calor de Ocupación por Formato:** Grilla semafórica dinámica que indica la saturación semanal de los formatos F1 a F6 en troqueles y enrolladoras.
+    *   **Simulador de Demanda Externa y SVG Reparto:** Un conmutador interactivo que eleva la demanda del grupo un +35%, lo cual recalcula en vivo las cargas, genera un banner de alerta crítica al saturar los formatos F3 y F5, y actualiza de manera fluida el gráfico de donut SVG de cuotas de producción (reduciendo la asignación local de Iberica del 65% al 45%).
     *   Ejecución exitosa del compilador de Next.js (`npm run build`) verificando cero errores y cero advertencias.
 *   **Decisiones Clave:**
     *   Se aprueba el enfoque **Read-Only** para las primeras tres fases, manteniendo a Odoo como SSoT absoluto y libre de modificaciones invasivas.
     *   Se prioriza la **Fase 1 (Silos Planner)** como primer módulo de valor del MVP debido al alto impacto financiero que representan las paradas de línea por rotura de materia prima.
     *   Se utiliza una arquitectura de **Route Groups** (`(dashboard)`) en Next.js para separar las páginas que consumen el Sidebar/Header común de la pantalla limpia de Login `/login`.
     *   Se implementa el motor de simulación de silos completamente en el lado del cliente (Client State) para este prototipo a fin de validar la interactividad de la interfaz antes de conectar la lógica del backend real.
+    *   El simulador de pico de demanda de aluminio se acopla directamente al estado de la vista para demostrar de manera reactiva cómo colisionan las prioridades operativas de la planta local Iberica con las demandas de otras plantas del grupo.
 *   **Bloqueos / Riesgos Detectados:**
     *   Se requiere configurar las credenciales y probar la conexión real a las APIs de Odoo del cliente en las fases subsiguientes.
+
 
 
 
