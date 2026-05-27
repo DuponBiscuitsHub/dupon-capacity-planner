@@ -1,0 +1,206 @@
+/* Estilos para el Módulo de Silos y Materias Primas (CSS Modules) */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Rejilla de los 5 Silos de Planta */
+.silosGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.siloCard {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+  position: relative;
+}
+
+.siloMaterialLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  letter-spacing: 0.08em;
+}
+
+.siloTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Representación Gráfica del Tanque Industrial */
+.tankOuter {
+  width: 90px;
+  height: 160px;
+  border: 2px solid var(--border-light);
+  border-radius: 16px 16px 4px 4px;
+  background: hsla(224, 71%, 15%, 0.15);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 8px 16px 0 rgba(0, 0, 0, 0.4);
+  margin: 0.5rem 0;
+}
+
+.tankFluid {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  transition: height 0.8s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.8s ease;
+}
+
+/* Colores de fluido dinámicos en base al estado */
+.tankFluidGreen {
+  background: linear-gradient(180deg, hsl(142, 70%, 45%) 0%, hsl(142, 70%, 30%) 100%);
+  box-shadow: 0 -4px 10px 0 hsla(142, 70%, 45%, 0.3);
+}
+
+.tankFluidWarning {
+  background: linear-gradient(180deg, hsl(38, 92%, 50%) 0%, hsl(38, 92%, 35%) 100%);
+  box-shadow: 0 -4px 10px 0 hsla(38, 92%, 50%, 0.3);
+}
+
+.tankFluidDanger {
+  background: linear-gradient(180deg, hsl(346, 84%, 49%) 0%, hsl(346, 84%, 34%) 100%);
+  box-shadow: 0 -4px 10px 0 hsla(346, 84%, 49%, 0.3);
+}
+
+/* Indicadores Numéricos y Tiempo de Autonomía */
+.siloInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.siloPercentage {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.siloVolume {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.siloTimeLeft {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  display: inline-flex;
+}
+
+/* Sección Inferior */
+.splitLayout {
+  display: grid;
+  grid-template-columns: 1.3fr 1.1fr;
+  gap: 1.5rem;
+}
+
+.chartCard {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Gráfica de decaimiento SVG */
+.svgContainer {
+  width: 100%;
+  height: 180px;
+  margin-top: 1rem;
+  background: hsla(224, 71%, 10%, 0.2);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 0.5rem;
+}
+
+.legend {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Tabla de Camiones */
+.trucksCard {
+  padding: 1.5rem;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  margin-top: 0.5rem;
+}
+
+.truckTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.th {
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.td {
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 0.8rem;
+  vertical-align: middle;
+}
+
+/* Botón interactivo de descarga */
+.simulateBtn {
+  background: hsla(210, 100%, 50%, 0.12);
+  color: var(--color-primary);
+  border: 1px solid hsla(210, 100%, 50%, 0.25);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  transition: var(--transition-smooth);
+}
+
+.simulateBtn:hover {
+  background: var(--color-primary);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px 0 rgba(0, 118, 255, 0.2);
+}
+
+.simulateBtn:active {
+  transform: translateY(1px);
+}
