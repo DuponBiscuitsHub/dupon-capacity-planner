@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./layout.module.css";
+import { useLanguage } from "../i18n/context";
+import { LanguageType } from "../i18n/translations";
 
 // Definición de interfaces para los ítems de navegación
 interface NavItem {
-  label: string;
+  labelKey: string;
   href: string;
   icon: React.ReactNode;
 }
@@ -17,11 +19,12 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { language, setLanguage, t } = useLanguage();
 
-  // Lista de rutas principales y sus iconos vectoriales SVG limpios
+  // Lista de rutas principales con sus respectivas claves de traducción e iconos SVG
   const navItems: NavItem[] = [
     {
-      label: "Dashboard",
+      labelKey: "navDashboard",
       href: "/",
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -33,7 +36,7 @@ export default function DashboardLayout({
       ),
     },
     {
-      label: "RM & Silos",
+      labelKey: "navSilos",
       href: "/silos",
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -44,7 +47,7 @@ export default function DashboardLayout({
       ),
     },
     {
-      label: "Aluminios",
+      labelKey: "navAluminum",
       href: "/aluminum",
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -55,7 +58,7 @@ export default function DashboardLayout({
       ),
     },
     {
-      label: "Capacidad CTP",
+      labelKey: "navCommercial",
       href: "/commercial",
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -68,7 +71,7 @@ export default function DashboardLayout({
       ),
     },
     {
-      label: "Simulador",
+      labelKey: "navSimulation",
       href: "/simulation",
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -80,19 +83,19 @@ export default function DashboardLayout({
     },
   ];
 
-  // Resolver título de cabecera dinámicamente según la ruta
+  // Resolver título de cabecera dinámicamente según la ruta y traducir usando i18n
   const getHeaderTitle = () => {
     switch (pathname) {
       case "/":
-        return "Dashboard General de Operaciones";
+        return t("titleDashboard");
       case "/silos":
-        return "Planificador de Silos y Materias Primas Pesadas";
+        return t("titleSilos");
       case "/aluminum":
-        return "Planificador de Troquelado y Enrolladoras de Aluminio";
+        return t("titleAluminum");
       case "/commercial":
-        return "Consola Comercial Capable-to-Promise (CTP)";
+        return t("titleCommercial");
       case "/simulation":
-        return "Entorno Sandbox - Simulación de Escenarios Futuros";
+        return t("titleSimulation");
       default:
         return "Consola Operativa";
     }
@@ -118,7 +121,7 @@ export default function DashboardLayout({
                   className={`${styles.navLink} ${isActive ? styles.activeNavLink : ""}`}
                 >
                   {item.icon}
-                  <span>{item.label}</span>
+                  <span>{t(item.labelKey)}</span>
                 </Link>
               );
             })}
@@ -133,7 +136,7 @@ export default function DashboardLayout({
               <polyline points="16 17 21 12 16 7" />
               <line x1="21" y1="12" x2="9" y2="12" />
             </svg>
-            <span>Cerrar Sesión</span>
+            <span>{t("navLogout")}</span>
           </Link>
         </div>
       </aside>
@@ -147,12 +150,23 @@ export default function DashboardLayout({
             {/* Estado de Odoo API */}
             <div className={styles.statusIndicator}>
               <span className={`${styles.pulseDot} badge-success`} style={{ animation: "pulse-alert-glow 2s infinite" }}></span>
-              <span>Odoo: Conectado (Lectura)</span>
+              <span>{t("odooConnected")}</span>
             </div>
             
-            {/* Estado de Turno */}
-            <div className="badge badge-primary">
-              Turno A (Mañana)
+            {/* Selector de Idioma Dropdown en sustitución del tag Turno */}
+            <div className={styles.languageSelectorWrapper}>
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value as LanguageType)}
+                className={styles.languageSelect}
+              >
+                <option value="es">Español 🇪🇸</option>
+                <option value="en">English 🇬🇧</option>
+                <option value="fr">Français 🇫🇷</option>
+                <option value="de">Deutsch 🇩🇪</option>
+                <option value="be">Belgisch 🇧🇪</option>
+                <option value="ca">Català 🇦🇩</option>
+              </select>
             </div>
           </div>
         </header>

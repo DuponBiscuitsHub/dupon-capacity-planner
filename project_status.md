@@ -44,6 +44,7 @@ Este documento es la bitácora viva del proyecto. Debe ser actualizado al finali
 - [x] Desarrollar la vista interactiva de Aluminios `/aluminum` con Mapa de Calor de Saturación Semanal semafórico.
 - [x] Diseñar e implementar la gráfica de cuota de capacidad grupal mediante gráficos de donut SVG nativos reactivos.
 - [x] Crear el simulador de Pico de Demanda del Grupo (+35%) reactivo en cliente con banners de alertas preventivas.
+- [x] Diseñar e implementar soporte nativo de multi-idioma (i18n) desacoplado para los 6 idiomas con un dropdown en el layout.
 - [x] Compilar y verificar el build de producción del Frontend con Turbopack.
 
 ### FASE 0: Diagnóstico y Calidad de Datos (Próximos Pasos)
@@ -73,6 +74,7 @@ Este documento es la bitácora viva del proyecto. Debe ser actualizado al finali
     *   **Desarrollo del Módulo de Aluminios (`/aluminum`):** Creación de la consola operativa del taller con monitor físico de los 5 troqueles, su formato de corte activo y estado de marcha.
     *   **Mapa de Calor de Ocupación por Formato:** Grilla semafórica dinámica que indica la saturación semanal de los formatos F1 a F6 en troqueles y enrolladoras.
     *   **Simulador de Demanda Externa y SVG Reparto:** Un conmutador interactivo que eleva la demanda del grupo un +35%, lo cual recalcula en vivo las cargas, genera un banner de alerta crítica al saturar los formatos F3 y F5, y actualiza de manera fluida el gráfico de donut SVG de cuotas de producción (reduciendo la asignación local de Iberica del 65% al 45%).
+    *   **Internacionalización (i18n) Desacoplada y Reactiva:** Implementación de diccionarios de traducción en los 6 idiomas (`es`, `en`, `fr`, `de`, `be`, `ca`) en `translations.ts` y del `LanguageProvider` en `context.tsx`. Sustitución del tag de Turno en cabecera por un selector dropdown estilizado en HSL, traduciendo de forma reactiva y en tiempo real todo el layout y el Dashboard general.
     *   Ejecución exitosa del compilador de Next.js (`npm run build`) verificando cero errores y cero advertencias.
 *   **Decisiones Clave:**
     *   Se aprueba el enfoque **Read-Only** para las primeras tres fases, manteniendo a Odoo como SSoT absoluto y libre de modificaciones invasivas.
@@ -80,6 +82,7 @@ Este documento es la bitácora viva del proyecto. Debe ser actualizado al finali
     *   Se utiliza una arquitectura de **Route Groups** (`(dashboard)`) en Next.js para separar las páginas que consumen el Sidebar/Header común de la pantalla limpia de Login `/login`.
     *   Se implementa el motor de simulación de silos completamente en el lado del cliente (Client State) para este prototipo a fin de validar la interactividad de la interfaz antes de conectar la lógica del backend real.
     *   El simulador de pico de demanda de aluminio se acopla directamente al estado de la vista para demostrar de manera reactiva cómo colisionan las prioridades operativas de la planta local Iberica con las demandas de otras plantas del grupo.
+    *   Se desacoplan totalmente las traducciones (diccionarios planos de i18n) de la capa lógica y de componentes de la interfaz de usuario, garantizando un código limpio y mantenible.
 *   **Bloqueos / Riesgos Detectados:**
     *   Se requiere configurar las credenciales y probar la conexión real a las APIs de Odoo del cliente en las fases subsiguientes.
 

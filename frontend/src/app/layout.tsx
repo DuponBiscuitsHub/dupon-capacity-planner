@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
+import { LanguageProvider } from "./i18n/context";
 
 // Carga optimizada de la tipografía Google Font Outfit
 const outfit = Outfit({
@@ -22,7 +23,10 @@ export default function RootLayout({
   return (
     <html lang="es" className={outfit.variable}>
       <body>
-        {children}
+        {/* Proveedor global de traducción i18n */}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

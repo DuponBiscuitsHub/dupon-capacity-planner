@@ -1,61 +1,66 @@
+"use client";
+
 import styles from "./page.module.css";
+import { useLanguage } from "../i18n/context";
 
 export default function DashboardPage() {
+  const { t } = useLanguage();
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
       
-      {/* 1. Tarjetas de KPIs Generales (Grid de Alta Densidad) */}
+      {/* 1. Tarjetas de KPIs Generales (Grid de Alta Densidad Localizado) */}
       <section className={styles.metricsGrid}>
         
         {/* KPI: OEE Global */}
         <div className={`${styles.kpiCard} glass-panel glass-panel-hover`}>
           <div className={styles.kpiHeader}>
-            <span>OEE Global Planta</span>
-            <span className="badge badge-success">Óptimo</span>
+            <span>{t("oeeGlobal")}</span>
+            <span className="badge badge-success">{t("oeeStatus")}</span>
           </div>
           <div className={styles.kpiValue}>84.5%</div>
-          <div className={styles.kpiSubtext}>Eficiencia agregada de las 3 líneas</div>
+          <div className={styles.kpiSubtext}>{t("oeeSubtext")}</div>
         </div>
 
         {/* KPI: Autonomía de Harina */}
         <div className={`${styles.kpiCard} glass-panel glass-panel-hover`}>
           <div className={styles.kpiHeader}>
-            <span>Silo Crítico (Harina)</span>
+            <span>{t("siloCritical")}</span>
             <span className="badge badge-warning" style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}>
               <span className="pulse-warning" style={{ width: "6px", height: "6px", borderRadius: "50%" }}></span>
-              18 horas
+              18 hours
             </span>
           </div>
           <div className={styles.kpiValue}>14,200 kg</div>
-          <div className={styles.kpiSubtext}>Silo #1 cruza línea roja mañana 04:32h</div>
+          <div className={styles.kpiSubtext}>{t("siloSubtext")}</div>
         </div>
 
         {/* KPI: Carga de Troqueles */}
         <div className={`${styles.kpiCard} glass-panel glass-panel-hover`}>
           <div className={styles.kpiHeader}>
-            <span>Carga Aluminio</span>
-            <span className="badge badge-primary">Estable</span>
+            <span>{t("aluminumLoad")}</span>
+            <span className="badge badge-primary">{t("aluminumStatus")}</span>
           </div>
           <div className={styles.kpiValue}>72.0%</div>
-          <div className={styles.kpiSubtext}>Troqueles y enrolladoras ocupados</div>
+          <div className={styles.kpiSubtext}>{t("aluminumSubtext")}</div>
         </div>
 
         {/* KPI: Riesgo de Pedidos */}
         <div className={`${styles.kpiCard} glass-panel glass-panel-hover`}>
           <div className={styles.kpiHeader}>
-            <span>Pedidos en Riesgo</span>
+            <span>{t("ordersInRisk")}</span>
             <span className="badge badge-danger" style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}>
               <span className="pulse-danger" style={{ width: "6px", height: "6px", borderRadius: "50%" }}></span>
               3 Pedidos
             </span>
           </div>
           <div className={styles.kpiValue}>4.2%</div>
-          <div className={styles.kpiSubtext}>Exceden capacidad de entrega comprometida</div>
+          <div className={styles.kpiSubtext}>{t("ordersInRiskSubtext")}</div>
         </div>
 
       </section>
 
-      {/* 2. Sección Inferior (Líneas Activas + Alertas de Fábrica) */}
+      {/* 2. Sección Inferior (Líneas Activas + Alertas de Fábrica Localizadas) */}
       <div className={styles.bottomSection}>
         
         {/* Panel Izquierdo: Estado de Líneas de Producción */}
@@ -67,7 +72,7 @@ export default function DashboardPage() {
               <line x1="6" y1="6" x2="6.01" y2="6" />
               <line x1="6" y1="18" x2="6.01" y2="18" />
             </svg>
-            Monitoreo en Tiempo Real - Líneas de Ensamble A17
+            {t("lineMonitorTitle")}
           </h3>
           
           <div className={styles.linesList}>
@@ -77,15 +82,15 @@ export default function DashboardPage() {
               <div className={styles.lineInfo}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                   <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "var(--color-success)" }}></span>
-                  <span className={styles.lineName}>Línea 1 (Galleta Ensamblada A17)</span>
+                  <span className={styles.lineName}>{t("lineActive")} 1 ({t("lineActiveAssembly")})</span>
                 </div>
                 <div className={styles.lineDetails}>
-                  Orden Activa: <strong>#MO98242</strong> | Formato: F3 (Familiar) | Receta: Galleta Tradicional
+                  {t("lineDetails")}: <strong>#MO98242</strong> | {t("lineFormat")}: F3 (Familiar) | {t("lineRecipe")}: Galleta Tradicional
                 </div>
               </div>
               <div className={styles.lineSpeedSection}>
                 <span className={styles.lineSpeed}>420 u/m</span>
-                <span className={styles.lineSpeedUnit}>Velocidad de Empaque</span>
+                <span className={styles.lineSpeedUnit}>{t("lineSpeedPack")}</span>
               </div>
             </div>
 
@@ -94,15 +99,15 @@ export default function DashboardPage() {
               <div className={styles.lineInfo}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                   <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "var(--color-success)" }}></span>
-                  <span className={styles.lineName}>Línea 2 (Galleta Ensamblada A17)</span>
+                  <span className={styles.lineName}>{t("lineActive")} 2 ({t("lineActiveAssembly")})</span>
                 </div>
                 <div className={styles.lineDetails}>
-                  Orden Activa: <strong>#MO98245</strong> | Formato: F1 (Individual) | Receta: Galleta Rellena Coco
+                  {t("lineDetails")}: <strong>#MO98245</strong> | {t("lineFormat")}: F1 (Individual) | {t("lineRecipe")}: Galleta Rellena Coco
                 </div>
               </div>
               <div className={styles.lineSpeedSection}>
                 <span className={styles.lineSpeed}>380 u/m</span>
-                <span className={styles.lineSpeedUnit}>Velocidad de Empaque</span>
+                <span className={styles.lineSpeedUnit}>{t("lineSpeedPack")}</span>
               </div>
             </div>
 
@@ -111,15 +116,15 @@ export default function DashboardPage() {
               <div className={styles.lineInfo}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                   <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "var(--text-muted)" }}></span>
-                  <span className={styles.lineName}>Línea 3 (Galleta Ensamblada A17)</span>
+                  <span className={styles.lineName}>{t("lineActive")} 3 ({t("lineActiveAssembly")})</span>
                 </div>
                 <div className={styles.lineDetails}>
-                  Estado: <strong>Inactiva (Parada de Mantenimiento)</strong> | Reinicio estimado: 16:00h
+                  Status: <strong>{t("lineInactive")}</strong> | {t("lineEstimateRestart")}: 16:00h
                 </div>
               </div>
               <div className={styles.lineSpeedSection}>
                 <span className={styles.lineSpeed} style={{ color: "var(--text-muted)" }}>0 u/m</span>
-                <span className={styles.lineSpeedUnit}>Velocidad de Empaque</span>
+                <span className={styles.lineSpeedUnit}>{t("lineSpeedPack")}</span>
               </div>
             </div>
 
@@ -134,7 +139,7 @@ export default function DashboardPage() {
               <line x1="12" y1="9" x2="12" y2="13" />
               <line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
-            Alertas Predictivas del APS
+            {t("apsAlertsTitle")}
           </h3>
           
           <div className={styles.alertsList}>
@@ -148,9 +153,9 @@ export default function DashboardPage() {
                 </svg>
               </span>
               <div className={styles.alertContent}>
-                <span className={styles.alertTitle} style={{ color: "var(--color-warning)" }}>Silo de Harina #1 en Decaimiento</span>
+                <span className={styles.alertTitle} style={{ color: "var(--color-warning)" }}>{t("siloAlertTitle")}</span>
                 <span className={styles.alertDescription}>
-                  Consumo dinámico de Línea 1 proyecta vaciado en **18 horas**. Ventana óptima para recibir el camión cisterna: **Hoy a las 18:00h** (capacidad útil disponible para vaciar 25 t).
+                  {t("siloAlertDesc")}
                 </span>
                 <span className={styles.alertMeta}>Modulo: RM & Silos Planner | Hace 5 min</span>
               </div>
@@ -168,7 +173,7 @@ export default function DashboardPage() {
               <div className={styles.alertContent}>
                 <span className={styles.alertTitle} style={{ color: "var(--color-danger)" }}>Ruptura Proyectada de Sleeve F3</span>
                 <span className={styles.alertDescription}>
-                  El pedido de venta **#SO4322 (A17 Familiar)** excede el stock proyectado de envoltorios A16. El taller de aluminio reporta saturación en enrolladoras para el formato F3. Riesgo de demora de entrega: **+2 días**.
+                  El pedido de venta #SO4322 excede el stock proyectado de envoltorios A16. El taller de aluminio reporta saturación en enrolladoras para el formato F3. Riesgo de demora de entrega: +2 días.
                 </span>
                 <span className={styles.alertMeta}>Modulo: Aluminum & CTP | Hace 12 min</span>
               </div>
