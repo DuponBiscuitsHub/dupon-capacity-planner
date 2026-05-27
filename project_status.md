@@ -135,6 +135,24 @@ Este documento es la bitácora viva del proyecto. Debe ser actualizado al finali
 *   **Bloqueos / Riesgos Detectados:**
     *   Ninguno. La infraestructura visual de login y modos de visualización está completamente operativa y validada.
 
+### Sesión 4: 27 de Mayo de 2026
+*   **Operador:** Antigravity (AI Agent)
+*   **Hitos:**
+    *   **Rediseño Visual del Dashboard General (`/`):** Remoción de los antiguos fondos oscuros remanentes en las tarjetas de monitoreo de líneas `.lineRow` y sustitución por un elegante fondo cristalino perla estilo *Synetica* de Dribbble. Implementación del hover dinámico de elevación, sombras difusas y contorno de acento en azul/cian.
+    *   **Corrección de Bugs Críticos:** Resolución de un error de interpolación en el componente `page.tsx` que impedía renderizar la clase `.alertItemDanger` en la bitácora de alertas del planificador.
+    *   **Suite de Pruebas Automatizadas Frontend (QA):** Configuración y despliegue del entorno de pruebas unitarias bajo **Vitest** y **jsdom** en la carpeta `/frontend`. Configuración de alias `@/` en [vitest.config.ts](file:///home/pakipy/dupon-dev/dupon-capacity-planner/frontend/vitest.config.ts) e inyección de scripts en `package.json`.
+    *   **Pruebas de Formateo e i18n:** Desarrollo de 14 pruebas de integridad divididas en `format.test.ts` (previniendo fallos de hidratación SSR) y `translations.test.ts` (asegurando simetría de claves i18n y la correcta traducción catalana de Silo a `"Sitge"` y `"Sitges"`). Ejecución 100% exitosa (14 de 14 pasados en 819ms).
+    *   **Aislamiento de Persistencia Local (Docker):** Configuración de [docker-compose.yml](file:///home/pakipy/dupon-dev/dupon-capacity-planner/docker-compose.yml) mapeando PostgreSQL v15 al puerto **`5435:5432`** para evitar colisiones con otros proyectos del cliente activos en Docker Desktop (como `qms-postgres`). Despliegue atómico completado y verificado.
+    *   **Estructura y Core del Backend (FastAPI):** Inicialización de la carpeta `/backend`, dependencias en `requirements.txt` e inyección de configuraciones core (`config.py`, `database.py`, `security.py`).
+    *   **Modelos ORM Declarativos y Multi-Esquema:** Diseño de los modelos SQLAlchemy compartiendo `Base.metadata` y mapeados con esquemas Postgres separados: `odoo_replica` (8 tablas) y `dcp_app` (4 tablas).
+    *   **Migraciones Alembic Aplicadas:** Configuración de `env.py` para autocrear los esquemas lógicos y mapear autogenerate. Generación y aplicación exitosa del esquema de migración inicial en PostgreSQL local.
+    *   **FastAPI Health Check:** Creación de `main.py` y validación con total éxito del endpoint de salud `/health` (`{"status":"healthy","database":"connected"}`) sobre el puerto de desarrollo **`8005`** (evitando colisión con puerto 8000).
+*   **Decisiones Clave:**
+    *   Implementar un completo aislamiento de puertos de desarrollo de DCP (Base de datos en `5435` y Backend en `8005`) para permitir coexistir con sus otros entornos activos sin interferencias.
+    *   Persistencia de credenciales locales mediante `.env` no versionado.
+*   **Bloqueos / Riesgos Detectados:**
+    *   Ninguno. La base estructurada del monorepo está completamente desplegada y sincronizada.
+
 ---
 
 ## 🛠️ 5. Instrucciones para Nuevos Agentes / Desarrolladores
@@ -144,3 +162,4 @@ Si acabas de entrar al proyecto, por favor sigue estos pasos rigurosamente:
 2.  Revisa la sección **Checklist de Tareas Activas** de este documento (`project_status.md`) para saber en qué tarea debes trabajar.
 3.  Una vez termines tus cambios, marca las casillas completadas `[x]`, actualiza el **Historial de Sesiones** añadiendo una nueva entrada al final y sube el commit.
 4.  *Regla de Oro:* **No introduzcas lógica de optimización compleja o escritura en Odoo sin antes verificar la calidad de datos y asegurar el desacoplamiento.**
+
