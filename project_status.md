@@ -58,7 +58,14 @@ Este documento es la bitácora viva del proyecto. Debe ser actualizado al finali
 - [ ] Crear el script base del validador de consistencia de datos de Odoo (*BOM & Stock Integrity Checker*).
 - [ ] Desarrollar la primera vista básica en el Frontend de diagnóstico de datos.
 
+### Suite de Pruebas Automatizadas (Fase A - QA)
+- [ ] Configurar el entorno de pruebas en Next.js con `Vitest`, `React Testing Library` y `jsdom`.
+- [ ] Implementar pruebas unitarias de calidad para formateadores y utilidades consistentes (`format.ts`).
+- [ ] Implementar pruebas unitarias para componentes interactivos de UI (ej. Silo interactivo o alertas).
+- [ ] Validar la ejecución correcta de las pruebas con cobertura y 0 fallos.
+
 ---
+
 
 ## 📓 4. Historial de Sesiones (Bitácora)
 

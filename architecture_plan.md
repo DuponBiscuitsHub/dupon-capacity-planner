@@ -478,4 +478,43 @@ dupon-capacity-planner/
 
 ---
 
+## 21. Plan de Pruebas y Validación (Testing Strategy)
+
+Para asegurar la robustez, correctitud y mantenibilidad a largo plazo del **Dupon Capacity Planner (DCP)**, se establece una estrategia de pruebas automatizadas de tres niveles en el Frontend y el Backend.
+
+### A. Estrategia de Pruebas para el Frontend (Next.js & TypeScript)
+
+El frontend contiene lógica matemática interactiva en el cliente (como el decaimiento de silos, cálculo de OEE en simulaciones y slots comerciales CTP) que debe validarse ante cualquier cambio de diseño.
+
+1. **Suite de Pruebas Unitarias y de Componentes:**
+   * **Tecnología:** `Vitest` + `React Testing Library` + `jsdom`.
+   * **Enfoque:**
+     * **Unit Tests:** Validar que las utilidades y formateadores puros (ej. `formatNumber` en `utils/format.ts`) se comporten exactamente igual independientemente de la configuración regional o el entorno de SSR.
+     * **Component Tests:** Verificar la reactividad y renderizado de componentes críticos (ej. que la animación del tanque interactivo de harina aplique correctamente los colores HSL e inyecte los porcentajes correctos).
+   * **Comando de Ejecución:** `npm run test` y `npm run test:watch`.
+
+2. **Suite de Pruebas E2E (Extremo a Extremo):**
+   * **Tecnología:** `Playwright`.
+   * **Enfoque:** Validar flujos de interacción de extremo a extremo, tales como la redirección forzada del Login, la persistencia del selector de idioma `i18n` en el layout, y la simulación interactiva CTP.
+
+---
+
+### B. Estrategia de Pruebas para el Backend (FastAPI & Python)
+
+El backend resolverá los cálculos matemáticos de balance de masa y la sincronización en tiempo real con Odoo ERP.
+
+1. **Suite de Pruebas Unitarias:**
+   * **Tecnología:** `pytest`.
+   * **Enfoque:**
+     * Validar el balance de masa de silos en `services/mass_balance.py`.
+     * Validar el motor de restricciones de troqueles y enrolladoras en `services/solver.py`.
+2. **Suite de Pruebas de Integración y Mocking:**
+   * **Tecnología:** `pytest-asyncio` + `httpx` + `SQLAlchemy` (base de datos en Docker de pruebas con rollbacks).
+   * **Enfoque:**
+     * Mockear llamadas XML-RPC/REST de Odoo (`sync_engine.py`) para verificar la consistencia de datos de stock y BOM.
+     * Validar endpoints REST de la API local (`api/v1/silos`, etc.) para ratificar que las respuestas JSON y los códigos de estado HTTP coincidan con el contrato esperado.
+
+---
+
 *Fin del Documento de Contexto y Arquitectura.*
+
