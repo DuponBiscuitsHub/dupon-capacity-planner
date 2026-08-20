@@ -1,6 +1,6 @@
 # DCP Raw Material Planner — Guía de Características y Funcionalidades
 
-> **Dupon Biscuits · v2.0 · Julio 2026**
+> **Dupon Biscuits · v2.0 · Agosto 2026**
 >
 > Documento de referencia para agentes IA, desarrolladores y stakeholders.
 > Describe **todas** las funcionalidades implementadas y planificadas.
@@ -39,9 +39,23 @@
 | **IT (Admin)** | `it` | Todo: gestión usuarios, config silos/líneas/recetas, sync forzado, logs |
 | **Usuario (Planificador)** | `user` | Ver dashboard, silos, entregas, recalcular entregas |
 
-**Implementación**: Dependencias FastAPI `require_auth` y `require_role("it")`. Todo endpoint protegido.
+**Implementación**: Dependencias FastAPI `require_auth`, `require_role("it")` y `validate_company_access()`. Todo endpoint protegido.
 
-### 2.3. Gestión de Usuarios (IT only)
+### 2.3. RBAC Multicompany (v2.0)
+
+Validación server-side de `company_id` en todos los endpoints que aceptan este parámetro:
+
+| Rol | Acceso |
+|-----|--------|
+| **IT** | Todas las compañías (admin multicompany) |
+| **User** | Solo su `default_company_id` |
+
+**Implementación**: `validate_company_access(company_id, current_user)` en `security.py`.
+Aplicado en 10 endpoints de 4 routers (`api_silos`, `api_delivery_planning`, `api_config`, `api_corrections`).
+
+> Si un usuario intenta cambiar `?company_id=X` en la URL para acceder a datos de otra compañía, recibe HTTP 403.
+
+### 2.4. Gestión de Usuarios (IT only)
 
 - Listar usuarios activos
 - Crear usuarios con rol asignado
@@ -74,7 +88,7 @@ La app soporta múltiples plantas/compañías del grupo Dupon, mapeando cada una
 - **Persistencia**: `localStorage` (`dcp-company-id`)
 - **Datos**: Se cargan desde `GET /api/v1/auth/companies`
 
-> **BUG-4 (activo)**: El selector de compañía ha desaparecido de la UI. El código existe en `layout.tsx` (líneas 165-179) y se renderiza condicionalmente cuando `companies.length > 1`. El problema puede ser que el endpoint `/auth/companies` no devuelve datos o la condición no se cumple.
+> **BUG-4 (resuelto v1.9b)**: El selector de compañía había desaparecido. Causa: seed data ausente en tabla `companies`. Fix: `_seed_companies_if_empty()`.
 
 ---
 
@@ -306,8 +320,33 @@ Tabla detallada con todas las POs de materiales de silo:
 ### 8.5. Sync manual (IT only)
 
 - `POST /api/v1/sync/run` → ejecuta sync completo + recálculo
+  - **v2.0**: Ahora es `async def` con `run_in_executor()` — no bloquea el event loop de uvicorn durante los 15-30s del sync
 - `GET /api/v1/sync/status` → último estado del sync
 - `GET /api/v1/sync/last` → timestamp del último sync (para label en UI)
+
+### 8.6. Odoo Health Check (v2.0)
+
+Endpoint ligero para verificar conectividad con Odoo sin sincronizar datos:
+
+- `GET /api/v1/sync/health` → ejecuta `authenticate()` contra Odoo
+- **Response**:
+  ```json
+  {
+    "odoo_reachable": true,
+    "latency_ms": 234,
+    "odoo_mode": "real",
+    "error": null
+  }
+  ```
+- En modo mock: siempre `reachable: true, mode: "mock"`
+- Ejecutado en thread pool (no bloquea event loop)
+
+**Frontend — OdooStatusDot**: Dot de 9px en el header del layout:
+- 🟢 Verde pulsante: Odoo conectado (tooltip muestra latencia)
+- 🔴 Rojo: Odoo no accesible
+- ⚫ Gris: modo mock o desconocido
+- Auto-check cada 5 minutos + al montar el componente
+- i18n: `odooStatusConnected`, `odooStatusDisconnected`, `odooStatusMock`, `odooStatusChecking` (ES/CA/EN)
 
 ---
 
@@ -430,10 +469,59 @@ factor           = consumo_real / consumo_teórico
 docker-compose up  # PostgreSQL + Backend + Frontend
 ```
 
-### 13.3. Migraciones
+### 13.3. Migraciones y Setup de BD
 
-- Alembic (0001 → 0003), ejecutadas con `alembic upgrade head`
-- Seed data incluido en las migraciones (silos Ibérica, tabla CON, line_formats)
+**Cadena de migraciones Alembic:** 0001 → 0002 → 0003 → 0004 → 0005 → 0006
+
+| Migración | Descripción |
+|-----------|-------------|
+| 0001 | Schema inicial: `odoo_replica` (7 tablas) + `dcp_app` (5 tablas) + seed silos/CON |
+| 0002 | `correction_factors` + `ref_consumption_rates` |
+| 0003 | Evolución `ref_consumption_rates` a kg/día + `line_formats` + `product_format_mappings` |
+| 0004 | Campos vendor en `purchase_orders` (`order_odoo_id`, `partner_name`, `vendor_confirmed`) |
+| 0005 | Tabla `companies` + `users.default_company_id` + seed 5 compañías |
+| 0006 | Reconciliación idempotente: alinea BD legacy con ORM actual |
+
+> **⚠️ Nota:** Las migraciones 0001-0003 tienen discrepancias con el ORM actual
+> (tablas/columnas renombradas durante la evolución del proyecto). Para BD nuevas,
+> usar el procedimiento **ORM-based** documentado en `proyecto_maestro.md` §6.
+
+**Seed data** (SSoT: `backend/scripts/seed_config.py`):
+- 5 compañías Dupon (IBE=1, GUD=8, FRA=3, ITA=4, BEL=5 — odoo_company_id confirmados)
+- 5 silos Ibérica (odoo_location_id 79-83, odoo_product_id 49486/49488/49492)
+- 10 líneas L01-L10 (capacidad teórica kg/h: 250-450)
+- 143 registros CON (14 formatos × 11 ingredientes, kg/día por máquina 24h, fuente: `Apro-PM 2026.ods`)
+- 20 mappings línea→formato con nº máquinas (rotativos 2-3, lineales 1)
+
+```bash
+# Ejecutar seed completo (idempotente: limpia y reinserta)
+cd backend
+../.venv/bin/python scripts/seed_config.py
+```
+
+### 13.4. Script de rotación de API Key (v2.0)
+
+CLI para actualizar la API key de Odoo en `.env` tras un rebuild de staging:
+
+```bash
+cd backend
+
+# Rotar API key:
+python -m scripts.rotate_odoo_key --key "nueva_key"
+
+# Rotar key + DB (post-rebuild):
+python -m scripts.rotate_odoo_key --key "nueva_key" --db "nueva-bd-staging"
+
+# Solo verificar conexión actual:
+python -m scripts.rotate_odoo_key --verify
+
+# Interactivo (sin eco):
+python -m scripts.rotate_odoo_key
+```
+
+- Solo toca variables `ODOO_*` (no `JWT_SECRET`, `DATABASE_URL`, etc.)
+- Verifica conexión automáticamente tras actualizar
+- Documentado en `.env.example`
 
 ---
 
@@ -471,7 +559,10 @@ docker-compose up  # PostgreSQL + Backend + Frontend
 | TECH-8 | Gráfica de tendencia histórica de consumo por silo | Propuesta evaluada |
 | TECH-10 | Unificar DeliveryPlanningTable + DeliveryTimeline | Evaluación pendiente |
 | TECH-11 | Tests para `_compute_timing_color` y `_compute_editability` | Pendiente |
-| TECH-12 | Migración Alembic para `partner_name` y `vendor_confirmed` (PG) | Pendiente |
+| TECH-12 | Migración Alembic para `partner_name` y `vendor_confirmed` (PG) | ✅ Resuelto v2.0 |
+| TECH-13 | Multi-silo: consumo asigna 100% demanda a cada silo individual | Pendiente (decisión de diseño) |
+| TECH-14 | POs replicadas en proyección (1 camión → todos los silos de un material) | Pendiente |
+| TECH-15 | Rate limiter in-memory no resistente a multi-instance Cloud Run | Pendiente (Baja) |
 
 ### 15.3. Futuro (fuera de scope actual)
 

@@ -1,5 +1,5 @@
 # DCP Raw Material Planner — Documento Maestro del Proyecto
-> **Dupon · v1.9b · Planificador Primera Materia Galleta · 21/07/2026**
+> **Dupon · v2.0 · Planificador Primera Materia Galleta · 20/08/2026**
 >
 > Este documento es la fuente única de verdad del proyecto. Se actualiza en cada iteración.
 > El agente IA debe leerlo al inicio de cada sesión y actualizarlo al completar tareas.
@@ -112,9 +112,10 @@ y calcula ventanas de entrega. Solo escribe `purchase.order.line.date_planned` e
 - `GET /api/v1/corrections/current` — Factor activo por material (para el dashboard)
 
 ### Sync
-- `POST /api/v1/sync/run` — Forzar sync manual (IT only)
+- `POST /api/v1/sync/run` — Forzar sync manual (IT only, async en thread pool)
 - `GET /api/v1/sync/status` — Estado último sync
 - `GET /api/v1/sync/last` — Timestamp del último sync exitoso (para label UI)
+- `GET /api/v1/sync/health` — **[NUEVO v2.0]** Health check Odoo (authenticate sin sync)
 
 ### Admin (IT only)
 - `GET /api/v1/admin/logs` — Últimas N líneas del log del servidor
@@ -139,13 +140,12 @@ y calcula ventanas de entrega. Solo escribe `purchase.order.line.date_planned` e
 - [x] Actualizar `.gitignore`
 
 ---
-
 ### FASE 1 — Backend: Auth + Modelos + Sync ✅ COMPLETADA (06/07/2026)
 **Criterio:** Código escrito y coherente. Verificación en terminal pendiente por entorno.
 
 - [x] config.py — ODOO_MODE, SYNC_INTERVAL_SECONDS, APP_ENV
 - [x] database.py — SQLite/PostgreSQL compatible (pool args condicionales)
-- [x] security.py — JWT HttpOnly cookie, require_auth, require_role
+- [x] security.py — JWT HttpOnly cookie, require_auth, require_role, validate_company_access
 - [x] odoo_client.py — Síncrono (httpx.Client). Sin asyncio.run
 - [x] sync_engine.py — 6 modelos Odoo, ODOO_MODE=mock short-circuit
 - [x] models/odoo_replica.py — Schema reducido a galleta
@@ -157,98 +157,34 @@ y calcula ventanas de entrega. Solo escribe `purchase.order.line.date_planned` e
 - [x] tests/test_auth.py, tests/test_delivery_calculator.py
 - [x] scripts/create_user.py — CLI bootstrap admin
 - [x] backend/.env.example actualizado
-- [ ] alembic/versions/ — **Migración inicial pendiente** (bloqueada hasta arrancar con PG)
+- [x] alembic/versions/ — Migraciones 0001→0006 + setup ORM-based
 - [ ] .env.test — Pendiente para tests sin interferencia del .env real
 
----
-
 ### FASE 2 — Frontend: Simplificación + Conexión Real ✅ COMPLETADA (06/07/2026)
-**Criterio:** Frontend conectado a backend real. Silos y entregas funcionales.
-
-- [x] layout.tsx — auth real via /me, logout correcto, nav simplificado (ES+EN)
-- [x] translations.ts — Solo ES+EN, claves DCP, archivo reescrito desde cero
-- [x] login/page.tsx — POST form-encoded, credentials:'include'
-- [x] silos/page.tsx — API real, fill bars SCADA, tabla entregas, botón recalcular
-- [x] (dashboard)/page.tsx — Overview: stat cards + mini silo cards + acciones rápidas
-- [x] config/page.tsx — Panel IT: 3 tabs (líneas, silos, usuarios)
-- [x] Modules fuera de scope — aluminum, commercial, simulation → stub redirect
-- [x] frontend/.env.local — NEXT_PUBLIC_API_URL configurado
-
----
-
 ### FASE 3 — Deploy Cloud Run ✅ COMPLETADA (06/07/2026)
-**Criterio:** Artefactos de deploy listos. Pendiente ejecución en GCP.
-
-- [x] backend/Dockerfile — Multi-stage, non-root, Cloud Run compatible
-- [x] frontend/Dockerfile — Multi-stage, Next.js standalone output
-- [x] next.config.ts — output: 'standalone' activado
-- [x] docker-compose.yml — Stack local completo (PG + backend + frontend)
-- [x] alembic/versions/0001_initial.py — Migración inicial con seed Ibérica
-- [x] deploy/cloud_run_deploy.sh — Script deploy backend + frontend
-- [x] deploy/secrets_setup.md — Guía GCP Secret Manager
-
-**Para ejecutar el deploy:**
-```bash
-GCP_PROJECT=mi-proyecto REGION=europe-west1 ./deploy/cloud_run_deploy.sh
-```
-
-
----
-
 ### FASE 4 — Motor de Factor de Corrección ✅ COMPLETADA (06/07/2026)
-**Criterio:** App auto-calibra el consumo real vs. teórico de Odoo. Tabla CON como fallback.
-
-- [x] `models/planner.py` — `RefConsumptionRate` (tabla CON) + `CorrectionFactor`
-- [x] `alembic/versions/0002_correction_factors.py` — Migración + seed 60 filas CON
-- [x] `services/correction_engine.py` — Motor auto-calibración: stock_expected vs stock_actual
-- [x] `services/delivery_calculator.py` — Fallback CON + factor de corrección aplicado
-- [x] `core/database.py` — SQLite compat: strip schemas + create_all en lifespan
-- [x] `routers/api_corrections.py` — 4 endpoints: historial + current + recipes CRUD
-- [x] `services/sync_worker.py` — Llama correction_engine.run() tras cada sync
-- [x] `(dashboard)/page.tsx` — Sección "Factores de corrección activos" con color coding
-- [x] `config/page.tsx` — Tab 4 "Recetas (CON)" con grid editable
-
-**Modelo de cálculo:**
-```
-stock_expected = stock_ayer + entradas_hoy - consumo_teórico_odoo
-consumption_actual = stock_ayer + entradas_hoy - stock_actual_odoo
-factor = consumption_actual / consumption_teórico
-```
-
-**Invariantes:**
-- Odoo SSoT: el ajuste de sala de pasta se hace en Odoo, la app solo lo lee
-- La app nunca escribe en Odoo
-- Factor se auto-calibra diariamente tras el sync
-- Sanity clamp: factor fuera de [0.50, 2.00] se ignora → usa 1.0
-
----
-
 ### FASE 5 — Consumos Excel CON + Config UI ✅ COMPLETADA (20/07/2026)
-**Criterio:** Consumos basados en Excel CON (kg/día por máquina). BOM Odoo eliminada del cálculo. Config editable por IT.
+### FASE 6 — Seguridad y Auditoría v2.0 ✅ COMPLETADA (20/08/2026)
+**Criterio:** Endurecimiento de seguridad, async operations y monitoreo de salud.
 
-- [x] Análisis comparativo BOM vs Excel: HAAS consistente, rotativos/Oreo/BC divergen
-- [x] Decisión arquitectural: D11 — Excel CON es SSoT para consumos
-- [x] `models/planner.py` — `RefConsumptionRate` evolucionado: `format_code`, `kg_per_day`, `updated_by`
-- [x] `models/planner.py` — Nueva tabla `LineFormat` (línea→formato, nº máquinas)
-- [x] `models/planner.py` — Nueva tabla `ProductFormatMapping` (producto Odoo→formato)
-- [x] `alembic/versions/0003_kg_per_day.py` — Migración + seed ~170 filas CON + 20 line_formats
-- [x] `services/delivery_calculator.py` — Simplificado: elimina BOM Odoo, usa `kg_per_day × machines / 24`
-- [x] `routers/api_corrections.py` — Endpoints actualizados: CRUD recetas + line-formats
-- [x] `config/page.tsx` — Tab "Recetas (kg/día)" actualizada con 11 ingredientes
-- [x] `config/page.tsx` — Nuevo tab "Líneas ↔ Formatos" con edición de máquinas
+- [x] JWT lifecycle: reducción a 60min expiración
+- [x] RBAC multicompany: restricción de endpoints por `company_id`
+- [x] Sync engine: migración a arquitectura async con thread pool para evitar bloqueos
+- [x] Odoo Health Check: endpoint de monitoreo activo con indicadores visuales en UI
+- [x] Migración Alembic 0004: normalización de campos de PO (`vendor_confirmed`, etc)
+- [x] Script de rotación de API Key para ciclos de despliegue
 
-**Modelo de cálculo v2:**
-```
-consumption_kg_h = Σ (kg_per_day × machines / 24)   # por cada línea/formato
-corrected = consumption_kg_h × correction_factor
-```
+### FASE 7 — Reconciliación BD y Migraciones ✅ COMPLETADA (20/08/2026)
+**Criterio:** BD PostgreSQL alineada al 100% con el ORM actual. Procedimiento de setup documentado.
 
-**Datos seed incluidos:**
-- 14 formatos: STD_R_110, STD_R_SS, HAAS_110, HAAS_98, HAAS_98_OREO, HAAS_110_OREO, MINI_75_SS, MINI_75_OLI, MINI_82, MINI_82_OREO, MINI_90, MINI_90_SS, IMPERIAL, BONCOLAC
-- 11 ingredientes: harina, azucar, aceite, lecitina, sal, carbonat, caramelina, maltitol, cacao, colorante, oli_bany
-- 20 mappings línea→formato con máquinas (L01_L02=8, L06=8, L03-L10=1)
+- [x] Migración 0005: tabla `companies` + columna `users.default_company_id`
+- [x] Migración 0006: reconciliación idempotente para BD legacy → ORM actual
+- [x] Corrección 0001: `workcenters` (antes `mrp_workcenters`), `purchase_orders` y `mrp_productions` alineados con ORM
+- [x] Procedimiento de setup PG documentado: ORM `create_all()` + stamp Alembic
+- [x] Seed data: 5 compañías Dupon + 5 silos Ibérica
 
 ---
+
 ## 6. Entorno de desarrollo
 
 ### Venv del proyecto
@@ -287,6 +223,56 @@ env -i \
 **Nota:** `env -i` limpia el entorno antes de arrancar, evitando que el shell
 actual ya tenga variables conflictivas. Alternativa: crear `backend/.env.test`.
 
+### Setup PostgreSQL desde cero (BD limpia)
+
+**Procedimiento recomendado:** Crear tablas directamente desde el ORM (evita discrepancias
+entre las migraciones legacy y los modelos Python actuales).
+
+```bash
+# 1. Crear BD y schemas
+PGPASSWORD=<password> psql -h localhost -p 5435 -U <user> -d postgres \
+  -c "DROP DATABASE IF EXISTS dcp_db_dev;"
+PGPASSWORD=<password> psql -h localhost -p 5435 -U <user> -d postgres \
+  -c "CREATE DATABASE dcp_db_dev;"
+PGPASSWORD=<password> psql -h localhost -p 5435 -U <user> -d dcp_db_dev \
+  -c "CREATE SCHEMA dcp_app; CREATE SCHEMA odoo_replica;"
+
+# 2. Crear tablas desde ORM + stampear Alembic
+cd backend
+../.venv/bin/python -c "
+from app.models.base import Base
+import app.models.odoo_replica
+import app.models.planner
+from app.core.database import engine
+Base.metadata.create_all(engine)
+from sqlalchemy import text
+with engine.begin() as conn:
+    conn.execute(text('CREATE TABLE IF NOT EXISTS alembic_version (version_num VARCHAR(32) NOT NULL)'))
+    conn.execute(text(\"INSERT INTO alembic_version (version_num) VALUES ('0006_reconcile_pg')\"))
+print('OK')
+"
+
+# 3. Seed de configuración de fábrica (SSoT: seed_config.py)
+#    Inserta: 5 compañías, 5 silos, 10 líneas, 143 recetas CON, 20 mappings línea-formato
+../.venv/bin/python scripts/seed_config.py
+
+# 4. Crear admin
+../.venv/bin/python -m scripts.create_user --username admin --password <password> --role it
+
+# 5. Arrancar backend
+../.venv/bin/uvicorn app.main:app --reload --port 8000
+```
+
+> **⚠️ IMPORTANTE:** `backend/scripts/seed_config.py` es la **fuente única de verdad**
+> para toda la configuración de fábrica (silos, líneas, recetas CON, formatos).
+> Los datos provienen del Excel `Apro-PM 2026.ods` y de IDs confirmados en Odoo staging3.
+> **No modificar los valores sin verificar con el usuario.**
+
+> **¿Por qué no `alembic upgrade head`?** Las migraciones 0001-0003 se escribieron para
+> un schema anterior del proyecto. El ORM evolucionó (renombrado de tablas, columnas
+> diferentes) y las migraciones no se actualizaron en paralelo. El approach ORM-based
+> garantiza que la BD coincide 100% con los modelos Python.
+
 ---
 
 ## 7. Pendientes sin resolver (TBD)
@@ -308,20 +294,22 @@ actual ya tenga variables conflictivas. Alternativa: crear `backend/.env.test`.
 ### 🔴 Bugs
 | ID | Descripción | Estado |
 |----|-------------|--------|
-| BUG-1 | Imágenes/visualización de silos con % de RM perdida | ✅ Resuelto (era falta de seed data) |
-| BUG-2 | Textos de gauges de silos solo en español (hardcodeados) | ✅ Resuelto v1.7 — `t()` + nuevas claves i18n |
-| BUG-3 | Sync Odoo no refresca la pantalla tras completarse | ✅ Resuelto v1.7 — estado `refreshing` separado |
+| BUG-1 | Imágenes/visualización de silos con % de RM perdida | ✅ Resuelto |
+| BUG-2 | Textos de gauges de silos solo en español (hardcodeados) | ✅ Resuelto |
+| BUG-3 | Sync Odoo no refresca la pantalla tras completarse | ✅ Resuelto |
 
 ### 🟡 Pendientes técnicos
 | ID | Descripción | Estado |
 |----|-------------|--------|
-| TECH-1 | Multicompany (D12): selector de compañía, datos por tenant | ✅ Implementado |
-| TECH-2 | Mock data (D14): seed_dev_data.py con companies, silos, stock, CON | ✅ Eliminado — datos reales desde Odoo |
-| TECH-3 | Migración Alembic limpia (0001→0003 consolidar si es posible) | Pendiente (Baja) |
-| TECH-4 | product_format_mappings vacía (TBD-4 bloquea) | Pendiente (Baja) |
-| TECH-5 | i18n: textos nuevos de Fase 5 sin traducir (LineFormatsTab) | ✅ Resuelto v1.7 |
-| TECH-6 | Recetas CON: 8 ingredientes nuevos con valor 0 (sin datos Excel) | ✅ Resuelto v1.7 — valores reales extraídos |
-| TECH-7 | Tipos de línea rotativa/lineal no visibles en UI Config | ✅ Resuelto v1.7 — badge + bloqueo edición |
+| TECH-8 | Gráfica de evolución de consumo por silo (trend line histórico) | Pendiente — propuesta evaluada, no implementada |
+| TECH-9 | `app_suggested_date` basada en cálculo real (hoy está vacía para muchas POs → timing_color siempre verde) | Pendiente — `delivery_calculator.py` no está conectado al timeline |
+| TECH-10 | DeliveryPlanningTable (tabla legacy) + DeliveryTimeline coexisten — evaluar unificación | Pendiente |
+| TECH-11 | Tests unitarios para `_compute_timing_color` y `_compute_editability` | Pendiente |
+| TECH-12 | Alembic migration para `partner_name` y `vendor_confirmed` en `purchase_orders` (SQLite migrado manual, falta PG) | ✅ **Resuelto v2.0** — `0004_po_vendor_fields.py` |
+| TECH-13 | **[NUEVO]** Multi-silo: consumo asigna 100% demanda a cada silo individual (conservador, documentar decisión) | Pendiente — decisión de diseño, no bug |
+| TECH-14 | **[NUEVO]** POs replicadas en proyección: gráfica muestra un camión llenando todos los silos de un material | Pendiente — requiere lógica de asignación silo-específica |
+| TECH-15 | **[NUEVO]** Rate limiter in-memory no resistente a multi-instance Cloud Run | Pendiente (Baja) — adecuado para single instance |
+| TECH-16 | **[NUEVO]** Migraciones Alembic 0001-0003 desalineadas con ORM actual (tablas/columnas renombradas) | ✅ **Resuelto v2.1** — Setup ORM-based documentado. 0001 parcialmente corregido. |
 
 ---
 
@@ -336,26 +324,10 @@ actual ya tenga variables conflictivas. Alternativa: crear `backend/.env.test`.
 | 20/07/2026 | v1.4 | BUG-1 resuelto, TECH-1 (multicompany) y TECH-2 (mock data) implementados |
 | 20/07/2026 | v1.5 | 5 companies (IBE/GUD/FRA/ITA/BEL). i18n: +catalán (ES/CA/EN). Filtros silo: solo harina/azúcar/aceite. D15-D16 |
 | 20/07/2026 | v1.6 | Conexión Odoo staging3 verificada. TBD-3,4,6 resueltos. location_id y product_id de silos confirmados |
-| 20/07/2026 | v1.7 | **i18n gauges completo** (matHarina/matAzucar/matAceite + locales BCP-47). **CON completo** (11 materiales × 13 formatos desde Excel Apro-PM 2026.ods). **Line formats** rotativa vs lineal: badges en UI + bloqueo edición en hornos lineales. **BUG-3**: sync refresca pantalla (estado `refreshing` independiente). |
-| 20/07/2026 | v1.8 | **Stock Projection Chart** en Dashboard (Chart.js, forward-looking 14 días). **Delivery Planning Table** en Silos (semáforo green/orange/red POs vs fecha sugerida). **Odoo write-back** de `date_planned` vía JSON-RPC con restricciones por estado (draft=libre, purchase=warning, done=bloqueado). **D17**: cambio scope read-only → write limitado a `purchase.order.line.date_planned`. Dropdown forecast 15/30/45 días. `odoo_product_id` poblado en silo_configs. `order_odoo_id` añadido a PurchaseOrder. |
-| 20/07/2026 | v1.8b | **Timeline POs reales**: DeliveryTimeline ahora muestra POs de Odoo con semáforo. Botón edición integrado en pill. **ForecastDropdown** (15/30/45 días). **Último sync**: `GET /sync/last` + label relativo en header. **Pro logging**: `RotatingFileHandler` → `logs/dcp.log` (5MB×3). `GET /admin/logs` endpoint (role=it). |
-| 20/07/2026 | v1.9 | **Timeline UX completo**: pill = toda la tarjeta clicable (sin lápiz), hover effect scale+brightness. **Doble semáforo visual**: fondo=timing (verde=a tiempo/naranja=tarde/rojo=sin PO) + borde-izquierdo=vendor_confirmed (verde=confirmado proveedor/rojo=pendiente). **vendor_confirmed**: nuevo campo `purchase.order.vendor_confirmed` leído desde Odoo, persistido en `purchase_orders.vendor_confirmed`. **Modal edición rediseñado**: chips proveedor+ref RM, +20% tamaño, gradient buttons, spring animation. **Fix Python 3.10**: `datetime.fromisoformat()` con sufijo `Z` → `.replace("Z", "+00:00")`. **Fix `fmtKg`**: acepta `number \| null`. **i18n**: `silosSyncNever`, `silosSyncJustNow`. |
-| 20/07/2026 | v1.9b | **Modal dual-date**: campo "Fecha Sugerida" (read-only, calculada por app) + "Fecha PO" (editable, la actual de Odoo). Botón "↓ Usar propuesta" copia la fecha sugerida al campo editable. **partner_name en PO**: sync lee `partner_id` de `purchase.order` y guarda nombre del proveedor. **product_ref en modal**: `[default_code] product_name` desde relación `Product`. **timing_color desacoplado**: nuevo campo API `timing_color` (green/orange/red) independiente de `vendor_confirmed`. Antes `_compute_color` mezclaba ambos ejes → las POs con `vendor_confirmed=false` siempre daban rojo aunque tuvieran PO. **Fix prefill**: `openEdit()` ahora prefilla con `po_date_planned` (fecha real Odoo), no `app_suggested_date`. **i18n**: `planUseSuggested`, `planNoSuggested`. |
-
----
-
-## 10. Pendientes para próxima sesión
-
-### 🔴 Bugs
-| ID | Descripción | Prioridad |
-|----|-------------|-----------|
-| BUG-4 | **Selector de compañía desaparecido.** Causa raíz: la tabla `companies` nunca tenía seed data. `GET /auth/companies` devolvía `[]` → condición `companies.length > 1` siempre false. Fix: `_seed_companies_if_empty()` en `database.py`. | ✅ Resuelto v1.9b |
-
-### 🟡 Pendientes técnicos
-| ID | Descripción | Estado |
-|----|-------------|--------|
-| TECH-8 | Gráfica de evolución de consumo por silo (trend line histórico) | Pendiente — propuesta evaluada, no implementada |
-| TECH-9 | `app_suggested_date` basada en cálculo real (hoy está vacía para muchas POs → timing_color siempre verde) | Pendiente — `delivery_calculator.py` no está conectado al timeline |
-| TECH-10 | DeliveryPlanningTable (tabla legacy) + DeliveryTimeline coexisten — evaluar unificación | Pendiente |
-| TECH-11 | Tests unitarios para `_compute_timing_color` y `_compute_editability` | Pendiente |
-| TECH-12 | Alembic migration para `partner_name` y `vendor_confirmed` en `purchase_orders` (SQLite migrado manual, falta PG) | Pendiente |
+| 20/07/2026 | v1.7 | i18n gauges completo, CON completo, Line formats, BUG-3 resuelto |
+| 20/07/2026 | v1.8 | Stock Projection, Delivery Planning, Odoo write-back, D17 |
+| 20/07/2026 | v1.8b | Timeline POs, ForecastDropdown, Último sync, Pro logging |
+| 20/07/2026 | v1.9 | Timeline UX, Doble semáforo, Modal edición, Fixes Python 3.10 |
+| 20/07/2026 | v1.9b | Modal dual-date, partner_name sync, timing_color desacoplado, Fix prefill |
+| 20/08/2026 | v2.0  | Auditoría de seguridad, Migración 0004, Sync async, Odoo Health Check, Script rotación API key |
+| 20/08/2026 | v2.1  | Reconciliación BD: migraciones 0005-0006, tabla companies, setup ORM-based para PG limpio |

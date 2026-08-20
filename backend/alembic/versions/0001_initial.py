@@ -89,15 +89,14 @@ def upgrade() -> None:
         schema="odoo_replica",
     )
 
-    # ── odoo_replica.mrp_workcenters ──────────────────────────────────────
+    # ── odoo_replica.workcenters ──────────────────────────────────────────
     op.create_table(
-        "mrp_workcenters",
+        "workcenters",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("odoo_id", sa.Integer(), nullable=False),
         sa.Column("name", sa.String(length=255), nullable=False),
-        sa.Column("code", sa.String(length=50), nullable=True),
-        sa.Column("company_id", sa.Integer(), nullable=True),
-        sa.Column("synced_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("code", sa.String(length=64), nullable=True),
+        sa.Column("company_id", sa.Integer(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("odoo_id"),
         schema="odoo_replica",
@@ -108,37 +107,43 @@ def upgrade() -> None:
         "mrp_productions",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("odoo_id", sa.Integer(), nullable=False),
-        sa.Column("name", sa.String(length=100), nullable=False),
-        sa.Column("product_id", sa.Integer(), nullable=True),
-        sa.Column("product_qty", sa.Numeric(precision=14, scale=3), nullable=True),
+        sa.Column("name", sa.String(length=128), nullable=False),
+        sa.Column("product_id", sa.Integer(), nullable=False),
         sa.Column("workcenter_id", sa.Integer(), nullable=True),
-        sa.Column("date_start", sa.DateTime(timezone=True), nullable=True),
-        sa.Column("date_finished", sa.DateTime(timezone=True), nullable=True),
-        sa.Column("state", sa.String(length=50), nullable=True),
-        sa.Column("company_id", sa.Integer(), nullable=True),
-        sa.Column("synced_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("qty_to_produce", sa.Numeric(precision=12, scale=4), nullable=False),
+        sa.Column("state", sa.String(length=32), nullable=False),
+        sa.Column("date_planned_start", sa.DateTime(), nullable=True),
+        sa.Column("date_planned_finished", sa.DateTime(), nullable=True),
+        sa.Column("company_id", sa.Integer(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("odoo_id"),
+        sa.ForeignKeyConstraint(["product_id"], ["odoo_replica.products.odoo_id"]),
+        sa.ForeignKeyConstraint(["workcenter_id"], ["odoo_replica.workcenters.odoo_id"]),
         schema="odoo_replica",
     )
+    op.create_index("idx_mo_company_state", "mrp_productions", ["company_id", "state"], schema="odoo_replica")
 
     # ── odoo_replica.purchase_orders ──────────────────────────────────────
     op.create_table(
         "purchase_orders",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("odoo_id", sa.Integer(), nullable=False),
-        sa.Column("name", sa.String(length=100), nullable=False),
-        sa.Column("state", sa.String(length=50), nullable=True),
-        sa.Column("date_approve", sa.DateTime(timezone=True), nullable=True),
-        sa.Column("date_planned", sa.DateTime(timezone=True), nullable=True),
-        sa.Column("product_id", sa.Integer(), nullable=True),
-        sa.Column("product_qty", sa.Numeric(precision=14, scale=3), nullable=True),
-        sa.Column("company_id", sa.Integer(), nullable=True),
-        sa.Column("synced_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("order_odoo_id", sa.Integer(), nullable=True),
+        sa.Column("name", sa.String(length=128), nullable=False),
+        sa.Column("partner_name", sa.String(length=255), nullable=True),
+        sa.Column("vendor_confirmed", sa.Boolean(), nullable=False, server_default="false"),
+        sa.Column("product_id", sa.Integer(), nullable=False),
+        sa.Column("quantity", sa.Numeric(precision=12, scale=4), nullable=False),
+        sa.Column("date_planned", sa.DateTime(), nullable=True),
+        sa.Column("state", sa.String(length=32), nullable=False),
+        sa.Column("company_id", sa.Integer(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("odoo_id"),
+        sa.ForeignKeyConstraint(["product_id"], ["odoo_replica.products.odoo_id"]),
         schema="odoo_replica",
     )
+    op.create_index("ix_po_order_odoo_id", "purchase_orders", ["order_odoo_id"], schema="odoo_replica")
+    op.create_index("idx_po_product_state", "purchase_orders", ["product_id", "state", "company_id"], schema="odoo_replica")
 
     # ── dcp_app.users ─────────────────────────────────────────────────────
     op.create_table(
@@ -203,6 +208,7 @@ def upgrade() -> None:
         sa.Column("po_state", sa.String(length=50), nullable=True),
         sa.Column("po_date_planned", sa.DateTime(timezone=True), nullable=True),
         sa.Column("calculated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("locked_at", sa.DateTime(timezone=True), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.ForeignKeyConstraint(["silo_id"], ["dcp_app.silo_configs.id"]),
@@ -258,7 +264,7 @@ def downgrade() -> None:
     op.drop_table("users", schema="dcp_app")
     op.drop_table("purchase_orders", schema="odoo_replica")
     op.drop_table("mrp_productions", schema="odoo_replica")
-    op.drop_table("mrp_workcenters", schema="odoo_replica")
+    op.drop_table("workcenters", schema="odoo_replica")
     op.drop_table("mrp_bom_lines", schema="odoo_replica")
     op.drop_table("mrp_boms", schema="odoo_replica")
     op.drop_table("stock_quants", schema="odoo_replica")

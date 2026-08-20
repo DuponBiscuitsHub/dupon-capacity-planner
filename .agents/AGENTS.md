@@ -75,6 +75,7 @@ Ejemplos:
 | `docs/features.md` | Guía de funcionalidades. Verificar antes de eliminar código |
 | `docs/coding_standards.md` | Estándares de código. Seguir siempre |
 | `.env.example` | Template de configuración. Actualizar si se añade variable |
+| `backend/scripts/seed_config.py` | **SSoT de config de fábrica.** Silos, líneas, recetas CON, formatos. No modificar datos sin confirmar con usuario |
 | `backend/app/core/odoo_client.py` | Cliente JSON-RPC probado. No reescribir sin motivo |
 | `backend/app/core/sync_engine.py` | Motor de sync. Adaptar, no reescribir |
 
