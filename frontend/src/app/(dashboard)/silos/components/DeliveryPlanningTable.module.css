@@ -1,0 +1,300 @@
+/* DeliveryPlanningTable.module.css */
+
+.wrapper {
+  position: relative;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted);
+}
+
+/* ── Table ─────────────────────────────────────────────────────────────────── */
+
+.tableScroll {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border-card);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.table thead {
+  background: hsla(220, 25%, 12%, 0.6);
+}
+
+.table th {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border-card);
+}
+
+.table td {
+  padding: 0.55rem 0.75rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid hsla(220, 20%, 20%, 0.3);
+  white-space: nowrap;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ── Row colors (traffic light) ────────────────────────────────────────────── */
+
+.row_green {
+  background: hsla(152, 60%, 30%, 0.08);
+  border-left: 3px solid hsl(152, 60%, 45%);
+}
+
+.row_orange {
+  background: hsla(35, 70%, 40%, 0.08);
+  border-left: 3px solid hsl(35, 80%, 55%);
+}
+
+.row_red {
+  background: hsla(0, 60%, 35%, 0.08);
+  border-left: 3px solid hsl(0, 65%, 50%);
+}
+
+/* ── Cells ─────────────────────────────────────────────────────────────────── */
+
+.materialCell {
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.materialIcon {
+  font-size: 1rem;
+}
+
+.poCell {
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-size: 0.78rem;
+  color: var(--text-primary);
+}
+
+.appDateCell {
+  color: hsl(200, 70%, 60%);
+  font-weight: 500;
+}
+
+.emptyRow {
+  text-align: center;
+  padding: 2rem 1rem !important;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ── State badges ──────────────────────────────────────────────────────────── */
+
+.stateBadge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.state_draft {
+  background: hsla(220, 20%, 40%, 0.2);
+  color: hsl(220, 20%, 65%);
+}
+
+.state_sent {
+  background: hsla(40, 60%, 45%, 0.15);
+  color: hsl(40, 60%, 60%);
+}
+
+.state_purchase {
+  background: hsla(152, 50%, 40%, 0.15);
+  color: hsl(152, 50%, 60%);
+}
+
+.state_done {
+  background: hsla(200, 50%, 40%, 0.15);
+  color: hsl(200, 50%, 60%);
+}
+
+.state_none {
+  background: hsla(0, 50%, 40%, 0.15);
+  color: hsl(0, 50%, 60%);
+}
+
+/* ── Action buttons ────────────────────────────────────────────────────────── */
+
+.editBtn {
+  background: none;
+  border: 1px solid hsla(220, 30%, 40%, 0.4);
+  border-radius: 6px;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.15s ease;
+}
+
+.editBtn:hover {
+  background: hsla(220, 30%, 40%, 0.15);
+  border-color: hsla(220, 30%, 50%, 0.5);
+}
+
+.blockedIcon {
+  font-size: 0.85rem;
+  opacity: 0.5;
+}
+
+/* ── Modal ─────────────────────────────────────────────────────────────────── */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: hsla(0, 0%, 0%, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.15s ease;
+}
+
+.modal {
+  background: hsl(222, 22%, 14%);
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 12px 40px hsla(0, 0%, 0%, 0.5);
+}
+
+.modalTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.warningBox {
+  background: hsla(35, 80%, 50%, 0.1);
+  border: 1px solid hsla(35, 80%, 50%, 0.3);
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 0.8rem;
+  color: hsl(35, 80%, 65%);
+  line-height: 1.5;
+}
+
+.modalLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.dateInput {
+  background: hsl(222, 22%, 10%);
+  border: 1px solid var(--border-card);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-family: inherit;
+  outline: none;
+}
+
+.dateInput:focus {
+  border-color: hsl(200, 70%, 50%);
+  box-shadow: 0 0 0 2px hsla(200, 70%, 50%, 0.15);
+}
+
+.modalActions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.cancelBtn,
+.confirmBtn {
+  border: none;
+  border-radius: 6px;
+  padding: 0.45rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cancelBtn {
+  background: hsla(220, 20%, 30%, 0.3);
+  color: var(--text-muted);
+}
+
+.cancelBtn:hover {
+  background: hsla(220, 20%, 30%, 0.5);
+}
+
+.confirmBtn {
+  background: hsl(200, 70%, 45%);
+  color: white;
+}
+
+.confirmBtn:hover {
+  background: hsl(200, 70%, 50%);
+}
+
+.confirmBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Toast ─────────────────────────────────────────────────────────────────── */
+
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: hsl(152, 50%, 30%);
+  color: hsl(152, 50%, 90%);
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  z-index: 1100;
+  animation: slideUp 0.25s ease;
+  box-shadow: 0 4px 12px hsla(0, 0%, 0%, 0.4);
+}
+
+/* ── Animations ────────────────────────────────────────────────────────────── */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateX(-50%) translateY(1rem); opacity: 0; }
+  to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}

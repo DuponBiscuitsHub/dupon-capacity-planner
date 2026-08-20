@@ -1,189 +1,288 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import styles from "./page.module.css";
+import { useCompany } from "../context/CompanyContext";
 import { useLanguage } from "../i18n/context";
+import { apiFetch } from "@/lib/api";
 
-export default function DashboardPage() {
-  const { t } = useLanguage();
+// Lazy-load Chart.js component (solo client-side)
+const StockProjectionChart = dynamic(
+  () => import("./components/StockProjectionChart"),
+  { ssr: false },
+);
+
+// ── Types ──────────────────────────────────────────────────────────────────────
+
+interface SiloStatus {
+  silo_code: string;
+  name: string;
+  material_type: string;
+  capacity_kg: number;
+  current_stock_kg: number | null;
+  fill_pct: number | null;
+  autonomy_hours: number | null;
+  status: "ok" | "warning" | "critical" | "unknown";
+}
+
+interface Delivery {
+  id: number;
+  silo_code: string;
+  material_type: string;
+  suggested_date: string;
+  qty_kg: number;
+  status: string;
+  po_name: string | null;
+  po_state: string | null;
+}
+
+interface ProjectionPoint {
+  date: string;
+  stock_kg: number;
+}
+
+interface PoEvent {
+  date: string;
+  qty_kg: number;
+  po_name: string;
+}
+
+interface SiloProjection {
+  silo_code: string;
+  material_type: string;
+  capacity_kg: number;
+  safety_stock_kg: number;
+  consumption_kg_day: number;
+  points: ProjectionPoint[];
+  po_events: PoEvent[];
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
+function fmtKg(kg: number): string {
+  return kg >= 1000 ? `${(kg / 1000).toFixed(1)} t` : `${Math.round(kg)} kg`;
+}
+
+function getMaterialLabel(material: string, t: (key: string) => string): string {
+  const MAP: Record<string, string> = {
+    harina: t("matHarina"),
+    azucar: t("matAzucar"),
+    aceite: t("matAceite"),
+  };
+  return MAP[material] ?? material.toUpperCase();
+}
+
+// ── Vertical Bar Gauge ─────────────────────────────────────────────────────────
+
+function SiloBarGauge({
+  silo,
+  nextDelivery,
+  tToday,
+  tTomorrow,
+  tNoDelivery,
+  tSafety,
+  t,
+}: {
+  silo: SiloStatus;
+  nextDelivery?: Delivery;
+  tToday: string;
+  tTomorrow: string;
+  tNoDelivery: string;
+  tSafety: string;
+  t: (key: string) => string;
+}) {
+  const pct = silo.fill_pct ?? 0;
+
+  const fillColor =
+    silo.status === "critical" ? "var(--color-danger)" :
+    silo.status === "warning"  ? "var(--color-warning)" :
+                                 "var(--color-success)";
+
+  const labelColor =
+    silo.status === "critical" ? styles.matLabelDanger :
+    silo.status === "warning"  ? styles.matLabelWarning :
+                                 styles.matLabelOk;
+
+  const cardBorder =
+    silo.status === "critical" ? styles.cardCritical :
+    silo.status === "warning"  ? styles.cardWarning   :
+    silo.status === "ok"       ? styles.cardOk        : "";
+
+  const kg    = silo.current_stock_kg;
+  const capKg = silo.capacity_kg;
+
+  function fmtDeliveryDate(iso: string): string {
+    const d = new Date(iso);
+    const today = new Date();
+    const diffDays = Math.round((d.getTime() - today.getTime()) / 86400000);
+    const locale = t("_locale") || "es-ES";
+    const time = d.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
+    if (diffDays === 0) return `${tToday} ${time}`;
+    if (diffDays === 1) return `${tTomorrow} ${time}`;
+    return d.toLocaleDateString(locale, { day: "2-digit", month: "2-digit" }) + " " + time;
+  }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-      
-      {/* 1. General KPI Cards (High-Density Localized Grid) */}
-      <section className={styles.metricsGrid}>
-        
-        {/* KPI: Global OEE */}
-        <div className={`${styles.kpiCard} glass-panel glass-panel-hover`}>
-          <div className={styles.kpiHeader}>
-            <span>{t("oeeGlobal")}</span>
-            <span className="badge badge-success">{t("oeeStatus")}</span>
-          </div>
-          <div className={styles.kpiValue}>84.5%</div>
-          <div className={styles.kpiSubtext}>{t("oeeSubtext")}</div>
-        </div>
+    <div
+      className={`${styles.siloCard} ${cardBorder}`}
+      id={`silo-${silo.silo_code.toLowerCase()}`}
+    >
+      <div className={`${styles.matLabel} ${labelColor}`}>
+        {getMaterialLabel(silo.material_type, t)}
+      </div>
+      <div className={styles.siloName}>{silo.name}</div>
 
-        {/* KPI: Flour Autonomy */}
-        <div className={`${styles.kpiCard} glass-panel glass-panel-hover`}>
-          <div className={styles.kpiHeader}>
-            <span>{t("siloCritical")}</span>
-            <span className="badge badge-warning" style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}>
-              <span className="pulse-warning" style={{ width: "6px", height: "6px", borderRadius: "50%" }}></span>
-              18 hours
-            </span>
-          </div>
-          <div className={styles.kpiValue}>14,200 kg</div>
-          <div className={styles.kpiSubtext}>{t("siloSubtext")}</div>
-        </div>
-
-        {/* KPI: Die Load */}
-        <div className={`${styles.kpiCard} glass-panel glass-panel-hover`}>
-          <div className={styles.kpiHeader}>
-            <span>{t("aluminumLoad")}</span>
-            <span className="badge badge-primary">{t("aluminumStatus")}</span>
-          </div>
-          <div className={styles.kpiValue}>72.0%</div>
-          <div className={styles.kpiSubtext}>{t("aluminumSubtext")}</div>
-        </div>
-
-        {/* KPI: Order Risk */}
-        <div className={`${styles.kpiCard} glass-panel glass-panel-hover`}>
-          <div className={styles.kpiHeader}>
-            <span>{t("ordersInRisk")}</span>
-            <span className="badge badge-danger" style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}>
-              <span className="pulse-danger" style={{ width: "6px", height: "6px", borderRadius: "50%" }}></span>
-              3 Pedidos
-            </span>
-          </div>
-          <div className={styles.kpiValue}>4.2%</div>
-          <div className={styles.kpiSubtext}>{t("ordersInRiskSubtext")}</div>
-        </div>
-
-      </section>
-
-      {/* 2. Bottom Section (Active Lines + Localized Plant Alerts) */}
-      <div className={styles.bottomSection}>
-        
-        {/* Left Panel: Production Line Status */}
-        <section className={`${styles.linesCard} glass-panel`}>
-          <h3 className={styles.sectionTitle}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--color-primary)" }}>
-              <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
-              <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
-              <line x1="6" y1="6" x2="6.01" y2="6" />
-              <line x1="6" y1="18" x2="6.01" y2="18" />
-            </svg>
-            {t("lineMonitorTitle")}
-          </h3>
-          
-          <div className={styles.linesList}>
-            
-            {/* Line 1 */}
-            <div className={styles.lineRow}>
-              <div className={styles.lineInfo}>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "var(--color-success)" }}></span>
-                  <span className={styles.lineName}>{t("lineActive")} 1 ({t("lineActiveAssembly")})</span>
-                </div>
-                <div className={styles.lineDetails}>
-                  {t("lineDetails")}: <strong>#MO98242</strong> | {t("lineFormat")}: F3 (Familiar) | {t("lineRecipe")}: Galleta Tradicional
-                </div>
-              </div>
-              <div className={styles.lineSpeedSection}>
-                <span className={styles.lineSpeed}>420 u/m</span>
-                <span className={styles.lineSpeedUnit}>{t("lineSpeedPack")}</span>
-              </div>
-            </div>
-
-            {/* Line 2 */}
-            <div className={styles.lineRow}>
-              <div className={styles.lineInfo}>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "var(--color-success)" }}></span>
-                  <span className={styles.lineName}>{t("lineActive")} 2 ({t("lineActiveAssembly")})</span>
-                </div>
-                <div className={styles.lineDetails}>
-                  {t("lineDetails")}: <strong>#MO98245</strong> | {t("lineFormat")}: F1 (Individual) | {t("lineRecipe")}: Galleta Rellena Coco
-                </div>
-              </div>
-              <div className={styles.lineSpeedSection}>
-                <span className={styles.lineSpeed}>380 u/m</span>
-                <span className={styles.lineSpeedUnit}>{t("lineSpeedPack")}</span>
-              </div>
-            </div>
-
-            {/* Line 3 */}
-            <div className={styles.lineRow} style={{ opacity: 0.65 }}>
-              <div className={styles.lineInfo}>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "var(--text-muted)" }}></span>
-                  <span className={styles.lineName}>{t("lineActive")} 3 ({t("lineActiveAssembly")})</span>
-                </div>
-                <div className={styles.lineDetails}>
-                  Status: <strong>{t("lineInactive")}</strong> | {t("lineEstimateRestart")}: 16:00h
-                </div>
-              </div>
-              <div className={styles.lineSpeedSection}>
-                <span className={styles.lineSpeed} style={{ color: "var(--text-muted)" }}>0 u/m</span>
-                <span className={styles.lineSpeedUnit}>{t("lineSpeedPack")}</span>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        {/* Right Panel: Planner Alerts (Silos & Aluminum) */}
-        <section className={`${styles.alertsCard} glass-panel`}>
-          <h3 className={styles.sectionTitle}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--color-danger)" }}>
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-              <line x1="12" y1="9" x2="12" y2="13" />
-              <line x1="12" y1="17" x2="12.01" y2="17" />
-            </svg>
-            {t("apsAlertsTitle")}
-          </h3>
-          
-          <div className={styles.alertsList}>
-            
-            {/* Flour Alert (Phase 1) */}
-            <div className={styles.alertItem}>
-              <span className={styles.alertIcon} style={{ color: "var(--color-warning)" }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22 4 12 14.01 9 11.01" />
-                </svg>
-              </span>
-              <div className={styles.alertContent}>
-                <span className={styles.alertTitle} style={{ color: "var(--color-warning)" }}>{t("siloAlertTitle")}</span>
-                <span className={styles.alertDescription}>
-                  {t("siloAlertDesc")}
-                </span>
-                <span className={styles.alertMeta}>Modulo: RM & Silos Planner | Hace 5 min</span>
-              </div>
-            </div>
-
-            {/* Aluminum / CTP Alert (Phase 2 & 3) */}
-            <div className={`${styles.alertItem} ${styles.alertItemDanger}`}>
-              <span className={styles.alertIcon} style={{ color: "var(--color-danger)" }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="12" y1="8" x2="12" y2="12" />
-                  <line x1="12" y1="16" x2="12.01" y2="16" />
-                </svg>
-              </span>
-              <div className={styles.alertContent}>
-                <span className={styles.alertTitle} style={{ color: "var(--color-danger)" }}>Ruptura Proyectada de Sleeve F3</span>
-                <span className={styles.alertDescription}>
-                  El pedido de venta #SO4322 excede el stock proyectado de envoltorios A16. El taller de aluminio reporta saturación en enrolladoras para el formato F3. Riesgo de demora de entrega: +2 días.
-                </span>
-                <span className={styles.alertMeta}>Modulo: Aluminum & CTP | Hace 12 min</span>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
+      <div className={styles.barOuter}>
+        <div
+          className={styles.barFill}
+          style={{ height: `${Math.min(pct, 100)}%`, background: fillColor }}
+        />
+        <div className={styles.safetyLine} title={tSafety} />
       </div>
 
+      <div
+        className={styles.pctValue}
+        style={{ color: pct < 20 ? "var(--color-danger)" : pct < 40 ? "var(--color-warning)" : "var(--text-primary)" }}
+      >
+        {kg !== null ? `${Math.round(pct)}%` : "—"}
+      </div>
+
+      {kg !== null && (
+        <div className={styles.kgValue}>
+          {fmtKg(kg)} / {fmtKg(capKg)}
+        </div>
+      )}
+
+      {nextDelivery ? (
+        <div className={styles.nextDelivery}>
+          <span className={styles.ndIcon}>📦</span>
+          <span>{fmtDeliveryDate(nextDelivery.suggested_date)}</span>
+        </div>
+      ) : (
+        <div className={styles.nextDeliveryEmpty}>{tNoDelivery}</div>
+      )}
+    </div>
+  );
+}
+
+// ── Alert Bar ──────────────────────────────────────────────────────────────────
+
+function AlertBar({
+  silos,
+  tCritical,
+  tLow,
+}: {
+  silos: SiloStatus[];
+  tCritical: string;
+  tLow: string;
+}) {
+  const critical = silos.filter(s => s.status === "critical");
+  const warning  = silos.filter(s => s.status === "warning");
+  if (!critical.length && !warning.length) return null;
+
+  return (
+    <div className={critical.length ? styles.alertDanger : styles.alertWarning}>
+      <span>{critical.length ? "🔴" : "⚠️"}</span>
+      <span>
+        {critical.length > 0 && (
+          <strong>{critical.map(s => s.silo_code).join(", ")} — {tCritical}</strong>
+        )}
+        {critical.length > 0 && warning.length > 0 && "  ·  "}
+        {warning.length > 0 && `${warning.map(s => s.silo_code).join(", ")} — ${tLow}`}
+      </span>
+    </div>
+  );
+}
+
+// ── Dashboard Page ─────────────────────────────────────────────────────────────
+
+export default function DashboardPage() {
+  const { companyId } = useCompany();
+  const { t } = useLanguage();
+  const [silos, setSilos]             = useState<SiloStatus[]>([]);
+  const [deliveries, setDeliveries]   = useState<Delivery[]>([]);
+  const [projections, setProjections] = useState<SiloProjection[]>([]);
+  const [loading, setLoading]         = useState(true);
+  const [error, setError]             = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    try {
+      const [s, d, p] = await Promise.all([
+        apiFetch<SiloStatus[]>(`/api/v1/silos?company_id=${companyId}`),
+        apiFetch<Delivery[]>(`/api/v1/deliveries?company_id=${companyId}`),
+        apiFetch<SiloProjection[]>(`/api/v1/silos/projection?company_id=${companyId}`),
+      ]);
+      setSilos(s);
+      setDeliveries(d);
+      setProjections(p);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t("errorLoading"));
+    } finally {
+      setLoading(false);
+    }
+  }, [companyId, t]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const nextBySilo: Record<string, Delivery> = {};
+  for (const d of deliveries) {
+    if (!nextBySilo[d.silo_code]) nextBySilo[d.silo_code] = d;
+  }
+
+  if (loading) return <div className={styles.loading}>{t("loading")}</div>;
+  if (error)   return <div className={styles.errorBox}>{error}</div>;
+
+  return (
+    <div className={styles.page}>
+      <AlertBar
+        silos={silos}
+        tCritical={t("dashAlertCritical")}
+        tLow={t("dashAlertLow")}
+      />
+
+      <section className={styles.gaugesSection}>
+        {silos.map(silo => (
+          <SiloBarGauge
+            key={silo.silo_code}
+            silo={silo}
+            nextDelivery={nextBySilo[silo.silo_code]}
+            tToday={t("dashToday")}
+            tTomorrow={t("dashTomorrow")}
+            tNoDelivery={t("dashNoDelivery")}
+            tSafety={t("siloSafetyStock")}
+            t={t}
+          />
+        ))}
+      </section>
+
+      <section className={styles.chartSection}>
+        <h2 className={styles.chartTitle}>{t("chartTitle")}</h2>
+        <StockProjectionChart projections={projections} t={t} />
+      </section>
+
+      <section className={styles.statsRow}>
+        <div className={styles.statCard}>
+          <span className={styles.statNum}>{silos.filter(s => s.status === "ok").length}</span>
+          <span className={styles.statLabel}>{t("dashStatOk")}</span>
+        </div>
+        <div className={styles.statCard}>
+          <span className={`${styles.statNum} ${styles.numWarning}`}>
+            {silos.filter(s => s.status === "warning").length}
+          </span>
+          <span className={styles.statLabel}>{t("dashStatLow")}</span>
+        </div>
+        <div className={styles.statCard}>
+          <span className={`${styles.statNum} ${styles.numDanger}`}>
+            {silos.filter(s => s.status === "critical").length}
+          </span>
+          <span className={styles.statLabel}>{t("dashStatCritical")}</span>
+        </div>
+        <div className={styles.statCard}>
+          <span className={styles.statNum}>{deliveries.length}</span>
+          <span className={styles.statLabel}>{t("dashStatDeliveries")}</span>
+        </div>
+      </section>
     </div>
   );
 }

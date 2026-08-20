@@ -1,0 +1,552 @@
+/* config.module.css — Panel IT (fondo claro, mismo que el resto del app) */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Tab bar ─────────────────────────────────────────────────────────────── */
+
+.tabBar {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 0;
+  margin-bottom: 1.75rem;
+}
+
+.tabBtn {
+  padding: 0.6rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  margin-bottom: -1px;
+}
+
+.tabBtn:hover {
+  color: var(--text-secondary);
+}
+
+.tabActive {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  font-weight: 600;
+}
+
+.tabPanel {
+  flex: 1;
+}
+
+/* ── Tab content ─────────────────────────────────────────────────────────── */
+
+.tabContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.tabDesc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── States ──────────────────────────────────────────────────────────────── */
+
+.loading {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 1rem 0;
+}
+
+.errorMsg {
+  background: var(--bg-danger);
+  border: 1px solid var(--border-danger);
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  color: var(--color-danger);
+  font-size: 0.85rem;
+}
+
+/* ── Table ───────────────────────────────────────────────────────────────── */
+
+.tableWrap {
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+  overflow-x: auto;
+  background: var(--bg-card);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.th {
+  text-align: left;
+  padding: 0.7rem 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: hsl(220, 16%, 97%);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.tr {
+  transition: background 0.15s;
+}
+
+.tr:hover {
+  background: var(--bg-card-hover);
+}
+
+.td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.td:last-child { border-bottom-color: transparent; }
+.tr:last-child .td { border-bottom: none; }
+
+.tdActions {
+  padding: 0.65rem 1rem;
+  vertical-align: middle;
+  text-align: right;
+}
+
+.inactiveRow {
+  opacity: 0.5;
+}
+
+/* ── Inline edit ─────────────────────────────────────────────────────────── */
+
+.numberInput {
+  width: 110px;
+  padding: 0.4rem 0.6rem;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border-light);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-family: inherit;
+  outline: none;
+}
+
+.numberInput:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px hsla(152, 69%, 41%, 0.12);
+}
+
+.editActions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.editBtn {
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s;
+}
+.editBtn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.saveBtn {
+  padding: 0.35rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: var(--bg-success);
+  border: 1px solid var(--border-success);
+  border-radius: 6px;
+  color: var(--color-success);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.saveBtn:hover:not(:disabled) { background: hsla(152, 69%, 41%, 0.2); }
+.saveBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.cancelBtn {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.cancelBtn:hover { background: var(--border-light); }
+
+.deactivateBtn {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.78rem;
+  background: var(--bg-danger);
+  border: 1px solid var(--border-danger);
+  border-radius: 6px;
+  color: var(--color-danger);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.deactivateBtn:hover { background: hsla(0, 72%, 55%, 0.18); }
+
+/* ── Badges ──────────────────────────────────────────────────────────────── */
+
+.activeTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-success);
+  background: var(--bg-success);
+  border: 1px solid var(--border-success);
+  padding: 0.15rem 0.55rem;
+  border-radius: 99px;
+}
+
+.idleTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: hsl(220, 16%, 95%);
+  border: 1px solid var(--border-light);
+  padding: 0.15rem 0.55rem;
+  border-radius: 99px;
+}
+
+.kgValue {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.materialTag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: var(--text-secondary);
+  background: hsl(220, 16%, 95%);
+  border: 1px solid var(--border-light);
+  padding: 0.12rem 0.5rem;
+  border-radius: 99px;
+}
+
+.siloName {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+}
+
+.roleIt {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: hsla(238, 75%, 65%, 0.1);
+  border: 1px solid hsla(238, 75%, 65%, 0.25);
+  color: hsl(238, 60%, 55%);
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+}
+
+.roleUser {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: hsl(220, 16%, 95%);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+}
+
+/* ── Create user form ────────────────────────────────────────────────────── */
+
+.createForm {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.formTitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.formRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.textInput {
+  flex: 1;
+  min-width: 140px;
+  padding: 0.45rem 0.8rem;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border-light);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.textInput:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px hsla(152, 69%, 41%, 0.12);
+}
+
+.selectInput {
+  padding: 0.45rem 0.8rem;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border-light);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+.selectInput:focus {
+  border-color: var(--color-primary);
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+/* ── Recipes tab ─────────────────────────────────────────────────────────── */
+
+.tabHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.tabTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.tabHint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+.infoMsg {
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-success);
+  border: 1px solid var(--border-success);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: var(--color-success);
+  margin-bottom: 1rem;
+}
+
+.recipeGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.recipeHeaderRow,
+.recipeRow {
+  display: grid;
+  grid-template-columns: 1.8fr repeat(7, 1fr);
+  align-items: center;
+}
+
+.recipeHeaderRow {
+  background: hsl(220, 16%, 97%);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.recipeRow {
+  border-bottom: 1px solid var(--border-light);
+  transition: background 0.15s;
+}
+.recipeRow:last-child { border-bottom: none; }
+.recipeRow:hover { background: var(--bg-card-hover); }
+
+.recipeHeaderCell {
+  padding: 0.6rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.recipeName {
+  padding: 0.6rem 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.recipeCell {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.editableValue {
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+  color: var(--text-secondary);
+}
+.editableValue:hover {
+  background: var(--bg-primary);
+  color: var(--color-primary);
+}
+
+.editCell {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.recipeInput {
+  width: 70px;
+  padding: 0.2rem 0.4rem;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border-focus);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  outline: none;
+  font-family: inherit;
+}
+.recipeInput:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px hsla(152, 69%, 41%, 0.15);
+}
+
+.loadingRow {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+/* ── Data Table (Line Formats) ─────────────────────────────────────────── */
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.dataTable th {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 2px solid var(--border-light);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.dataTable td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border-light);
+  vertical-align: middle;
+}
+
+.dataTable tbody tr:hover {
+  background: hsla(152, 40%, 50%, 0.04);
+}
+
+.lineCell {
+  font-weight: 600;
+  color: var(--color-primary);
+  vertical-align: top;
+  padding-top: 0.75rem;
+}
+
+
+/* ── Line type badges ───────────────────────────────────────────────────── */
+.typeBadge {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.badgeRotary {
+  background: hsla(152, 60%, 45%, 0.15);
+  color: var(--color-primary);
+  border: 1px solid hsla(152, 60%, 45%, 0.3);
+}
+
+.badgeLinear {
+  background: hsla(220, 20%, 60%, 0.12);
+  color: var(--text-muted);
+  border: 1px solid hsla(220, 20%, 60%, 0.25);
+}
+
+.lockIcon {
+  font-size: 0.85rem;
+  opacity: 0.45;
+  cursor: default;
+}

@@ -1,215 +1,270 @@
-/* Estilos para el Login Corporativo (CSS Modules - Modo Claro Estándar) */
+/* login.module.css — DCP Login (label_edge: dark left panel + white form) */
 
+/* ── Layout principal: split-screen ─────────────────────────────────────── */
 .container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Panel izquierdo oscuro (marca) */
+.container::before {
+  content: "";
+  display: block;
+  width: 45%;
+  min-width: 300px;
+  background: var(--bg-sidebar);
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+}
+
+/* ── Card del formulario (panel derecho blanco) ───────────────────────────── */
+.card {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  max-width: 420px;
+  padding: 2.5rem 2.75rem;
+  margin: auto;
+  margin-left: calc(45% + 2rem);
+  background: transparent;
+  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Logo section ────────────────────────────────────────────────────────── */
+.logoSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.logoMark {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: var(--color-primary);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100vw;
-  height: 100vh;
-  background: radial-gradient(circle at 10% 20%, hsl(220, 20%, 82%) 0%, var(--bg-base) 90%);
-  position: relative;
-  overflow: hidden;
-  transition: var(--transition-smooth);
-}
-
-/* Decoraciones en background para simular profundidad industrial con brillo sutil */
-.backgroundOrb {
-  position: absolute;
-  width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  background: radial-gradient(circle, hsla(210, 100%, 50%, 0.05) 0%, rgba(0,0,0,0) 70%);
-  top: -20%;
-  left: -10%;
-  filter: blur(50px);
-  pointer-events: none;
-}
-
-.backgroundOrb2 {
-  position: absolute;
-  width: 700px;
-  height: 700px;
-  border-radius: 50%;
-  background: radial-gradient(circle, hsla(346, 84%, 49%, 0.03) 0%, rgba(0,0,0,0) 70%);
-  bottom: -30%;
-  right: -10%;
-  filter: blur(70px);
-  pointer-events: none;
-}
-
-.card {
-  width: 100%;
-  max-width: 440px;
-  padding: 3rem 2.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  z-index: 10;
-  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-  background: var(--bg-card) !important;
-  border: 1px solid var(--border-light) !important;
-  box-shadow: var(--shadow-premium) !important;
-}
-
-.header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  text-align: center;
-}
-
-.logoText {
-  font-size: 1.75rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  background: linear-gradient(135deg, var(--text-primary) 30%, var(--text-secondary) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.logoSub {
-  font-size: 0.85rem;
-  color: var(--color-primary);
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  box-shadow: 0 4px 16px hsla(152, 69%, 41%, 0.35);
+  margin-bottom: 0.5rem;
 }
 
 .title {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
+  font-weight: 700;
   color: var(--text-primary);
-  font-weight: 500;
-  margin-top: 0.5rem;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin: 0;
 }
 
+.subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* ── Form ────────────────────────────────────────────────────────────────── */
 .form {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
 
-.inputGroup {
+.fieldGroup {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .label {
-  font-size: 0.85rem;
-  font-weight: 500;
+  font-size: 0.78rem;
+  font-weight: 600;
   color: var(--text-secondary);
+  letter-spacing: 0.01em;
 }
 
-.inputGroup input {
+.input {
   width: 100%;
-  background-color: var(--bg-card) !important;
-  border: 1px solid var(--border-light) !important;
-  color: var(--text-primary) !important;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-light);
+  color: var(--text-primary);
   border-radius: 8px;
-  padding: 0.75rem 1rem;
+  padding: 0.7rem 0.875rem;
   outline: none;
-  font-size: 0.95rem;
-  transition: var(--transition-smooth);
+  font-size: 0.875rem;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.inputGroup input:focus {
-  background-color: #fff !important;
-  border-color: var(--border-focus) !important;
-  box-shadow: 0 0 0 2px hsla(210, 100%, 45%, 0.15) !important;
+.input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px hsla(152, 69%, 41%, 0.15);
 }
 
-/* Anular Autofill/Autocompletado del Navegador (Color blanco discordante corregido) */
-.inputGroup input:-webkit-autofill,
-.inputGroup input:-webkit-autofill:hover, 
-.inputGroup input:-webkit-autofill:focus, 
-.inputGroup input:-webkit-autofill:active {
+.input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+/* Autofill neutralization */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0 1000px hsl(220, 20%, 97%) inset !important;
   -webkit-text-fill-color: var(--text-primary) !important;
   transition: background-color 5000s ease-in-out 0s;
 }
 
-.submitBtn {
-  margin-top: 0.75rem;
-  background: linear-gradient(135deg, var(--color-primary) 0%, hsl(210, 100%, 40%) 100%);
-  color: #fff;
-  font-weight: 600;
-  padding: 0.85rem 1.5rem;
+/* ── Error banner ────────────────────────────────────────────────────────── */
+.errorBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.875rem;
+  background: var(--bg-danger);
+  border: 1px solid var(--border-danger);
   border-radius: 8px;
-  box-shadow: 0 4px 14px 0 rgba(0, 118, 255, 0.25);
-  transition: var(--transition-smooth);
+  color: var(--color-danger);
+  font-size: 0.8rem;
+  font-weight: 500;
+  animation: fadeIn 0.2s ease;
+}
+
+/* ── Submit button ────────────────────────────────────────────────────────── */
+.submitBtn {
+  width: 100%;
+  padding: 0.8rem 1.25rem;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.875rem;
+  font-family: inherit;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 14px hsla(152, 69%, 41%, 0.30);
+  transition: filter 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  margin-top: 0.25rem;
 }
 
-.submitBtn:hover {
+.submitBtn:hover:not(:disabled) {
+  filter: brightness(1.08);
+  box-shadow: 0 6px 20px hsla(152, 69%, 41%, 0.40);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px 0 rgba(0, 118, 255, 0.35);
-  filter: brightness(1.1);
 }
 
-.submitBtn:active {
-  transform: translateY(1px);
+.submitBtn:active:not(:disabled) {
+  transform: translateY(0);
+  filter: none;
 }
 
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
 .footer {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
   text-align: center;
-  margin-top: -0.5rem;
+  margin-top: 1.5rem;
 }
 
-.footer strong {
-  color: var(--text-secondary);
-}
-
-/* Animación de entrada */
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.floatingSelectors {
+/* ── Branding panel izquierdo (overlay) ──────────────────────────────────── */
+.brandPanel {
   position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
+  left: 0; top: 0; bottom: 0;
+  width: 45%;
+  min-width: 300px;
   display: flex;
-  gap: 0.75rem;
-  z-index: 100;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem 2.5rem;
+  z-index: 5;
 }
 
-.floatingSelect {
-  background-color: hsla(220, 20%, 100%, 0.95) !important;
-  border: 1px solid hsla(220, 20%, 82%, 0.85) !important;
-  color: var(--text-primary) !important;
-  padding: 0.45rem 0.85rem;
-  border-radius: 6px;
+.brandTitle {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+  margin-bottom: 0.75rem;
+}
+
+.brandSub {
   font-size: 0.8rem;
-  font-weight: 600;
-  outline: none;
-  cursor: pointer;
-  transition: var(--transition-smooth);
-  box-shadow: 0 4px 10px rgba(100, 110, 120, 0.05);
+  color: hsla(220, 18%, 95%, 0.5);
+  font-weight: 400;
+  line-height: 1.6;
+  max-width: 260px;
 }
 
-.floatingSelect:hover {
-  background-color: #fff !important;
-  border-color: hsla(220, 20%, 65%, 0.85) !important;
+.brandBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 2rem;
+  padding: 0.35rem 0.75rem;
+  background: hsla(152, 69%, 41%, 0.15);
+  border: 1px solid hsla(152, 69%, 41%, 0.30);
+  border-radius: 99px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
-.floatingSelect:focus {
-  border-color: var(--border-focus);
+/* ── Decorative dots (background texture) ───────────────────────────────── */
+.brandDecor {
+  position: absolute;
+  bottom: 2rem;
+  left: 2.5rem;
+  display: grid;
+  grid-template-columns: repeat(5, 6px);
+  grid-template-rows: repeat(4, 6px);
+  gap: 8px;
+  opacity: 0.12;
+}
+.brandDecor span {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  display: block;
 }
 
-.floatingSelect option {
-  background-color: #fff;
-  color: var(--text-primary);
+/* ── Responsive: mobile ──────────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .container::before { display: none; }
+  .brandPanel { display: none; }
+  .card {
+    margin: auto;
+    max-width: 100%;
+    padding: 2rem 1.5rem;
+  }
+}
+
+/* ── Animations ──────────────────────────────────────────────────────────── */
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }

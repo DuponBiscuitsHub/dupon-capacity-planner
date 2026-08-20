@@ -1,711 +1,912 @@
-/* Decoupled Translation Dictionary (i18n) */
+/* translations.ts — DCP Raw Material Planner i18n
+ * ES, CA, EN. Claves mínimas del scope actual.
+ * Añadir claves aquí antes de usarlas en componentes.
+ */
 
-export type LanguageType = 'es' | 'en' | 'fr' | 'de' | 'be' | 'ca';
+export type LanguageType = "es" | "ca" | "en";
 
 export interface TranslationDictionary {
-  [key: string]: {
-    [key in LanguageType]: string;
-  };
+  [key: string]: Record<LanguageType, string>;
 }
 
 export const translations: TranslationDictionary = {
-  // Sidebar Navigation
+  // ── Locale (BCP-47) — used by toLocaleString() calls ───────────────────────
+  _locale: {
+    es: "es-ES",
+    ca: "ca-ES",
+    en: "en-GB",
+  },
+
+  // ── Line type ────────────────────────────────────────────────────────────
+  lineTypeRotary: {
+    es: "Rotativa",
+    ca: "Rotativa",
+    en: "Rotary",
+  },
+  lineTypeLinear: {
+    es: "Lineal",
+    ca: "Lineal",
+    en: "Linear",
+  },
+  configColType: {
+    es: "Tipo",
+    ca: "Tipus",
+    en: "Type",
+  },
+
+  // ── Nav ─────────────────────────────────────────────────────────────────────
   navDashboard: {
-    es: "Dashboard",
-    en: "Dashboard",
-    fr: "Tableau de Bord",
-    de: "Dashboard",
-    be: "Dashboard",
-    ca: "Dashboard",
+    es: "Inicio",
+    ca: "Inici",
+    en: "Home",
   },
   navSilos: {
-    es: "RM & Silos",
-    en: "RM & Silos",
-    fr: "MP & Silos",
-    de: "RM & Silos",
-    be: "RM & Silo's",
-    ca: "MP & Sitges", // Silo -> Sitge in Catalan
+    es: "Silos & Entregas",
+    ca: "Sitges & Lliuraments",
+    en: "Silos & Deliveries",
   },
-  navAluminum: {
-    es: "Aluminios",
-    en: "Aluminum",
-    fr: "Aluminium",
-    de: "Aluminium",
-    be: "Aluminium",
-    ca: "Aluminis",
-  },
-  navCommercial: {
-    es: "Capacidad CTP",
-    en: "CTP Capacity",
-    fr: "Capacité CTP",
-    de: "CTP-Kapazität",
-    be: "CTP-Capaciteit",
-    ca: "Capacitat CTP",
-  },
-  navSimulation: {
-    es: "Simulador",
-    en: "Simulator",
-    fr: "Simulateur",
-    de: "Simulator",
-    be: "Simulator",
-    ca: "Simulador",
+  navConfig: {
+    es: "Configuración",
+    ca: "Configuració",
+    en: "Configuration",
   },
   navLogout: {
     es: "Cerrar Sesión",
-    en: "Sign Out",
-    fr: "Déconnexion",
-    de: "Abmelden",
-    be: "Afmelden",
     ca: "Tancar Sessió",
+    en: "Sign Out",
   },
 
-  // Header Titles
+  // ── Titles ───────────────────────────────────────────────────────────────────
   titleDashboard: {
-    es: "Dashboard General de Operaciones",
-    en: "General Operations Dashboard",
-    fr: "Tableau de Bord des Opérations Générales",
-    de: "Allgemeines Betriebs-Dashboard",
-    be: "Algemeen Operationeel Dashboard",
-    ca: "Dashboard General d'Operacions",
+    es: "Vista General — Primera Materia",
+    ca: "Vista General — Primera Matèria",
+    en: "Overview — Raw Materials",
   },
   titleSilos: {
-    es: "Planificador de Silos y Materias Primas Pesadas",
-    en: "Silos & Heavy Raw Materials Planner",
-    fr: "Planificateur de Silos et Matières Premières Lourdes",
-    de: "Silos & Schwere Rohstoffplaner",
-    be: "Silo's & Zware Grondstoffen Planner",
-    ca: "Planificador de Sitges i Matèries Primeres Pesades", // Silo -> Sitge in Catalan
+    es: "Silos y Planificación de Entregas",
+    ca: "Sitges i Planificació de Lliuraments",
+    en: "Silos & Delivery Planning",
   },
-  titleAluminum: {
-    es: "Planificador de Troquelado y Enrolladoras de Aluminio",
-    en: "Aluminum Die & Winding Planner",
-    fr: "Planificateur de Découpe et Bobinage d'Aluminium",
-    de: "Aluminium-Stanz- und Wickelplaner",
-    be: "Aluminium Stans- en Wikkelplanner",
-    ca: "Planificador de Troquelat i Enrotlladores d'Alumini",
-  },
-  titleCommercial: {
-    es: "Consola Comercial Capable-to-Promise (CTP)",
-    en: "Capable-to-Promise (CTP) Commercial Console",
-    fr: "Console Commerciale Capable-to-Promise (CTP)",
-    de: "Capable-to-Promise (CTP) Vertriebskonsole",
-    be: "Capable-to-Promise (CTP) Commerciële Console",
-    ca: "Consola Comercial Capable-to-Promise (CTP)",
-  },
-  titleSimulation: {
-    es: "Entorno Sandbox - Simulación de Escenarios Futuros",
-    en: "Sandbox Environment - Future Scenario Simulation",
-    fr: "Environnement Sandbox - Simulation de Scénarios Futurs",
-    de: "Sandbox-Umgebung - Zukünftige Szenariosimulation",
-    be: "Sandbox-Omgeving - Toekomstige Scenariosimulatie",
-    ca: "Entorn Sandbox - Simulació d'Escenaris Futurs",
+  titleConfig: {
+    es: "Configuración del Sistema",
+    ca: "Configuració del Sistema",
+    en: "System Configuration",
   },
 
-  // Odoo Connection Status
-  odooConnected: {
-    es: "Odoo: Conectado (Lectura)",
-    en: "Odoo: Connected (Read-Only)",
-    fr: "Odoo: Connecté (Lecture)",
-    de: "Odoo: Verbunden (Schreibgeschützt)",
-    be: "Odoo: Verbonden (Alleen Lezen)",
-    ca: "Odoo: Connectat (Lectura)",
+  // ── Silos page ───────────────────────────────────────────────────────────────
+  silosTitle: {
+    es: "Estado de Silos",
+    ca: "Estat de Sitges",
+    en: "Silo Status",
+  },
+  silosFill: {
+    es: "Nivel",
+    ca: "Nivell",
+    en: "Fill",
+  },
+  silosCapacity: {
+    es: "Capacidad",
+    ca: "Capacitat",
+    en: "Capacity",
+  },
+  silosStock: {
+    es: "Stock actual",
+    ca: "Estoc actual",
+    en: "Current stock",
+  },
+  silosStatus: {
+    es: "Estado",
+    ca: "Estat",
+    en: "Status",
+  },
+  silosStatusOk: {
+    es: "OK",
+    ca: "OK",
+    en: "OK",
+  },
+  silosStatusWarning: {
+    es: "Atención",
+    ca: "Atenció",
+    en: "Warning",
+  },
+  silosStatusCritical: {
+    es: "Crítico",
+    ca: "Crític",
+    en: "Critical",
+  },
+  silosStatusUnknown: {
+    es: "Sin datos",
+    ca: "Sense dades",
+    en: "No data",
   },
 
-  // General Dashboard Metrics
-  oeeGlobal: {
-    es: "OEE Global Planta",
-    en: "Global Plant OEE",
-    fr: "OEE Global de l'Usine",
-    de: "Globales Anlagen-OEE",
-    be: "Globale Fabriek OEE",
-    ca: "OEE Global Planta",
+  // ── Deliveries ───────────────────────────────────────────────────────────────
+  deliveriesTitle: {
+    es: "Sugerencias de Entrega",
+    ca: "Suggeriments de Lliurament",
+    en: "Delivery Suggestions",
   },
-  oeeStatus: {
-    es: "Óptimo",
-    en: "Optimal",
-    fr: "Optimal",
-    de: "Optimal",
-    be: "Optimaal",
-    ca: "Òptim",
+  deliveriesRecalculate: {
+    es: "Recalcular Entregas",
+    ca: "Recalcular Lliuraments",
+    en: "Recalculate Deliveries",
   },
-  oeeSubtext: {
-    es: "Eficiencia agregada de las 3 líneas",
-    en: "Aggregate efficiency of all 3 lines",
-    fr: "Efficacité globale de l'ensemble des 3 lignes",
-    de: "Aggregierte Effizienz aller 3 Linien",
-    be: "Geaggregeerde efficiëntie van de 3 lijnen",
-    ca: "Eficiència agregada de les 3 línies",
+  deliveriesRecalculating: {
+    es: "Calculando...",
+    ca: "Calculant...",
+    en: "Calculating...",
   },
-  siloCritical: {
-    es: "Silo Crítico (Harina)",
-    en: "Critical Silo (Flour)",
-    fr: "Silo Critique (Farine)",
-    de: "Kritisches Silo (Mehl)",
-    be: "Kritieke Silo (Bloem)",
-    ca: "Sitge Crític (Farina)", // Silo -> Sitge in Catalan
+  deliveriesColDate: {
+    es: "Fecha Sugerida",
+    ca: "Data Suggerida",
+    en: "Suggested Date",
   },
-  siloSubtext: {
-    es: "Silo #1 cruza línea roja mañana 04:32h",
-    en: "Silo #1 crosses safety line tomorrow 04:32h",
-    fr: "Silo #1 franchit la ligne de sécurité demain 04h32",
-    de: "Silo #1 kreuzt Sicherheitslinie morgen 04:32 Uhr",
-    be: "Silo #1 overschrijdt veiligheidsgrens morgen 04:32u",
-    ca: "Sitge #1 creua línia de seguretat demà 04:32h", // Silo -> Sitge in Catalan
+  deliveriesColQty: {
+    es: "Cantidad (kg)",
+    ca: "Quantitat (kg)",
+    en: "Quantity (kg)",
   },
-  aluminumLoad: {
-    es: "Carga Aluminio",
-    en: "Aluminum Load",
-    fr: "Charge Aluminium",
-    de: "Aluminium-Auslastung",
-    be: "Aluminium Belasting",
-    ca: "Càrrega Alumini",
+  deliveriesColStatus: {
+    es: "Estado",
+    ca: "Estat",
+    en: "Status",
   },
-  aluminumStatus: {
-    es: "Estable",
-    en: "Stable",
-    fr: "Stable",
-    de: "Stabil",
-    be: "Stabiel",
-    ca: "Estable",
+  deliveriesColPO: {
+    es: "PO Odoo",
+    ca: "PO Odoo",
+    en: "Odoo PO",
   },
-  aluminumSubtext: {
-    es: "Troqueles y enrolladoras ocupados",
-    en: "Die & winding machines busy",
-    fr: "Machines de découpe et de bobinage occupées",
-    de: "Auslastung Stanz- & Wickelmaschinen",
-    be: "Stans- & wikkelmachines bezet",
-    ca: "Troquels i enrotlladores ocupades",
+  deliveriesStatusDraft: {
+    es: "⚪ Borrador",
+    ca: "⚪ Esborrany",
+    en: "⚪ Draft",
   },
-  ordersInRisk: {
-    es: "Pedidos en Riesgo",
-    en: "Orders at Risk",
-    fr: "Commandes en Risque",
-    de: "Gefährdete Aufträge",
-    be: "Risico-orders",
-    ca: "Comandes en Risc",
+  deliveriesStatusPoPending: {
+    es: "🟡 PO Pendiente",
+    ca: "🟡 PO Pendent",
+    en: "🟡 PO Pending",
   },
-  ordersInRiskSubtext: {
-    es: "Exceden capacidad de entrega comprometida",
-    en: "Exceed committed delivery capacity",
-    fr: "Dépassement de la capacité de livraison promise",
-    de: "Überschreitung der zugesagten Lieferfähigkeit",
-    be: "Overschrijden de beloofde leveringscapaciteit",
-    ca: "Excedeixen capacitat de lliurament compromesa",
+  deliveriesStatusConfirmed: {
+    es: "✅ Confirmada",
+    ca: "✅ Confirmada",
+    en: "✅ Confirmed",
+  },
+  deliveriesStatusDelivered: {
+    es: "📦 Entregada",
+    ca: "📦 Lliurada",
+    en: "📦 Delivered",
+  },
+  deliveriesEmpty: {
+    es: "No hay sugerencias activas. Pulsa Recalcular para generarlas.",
+    ca: "No hi ha suggeriments actius. Prem Recalcular per generar-los.",
+    en: "No active suggestions. Press Recalculate to generate them.",
+  },
+  deliveriesConfirmedLocked: {
+    es: "🔒 Bloqueada — PO confirmada en Odoo",
+    ca: "🔒 Bloquejada — PO confirmada a Odoo",
+    en: "🔒 Locked — PO confirmed in Odoo",
   },
 
-  // Line Monitoring
-  lineMonitorTitle: {
-    es: "Monitoreo en Tiempo Real - Líneas de Ensamble A17",
-    en: "Real-Time Monitoring - Assembly Lines A17",
-    fr: "Surveillance en Temps Réel - Lignes d'Assemblage A17",
-    de: "Echtzeit-Überwachung - Montagelinien A17",
-    be: "Real-time Monitoring - Assemblagelijnen A17",
-    ca: "Monitoreig en Temps Real - Línies d'Ensamblatge A17",
+  // ── Config ───────────────────────────────────────────────────────────────────
+  configLines: {
+    es: "Capacidad por Línea",
+    ca: "Capacitat per Línia",
+    en: "Line Capacity",
   },
-  lineActive: {
-    es: "Línea",
-    en: "Line",
-    fr: "Ligne",
-    de: "Linie",
-    be: "Lijn",
-    ca: "Línia",
+  configSilos: {
+    es: "Configuración de Silos",
+    ca: "Configuració de Sitges",
+    en: "Silo Configuration",
   },
-  lineActiveAssembly: {
-    es: "Galleta Ensamblada A17",
-    en: "Assembled Biscuit A17",
-    fr: "Biscuit Assemblé A17",
-    de: "Zusammengesetzter Keks A17",
-    be: "Geassembleerd Koekje A17",
-    ca: "Galeta Ensamblada A17",
+  configUsers: {
+    es: "Usuarios",
+    ca: "Usuaris",
+    en: "Users",
   },
-  lineDetails: {
-    es: "Orden Activa",
-    en: "Active Order",
-    fr: "Ordre Actif",
-    de: "Aktiver Auftrag",
-    be: "Actieve Order",
-    ca: "Ordre Activa",
+  configSave: {
+    es: "Guardar",
+    ca: "Desar",
+    en: "Save",
   },
-  lineFormat: {
-    es: "Formato",
-    en: "Format",
-    fr: "Format",
-    de: "Format",
-    be: "Formaat",
-    ca: "Format",
+  configCancel: {
+    es: "Cancelar",
+    ca: "Cancel·lar",
+    en: "Cancel",
   },
-  lineRecipe: {
-    es: "Receta",
-    en: "Recipe",
-    fr: "Recette",
-    de: "Rezept",
-    be: "Recept",
-    ca: "Recept",
+  configEdit: {
+    es: "Editar",
+    ca: "Editar",
+    en: "Edit",
   },
-  lineSpeedPack: {
-    es: "Velocidad de Empaque",
-    en: "Packing Speed",
-    fr: "Vitesse d'Emballage",
-    de: "Verpackungsgeschwindigkeit",
-    be: "Verpakkingssnelheid",
-    ca: "Velocitat d'Empaquetatge",
+  configLineActive: {
+    es: "Produciendo",
+    ca: "Produint",
+    en: "Active",
   },
-  lineInactive: {
-    es: "Inactiva (Parada de Mantenimiento)",
-    en: "Inactive (Maintenance Shutdown)",
-    fr: "Inactive (Arrêt pour Maintenance)",
-    de: "Inaktiv (Wartungsstillstand)",
-    be: "Inactief (Onderhoudsstoring)",
-    ca: "Inactiva (Parada de Manteniment)",
+  configLineIdle: {
+    es: "Parada",
+    ca: "Aturada",
+    en: "Idle",
   },
-  lineEstimateRestart: {
-    es: "Reinicio estimado",
-    en: "Estimated restart",
-    fr: "Redémarrage estimé",
-    de: "Geschätzter Neustart",
-    be: "Verwachte herstart",
-    ca: "Reinici estimat",
+  configKgH: {
+    es: "kg/h teórico",
+    ca: "kg/h teòric",
+    en: "Theoretical kg/h",
+  },
+  configSafetyStock: {
+    es: "Stock de seguridad (kg)",
+    ca: "Estoc de seguretat (kg)",
+    en: "Safety stock (kg)",
   },
 
-  // APS Predictive Alerts
-  apsAlertsTitle: {
-    es: "Alertas Predictivas del APS",
-    en: "APS Predictive Alerts",
-    fr: "Alertes Prédictives de l'APS",
-    de: "APS Prädiktive Warnungen",
-    be: "APS Voorspellende Waarschuwingen",
-    ca: "Alertes Predictives de l'APS",
+  // ── Users ────────────────────────────────────────────────────────────────────
+  usersCreate: {
+    es: "Crear Usuario",
+    ca: "Crear Usuari",
+    en: "Create User",
   },
-  siloAlertTitle: {
-    es: "Silo de Harina #1 en Decaimiento",
-    en: "Silo Flour #1 in Decay",
-    fr: "Silo de Farine #1 en Déclin",
-    de: "Mehlsilo #1 im Verfall",
-    be: "Bloemsilo #1 in Verval",
-    ca: "Sitge de Farina #1 en Decaïment", // Silo -> Sitge in Catalan
+  usersUsername: {
+    es: "Usuario",
+    ca: "Usuari",
+    en: "Username",
   },
-  navUsers: {
-    es: "Gestión Usuarios",
-    en: "User Management",
-    fr: "Gestion Utilisateurs",
-    de: "Benutzerverwaltung",
-    be: "Gebruikersbeheer",
-    ca: "Gestió Usuaris",
+  usersPassword: {
+    es: "Contraseña",
+    ca: "Contrasenya",
+    en: "Password",
   },
-  companyLabel: {
-    es: "Compañía",
-    en: "Company",
-    fr: "Entreprise",
-    de: "Unternehmen",
-    be: "Bedrijf",
-    ca: "Companyia",
+  usersRole: {
+    es: "Rol",
+    ca: "Rol",
+    en: "Role",
   },
-  themeLabel: {
-    es: "Tema",
-    en: "Theme",
-    fr: "Thème",
-    de: "Thema",
-    be: "Thema",
-    ca: "Tema",
+  usersRoleIt: {
+    es: "IT (Admin)",
+    ca: "IT (Admin)",
+    en: "IT (Admin)",
   },
-  themeDark: {
-    es: "Modo Oscuro 🌙",
-    en: "Dark Mode 🌙",
-    fr: "Mode Sombre 🌙",
-    de: "Dunkelmodus 🌙",
-    be: "Donkere Modus 🌙",
-    ca: "Modus Fosc 🌙",
+  usersRoleUser: {
+    es: "Planificador",
+    ca: "Planificador",
+    en: "Planner",
   },
-  themeLight: {
-    es: "Modo Claro ☀️",
-    en: "Light Mode ☀️",
-    fr: "Mode Clair ☀️",
-    de: "Hellmodus ☀️",
-    be: "Lichte Modus ☀️",
-    ca: "Modus Clar ☀️",
+  usersDeactivate: {
+    es: "Desactivar",
+    ca: "Desactivar",
+    en: "Deactivate",
   },
-  aluminumRestrictedTitle: {
-    es: "Acceso Restringido - Módulo Exclusivo",
-    en: "Restricted Access - Exclusive Module",
-    fr: "Accès Restreint - Module Exclusif",
-    de: "Eingeschränkter Zugriff - Exklusives Modul",
-    be: "Beperkte Toegang - Exclusieve Module",
-    ca: "Accés Restringit - Mòdul Exclusiu",
+  usersActive: {
+    es: "Activo",
+    ca: "Actiu",
+    en: "Active",
   },
-  aluminumRestrictedDesc: {
-    es: "El taller de troquelado y enrollado de aluminio es de propiedad y operación exclusiva de la planta Dupon Ibèrica. Selecciona Dupon Ibèrica en el selector superior para habilitar este módulo.",
-    en: "The aluminum die and winding workshop is owned and operated exclusively by the Dupon Ibèrica plant. Select Dupon Ibèrica in the company selector above to enable this module.",
-    fr: "L'atelier de découpe et de bobinage d'aluminium appartient et est exploité exclusivement par l'usine Dupon Ibèrica. Sélectionnez Dupon Ibèrica dans le sélecteur ci-dessus pour activer ce module.",
-    de: "Die Aluminium-Stanz- und Wickelwerkstatt wird exklusiv vom Werk Dupon Ibèrica betrieben. Wählen Sie oben Dupon Ibèrica aus, um dieses Modul zu aktivieren.",
-    be: "De aluminium stans- en wikkelwerkplaats is eigendom van en wordt exclusief geëxploiteerd door de fabriek van Dupon Ibèrica. Selecteer hierboven Dupon Ibèrica om deze module in te schakelen.",
-    ca: "El taller de troquelat i enrotllat d'alumini és de propietat i operació exclusiva de la planta Dupon Ibèrica. Selecciona Dupon Ibèrica en el selector superior per habilitar aquest mòdul.",
-  },
-  titleUsers: {
-    es: "Panel de Gestión de Usuarios y Permisos RBAC",
-    en: "User Management & RBAC Permissions Panel",
-    fr: "Panneau de Gestion des Utilisateurs et Rôles RBAC",
-    de: "Benutzerverwaltung & RBAC-Berechtigungspanel",
-    be: "Gebruikersbeheer & RBAC-Machtigingenpaneel",
-    ca: "Panell de Gestió d'Usuaris i Permisos RBAC",
+  usersInactive: {
+    es: "Inactivo",
+    ca: "Inactiu",
+    en: "Inactive",
   },
 
-  // Capable-To-Promise (CTP) Commercial Console
-  commSelectProduct: {
-    es: "Seleccionar Producto",
-    en: "Select Product",
-    fr: "Sélectionner le Produit",
-    de: "Produkt Auswählen",
-    be: "Product Selecteren",
-    ca: "Seleccionar Producte",
+  // ── Sync ─────────────────────────────────────────────────────────────────────
+  syncRun: {
+    es: "Sincronizar con Odoo",
+    ca: "Sincronitzar amb Odoo",
+    en: "Sync with Odoo",
   },
-  commQuantity: {
-    es: "Cantidad (paquetes)",
-    en: "Quantity (packs)",
-    fr: "Quantité (paquets)",
-    de: "Menge (Packungen)",
-    be: "Aantal (pakken)",
-    ca: "Quantitat (paquets)",
+  syncRunning: {
+    es: "Sincronizando...",
+    ca: "Sincronitzant...",
+    en: "Syncing...",
   },
-  commDeliveryDate: {
-    es: "Fecha de Entrega Deseada",
-    en: "Desired Delivery Date",
-    fr: "Date de Livraison Souhaitée",
-    de: "Gewünschtes Lieferdatum",
-    be: "Gewenste Leveringsdatum",
-    ca: "Data de Lliurament Desitjada",
+  syncLastSync: {
+    es: "Último sync",
+    ca: "Últim sync",
+    en: "Last sync",
   },
-  commBtnCheck: {
-    es: "Consultar Capacidad CTP",
-    en: "Check CTP Capacity",
-    fr: "Consulter la Capacité CTP",
-    de: "CTP-Kapazität Prüfen",
-    be: "Controleer CTP-Capaciteit",
-    ca: "Consultar Capacitat CTP",
+  syncOk: {
+    es: "Conectado",
+    ca: "Connectat",
+    en: "Connected",
   },
-  commFormHeader: {
-    es: "Consulta Capable-To-Promise (CTP)",
-    en: "Capable-To-Promise (CTP) Query",
-    fr: "Requête Capable-To-Promise (CTP)",
-    de: "Capable-To-Promise (CTP) Abfrage",
-    be: "Capable-To-Promise (CTP) Aanvraag",
-    ca: "Consulta Capable-To-Promise (CTP)",
-  },
-  commResultTitle: {
-    es: "Diagnóstico de Capacidad CTP",
-    en: "CTP Capacity Diagnosis",
-    fr: "Diagnostic de Capacité CTP",
-    de: "CTP-Kapazitätsdiagnose",
-    be: "CTP-Capaciteitsdiagnose",
-    ca: "Diagnòstic de Capacitat CTP",
-  },
-  commStatusFeasible: {
-    es: "FACTIBLE",
-    en: "FEASIBLE",
-    fr: "FAISABLE",
-    de: "MACHBAR",
-    be: "HAALBAAR",
-    ca: "FACTIBLE",
-  },
-  commStatusRisk: {
-    es: "CON RIESGO",
-    en: "AT RISK",
-    fr: "À RISQUE",
-    de: "RISKANT",
-    be: "RISICOHOUDEND",
-    ca: "AMB RISC",
-  },
-  commStatusUnfeasible: {
-    es: "NO FACTIBLE",
-    en: "UNFEASIBLE",
-    fr: "NON FAISABLE",
-    de: "NICHT MACHBAR",
-    be: "NIET HAALBAAR",
-    ca: "NO FACTIBLE",
-  },
-  commDiagnosticOk: {
-    es: "Capacidad garantizada. Hay stock de materias primas y slots libres de troquelado y ensamble.",
-    en: "Capacity guaranteed. Raw materials stock and die/assembly slots are available.",
-    fr: "Capacité garantie. Le stock de matières premières et les créneaux de découpe/assemblage sont disponibles.",
-    de: "Kapazität garantiert. Rohstoffbestand sowie Stanz- und Montagekapazitäten sind vorhanden.",
-    be: "Capaciteit gegarandeerd. Grondstoffenvoorraad en stans-/assemblageslots zijn beschikbaar.",
-    ca: "Capacitat garantida. Hi ha estoc de matèries primeres i slots lliures de troquelat i ensamblat.",
-  },
-  commDiagnosticRisk: {
-    es: "Riesgo detectado. Formato de aluminio en saturación alta para la fecha seleccionada. Posible retraso de 24-48h.",
-    en: "Risk detected. Aluminum format in high saturation for selected date. Possible 24-48h delay.",
-    fr: "Risque détecté. Format d'aluminium en saturation élevée pour la date sélectionnée. Retard possible de 24-48h.",
-    de: "Risiko erkannt. Aluminiumformat in hoher Sättigung für das ausgewählte Datum. Mögliche Verzögerung von 24-48 Stunden.",
-    be: "Risico gedetecteerd. Aluminiumformaat in hoge saturatie voor geselecteerde datum. Mogelijke vertraging van 24-48u.",
-    ca: "Risc detectat. Format d'alumini en saturació alta per a la data seleccionada. Possible retard de 24-48h.",
-  },
-  commDiagnosticFail: {
-    es: "No factible. Rotura técnica de Silo de Harina #1 proyectada. Bobinas de aluminio A13 insuficientes.",
-    en: "Unfeasible. Projected technical outage of Flour Silo #1. Insufficient A13 aluminum coils.",
-    fr: "Non faisable. Panne technique projetée du Silo de Farine #1. Bobines d'aluminium A13 insuffisantes.",
-    de: "Nicht machbar. Projizierter technischer Ausfall von Mehlsilo #1. Unzureichende Aluminiumspulen A13.",
-    be: "Niet haalbaar. Geprojecteerde technische storing van Bloemsilo #1. Onvoldoende A13 aluminiumrollen.",
-    ca: "No factible. Rotura tècnica de Sitge de Farina #1 projectada. Bobines d'alumini A13 insuficients.", // Silo -> Sitge in Catalan
-  },
-  commCheckRaw: {
-    es: "Materias Primas Críticas",
-    en: "Critical Raw Materials",
-    fr: "Matières Premières Critiques",
-    de: "Kritische Rohstoffe",
-    be: "Kritieke Grondstoffen",
-    ca: "Matèries Primeres Crítiques",
-  },
-  commCheckAlu: {
-    es: "Capacidad Transformación Aluminio",
-    en: "Aluminum Processing Capacity",
-    fr: "Capacité de Transformation d'Aluminium",
-    de: "Aluminiumverarbeitungskapazität",
-    be: "Aluminiumverwerkingscapaciteit",
-    ca: "Capacitat Transformació Alumini",
-  },
-  commCheckLine: {
-    es: "Slot de Línea de Ensamble",
-    en: "Assembly Line Slot",
-    fr: "Créneau de Ligne d'Assemblage",
-    de: "Montagelinienplatz",
-    be: "Assemblagelijnslot",
-    ca: "Slot de Línia d'Ensamblatge",
-  },
-  commRiskListTitle: {
-    es: "Analizador de Riesgo de Pedidos Confirmados (Ventas)",
-    en: "Confirmed Sales Orders Risk Analyzer",
-    fr: "Analyseur de Risque des Commandes de Vente Confirmées",
-    de: "Risikoanalysator für Bestätigte Verkaufsaufträge",
-    be: "Risico-analysator voor Bevestigde Verkooporders",
-    ca: "Analitzador de Risc de Comandes de Venda Confirmades",
-  },
-  commColClient: {
-    es: "Cliente",
-    en: "Customer",
-    fr: "Client",
-    de: "Kunde",
-    be: "Klant",
-    ca: "Client",
-  },
-  commColOrder: {
-    es: "Pedido",
-    en: "Order",
-    fr: "Commande",
-    de: "Auftrag",
-    be: "Bestelling",
-    ca: "Comanda",
-  },
-  commColQty: {
-    es: "Cantidad",
-    en: "Quantity",
-    fr: "Quantité",
-    de: "Menge",
-    be: "Aantal",
-    ca: "Quantitat",
-  },
-  commColRisk: {
-    es: "Riesgo de Demora",
-    en: "Delay Risk",
-    fr: "Risque de Retard",
-    de: "Verzögerungsrisiko",
-    be: "Vertragingsrisico",
-    ca: "Risc de Retard",
-  },
-  commStatusOk: {
-    es: "Sin Riesgo",
-    en: "No Risk",
-    fr: "Sans Risque",
-    de: "Kein Risiko",
-    be: "Geen Risico",
-    ca: "Sense Risc",
-  },
-  commStatusWarn: {
-    es: "Riesgo Medio",
-    en: "Medium Risk",
-    fr: "Risque Moyen",
-    de: "Mittleres Risiko",
-    be: "Gemiddeld Risico",
-    ca: "Risc Mitjà",
-  },
-  commStatusCrit: {
-    es: "Riesgo Crítico",
-    en: "Critical Risk",
-    fr: "Risque Critique",
-    de: "Kritisches Risiko",
-    be: "Kritiek Risico",
-    ca: "Risc Crític",
+  syncError: {
+    es: "Error de sync",
+    ca: "Error de sync",
+    en: "Sync error",
   },
 
-  // Sandbox Scenario Planner
-  simParamsTitle: {
-    es: "Parámetros del Escenario Sandbox",
-    en: "Sandbox Scenario Parameters",
-    fr: "Paramètres du Scénario Sandbox",
-    de: "Sandbox-Szenarioparameter",
-    be: "Sandbox Scenarioparameters",
-    ca: "Paràmetres de l'Escenari Sandbox",
-  },
-  simCompareTitle: {
-    es: "Comparativa de Impacto: Plan Activo vs Plan Simulado",
-    en: "Impact Comparison: Active Plan vs Simulated Plan",
-    fr: "Comparaison d'Impact: Plan Actif vs Plan Simulé",
-    de: "Auswirkungsvergleich: Aktiver Plan vs. Simulierter Plan",
-    be: "Impactvergelijking: Actief Plan vs. Gesimuleerd Plan",
-    ca: "Comparativa d'Impacte: Plan Actiu vs Plan Simulat",
-  },
-  simActivePlan: {
-    es: "PLAN ACTIVO (SSoT Odoo)",
-    en: "ACTIVE PLAN (SSoT Odoo)",
-    fr: "PLAN ACTIF (SSoT Odoo)",
-    de: "AKTIVER PLAN (SSoT Odoo)",
-    be: "ACTIEF PLAN (SSoT Odoo)",
-    ca: "PLAN ACTIU (SSoT Odoo)",
-  },
-  simSimPlan: {
-    es: "PLAN SIMULADO (Sandbox)",
-    en: "SIMULATED PLAN (Sandbox)",
-    fr: "PLAN SIMULÉ (Sandbox)",
-    de: "GESIMULIERTER PLAN (Sandbox)",
-    be: "GESIMULEERD PLAN (Sandbox)",
-    ca: "PLAN SIMULAT (Sandbox)",
-  },
-  simSliderOee: {
-    es: "Pérdida de Eficiencia de Enrolladora #12",
-    en: "Winding Machine #12 Efficiency Loss",
-    fr: "Perte d'Efficacité de la Bobineuse #12",
-    de: "Wickelmaschine #12 Effizienzverlust",
-    be: "Wikkelmachine #12 Efficiëntieverlies",
-    ca: "Pèrdua d'Eficiència d'Enrotlladora #12",
-  },
-  simSliderDelay: {
-    es: "Retraso de Proveedor Bobinas A13 (Días)",
-    en: "A13 Coil Supplier Delay (Days)",
-    fr: "Retard du Fournisseur de Bobines A13 (Jours)",
-    de: "Verzögerung Lieferant A13-Spulen (Tage)",
-    be: "Vertraging Leverancier A13-Rollen (Dagen)",
-    ca: "Retard de Proveïdor Bobines A13 (Dies)",
-  },
-  simSliderEmergency: {
-    es: "Pedidos de Emergencia Adicionales",
-    en: "Additional Emergency Orders",
-    fr: "Commandes d'Urgence Supplémentaires",
-    de: "Zusätzliche Eilaufträge",
-    be: "Extra Spoedbestellingen",
-    ca: "Comandes d'Emergència Addicionals",
-  },
-  simMetricOtd: {
-    es: "Entregas a Tiempo (OTD)",
-    en: "On-Time Delivery (OTD)",
-    fr: "Livraison à Temps (OTD)",
-    de: "Pünktliche Lieferung (OTD)",
-    be: "Tijdige Levering (OTD)",
-    ca: "Lliuraments a Temps (OTD)",
-  },
-  simMetricOee: {
-    es: "OEE Promedio de Planta",
-    en: "Average Plant OEE",
-    fr: "OEE Moyen de l'Usine",
-    de: "Durchschnittliches Anlagen-OEE",
-    be: "Gemiddelde Fabriek OEE",
-    ca: "OEE Mitjà de Planta",
-  },
-  simMetricDowntime: {
-    es: "Horas de Parada de Línea",
-    en: "Line Downtime Hours",
-    fr: "Heures d'Arrêt de Ligne",
-    de: "Linien-Stillstandszeiten (Std)",
-    be: "Lijn Stilstanduren",
-    ca: "Hores de Parada de Línia",
-  },
-  simMetricCost: {
-    es: "Costes Logísticos Extra",
-    en: "Extra Logistical Costs",
-    fr: "Coûts Logistiques Supplémentaires",
-    de: "Zusätzliche Logistikkosten",
-    be: "Extra Logistieke Kosten",
-    ca: "Costos Logístics Extra",
-  },
-  simDescOee: {
-    es: "Simula el impacto de un fallo mecánico en un devanador clave de aluminio.",
-    en: "Simulates the impact of a mechanical failure on a key aluminum spooler.",
-    fr: "Simule l'impact d'une défaillance mécanique sur un bobineur d'aluminium clé.",
-    de: "Simuliert die Auswirkungen eines mechanischen Ausfalls auf eine wichtige Aluminiumspulmaschine.",
-    be: "Simuleert de impact van een mechanische storing op een belangrijke aluminium wikkelmachine.",
-    ca: "Simula l'impacte d'una fallada mecànica en un devanador clau d'alumini.",
-  },
-  simDescDelay: {
-    es: "Desplaza la fecha de llegada de camiones con materias primas o bobinas de metal primarias.",
-    en: "Shifts the arrival date of trucks with raw materials or primary metal coils.",
-    fr: "Décalage de la date d'arrivée des camions de matières premières ou de bobines métalliques primaires.",
-    de: "Verschiebt das Ankunftsdatum von Lkw mit Rohstoffen oder primären Metallspulen.",
-    be: "Verschuift de aankomstdatum van vrachtwagens met grondstoffen of primaire metalen rollen.",
-    ca: "Desplaça la data d'arribada de camions amb matèries primeres o bobines de metall primàries.",
-  },
-  simDescEmergency: {
-    es: "Inserta pedidos imprevistos de gran volumen que compiten por los mismos formatos.",
-    en: "Inserts unexpected high-volume orders competing for the same formats.",
-    fr: "Insère des commandes imprévues à volume élevé en concurrence pour les mêmes formats.",
-    de: "Fügt unerwartete Großaufträge hinzu, die um dieselben Formate konkurrieren.",
-    be: "Voegt onverwachte orders met groot volume toe die strijden om dezelfde formaten.",
-    ca: "Insereix comandes imprevistes de gran volum que competeixen pels mateixos formats.",
-  },
-
-  // Login Screen
+  // ── Login ────────────────────────────────────────────────────────────────────
   loginTitle: {
-    es: "Acceso de Operaciones",
-    en: "Operations Access",
-    fr: "Accès aux Opérations",
-    de: "Betriebszugang",
-    be: "Operationele Toegang",
-    ca: "Accés d'Operacions",
+    es: "Acceso Operaciones",
+    ca: "Accés Operacions",
+    en: "Operations Login",
   },
   loginUserLabel: {
-    es: "Usuario o Email",
-    en: "Username or Email",
-    fr: "Nom d'utilisateur ou Email",
-    de: "Benutzername oder E-Mail",
-    be: "Gebruikersnaam of E-mail",
-    ca: "Usuari o Email",
+    es: "Usuario",
+    ca: "Usuari",
+    en: "Username",
   },
   loginPassLabel: {
     es: "Contraseña",
-    en: "Password",
-    fr: "Mot de passe",
-    de: "Kennwort",
-    be: "Wachtwoord",
     ca: "Contrasenya",
+    en: "Password",
   },
   loginBtn: {
-    es: "Ingresar a Consola",
-    en: "Enter Console",
-    fr: "Entrer dans la Console",
-    de: "Konsole Betreten",
-    be: "Console Binnengaan",
-    ca: "Ingressar a Consola",
+    es: "Entrar",
+    ca: "Entrar",
+    en: "Sign In",
+  },
+  loginError: {
+    es: "Usuario o contraseña incorrectos.",
+    ca: "Usuari o contrasenya incorrectes.",
+    en: "Invalid username or password.",
   },
   loginFooter: {
-    es: "Dupon Capacity Planner v1.0.0 © 2026. Conectado de forma segura a Odoo ERP.",
-    en: "Dupon Capacity Planner v1.0.0 © 2026. Securely connected to Odoo ERP.",
-    fr: "Dupon Capacity Planner v1.0.0 © 2026. Connecté en toute sécurité à Odoo ERP.",
-    de: "Dupon Capacity Planner v1.0.0 © 2026. Sicher verbunden mit Odoo ERP.",
-    be: "Dupon Capacity Planner v1.0.0 © 2026. Veilig verbonden met Odoo ERP.",
-    ca: "Dupon Capacity Planner v1.0.0 © 2026. Connectat de forma segura a Odoo ERP.",
-  },
-  loginErrorEmpty: {
-    es: "Por favor, introduce tu usuario y contraseña.",
-    en: "Please enter your username and password.",
-    fr: "Veuillez saisir votre nom d'utilisateur et votre mot de passe.",
-    de: "Bitte geben Sie Ihren Benutzernamen und Ihr Passwort ein.",
-    be: "Voer uw gebruikersnaam en wachtwoord in.",
-    ca: "Si us plau, introdueix el teu usuari i contrasenya.", // Corrected catalan
+    es: "DCP Raw Material Planner © 2026 · Dupon Biscuits",
+    ca: "DCP Raw Material Planner © 2026 · Dupon Biscuits",
+    en: "DCP Raw Material Planner © 2026 · Dupon Biscuits",
   },
 
-  // User Registration
-  btnRegisterUser: {
-    es: "Registrar Usuari",
-    en: "Registrar Usuari",
-    fr: "Registrar Usuari",
-    de: "Registrar Usuari",
-    be: "Registrar Usuari",
-    ca: "Registrar Usuari", // Custom button translation requested globally
+  // ── Errors / Generic ─────────────────────────────────────────────────────────
+  errorLoading: {
+    es: "Error al cargar los datos.",
+    ca: "Error en carregar les dades.",
+    en: "Error loading data.",
+  },
+  loading: {
+    es: "Cargando...",
+    ca: "Carregant...",
+    en: "Loading...",
+  },
+  noData: {
+    es: "Sin datos",
+    ca: "Sense dades",
+    en: "No data",
+  },
+
+  // ── Dashboard gauge ───────────────────────────────────────────────────────────
+  dashNoDelivery: {
+    es: "Sin entrega planificada",
+    ca: "Sense lliurament planificat",
+    en: "No planned delivery",
+  },
+  dashToday: {
+    es: "Hoy",
+    ca: "Avui",
+    en: "Today",
+  },
+  dashTomorrow: {
+    es: "Mañana",
+    ca: "Demà",
+    en: "Tomorrow",
+  },
+  dashAlertCritical: {
+    es: "Stock crítico (< 20%)",
+    ca: "Estoc crític (< 20%)",
+    en: "Critical stock (< 20%)",
+  },
+  dashAlertLow: {
+    es: "Stock bajo (20–40%)",
+    ca: "Estoc baix (20–40%)",
+    en: "Low stock (20–40%)",
+  },
+  dashStatOk: {
+    es: "Silos OK",
+    ca: "Sitges OK",
+    en: "Silos OK",
+  },
+  dashStatLow: {
+    es: "Silos bajos",
+    ca: "Sitges baixos",
+    en: "Low silos",
+  },
+  dashStatCritical: {
+    es: "Silos críticos",
+    ca: "Sitges crítics",
+    en: "Critical silos",
+  },
+  dashStatDeliveries: {
+    es: "Entregas pendientes",
+    ca: "Lliuraments pendents",
+    en: "Pending deliveries",
+  },
+
+  // ── Chart projection ──────────────────────────────────────────────────────
+  chartTitle: {
+    es: "Proyección de Stock — 14 días",
+    ca: "Projecció d'Estoc — 14 dies",
+    en: "Stock Projection — 14 days",
+  },
+  chartStock: {
+    es: "Stock (t)",
+    ca: "Estoc (t)",
+    en: "Stock (t)",
+  },
+  chartCapacity: {
+    es: "Capacidad",
+    ca: "Capacitat",
+    en: "Capacity",
+  },
+  chartSafety: {
+    es: "Safety Stock",
+    ca: "Safety Stock",
+    en: "Safety Stock",
+  },
+  chartNoData: {
+    es: "Sin datos de proyección",
+    ca: "Sense dades de projecció",
+    en: "No projection data",
+  },
+
+  // ── Silos page ───────────────────────────────────────────────────────────────
+  silosDeliveryPlanning: {
+    es: "Planificación de Entregas",
+    ca: "Planificació de Lliuraments",
+    en: "Delivery Planning",
+  },
+  silosNextDays: {
+    es: "Próximos {n} días",
+    ca: "Propers {n} dies",
+    en: "Next {n} days",
+  },
+  silosFilterAll: {
+    es: "Todos",
+    ca: "Tots",
+    en: "All",
+  },
+  silosNoPO: {
+    es: "Sin PO",
+    ca: "Sense PO",
+    en: "No PO",
+  },
+  silosSyncing: {
+    es: "Sincronizando…",
+    ca: "Sincronitzant…",
+    en: "Syncing…",
+  },
+  silosRecalculating: {
+    es: "Recalculando…",
+    ca: "Recalculant…",
+    en: "Recalculating…",
+  },
+  silosSyncDone: {
+    es: "✓ Listo",
+    ca: "✓ Llest",
+    en: "✓ Done",
+  },
+  silosSyncError: {
+    es: "⚠ Error",
+    ca: "⚠ Error",
+    en: "⚠ Error",
+  },
+  silosSyncBtn: {
+    es: "🔄 Sync Odoo",
+    ca: "🔄 Sync Odoo",
+    en: "🔄 Sync Odoo",
+  },
+  silosSyncNever: {
+    es: "Sin sincronizar",
+    ca: "Sense sincronitzar",
+    en: "Not synced",
+  },
+  silosSyncJustNow: {
+    es: "< 1 min",
+    ca: "< 1 min",
+    en: "< 1 min",
+  },
+  syncOverlayTitle: {
+    es: "Sincronizando con Odoo",
+    ca: "Sincronitzant amb Odoo",
+    en: "Syncing with Odoo",
+  },
+  syncOverlayStepSync: {
+    es: "Importando stock y pedidos de compra…",
+    ca: "Important estoc i comandes de compra…",
+    en: "Importing stock and purchase orders…",
+  },
+  syncOverlayStepRecalc: {
+    es: "Calculando ventanas de entrega…",
+    ca: "Calculant finestres d'entrega…",
+    en: "Calculating delivery windows…",
+  },
+  syncOverlayErrTitle: {
+    es: "No se puede conectar con Odoo",
+    ca: "No es pot connectar amb Odoo",
+    en: "Cannot connect to Odoo",
+  },
+  syncOverlayErrHint: {
+    es: "Comprueba la conexión o inténtalo de nuevo más tarde.",
+    ca: "Comprova la connexió o torna-ho a intentar més tard.",
+    en: "Check your connection or try again later.",
+  },
+  silosDeliveryStatusDraft: {
+    es: "Borrador",
+    ca: "Esborrany",
+    en: "Draft",
+  },
+  silosDeliveryStatusPending: {
+    es: "PO Pendiente",
+    ca: "PO Pendent",
+    en: "PO Pending",
+  },
+  silosDeliveryStatusConfirmed: {
+    es: "Confirmado",
+    ca: "Confirmat",
+    en: "Confirmed",
+  },
+  silosDeliveryStatusDelivered: {
+    es: "Entregado",
+    ca: "Lliurat",
+    en: "Delivered",
+  },
+
+  // ── Delivery Planning Table ─────────────────────────────────────────────────
+  planTitle: {
+    es: "Planificación de Entregas",
+    ca: "Planificació de Lliuraments",
+    en: "Delivery Planning",
+  },
+  planColMaterial: {
+    es: "Material",
+    ca: "Material",
+    en: "Material",
+  },
+  planColPO: {
+    es: "PO Odoo",
+    ca: "PO Odoo",
+    en: "PO Odoo",
+  },
+  planColQty: {
+    es: "Cantidad",
+    ca: "Quantitat",
+    en: "Quantity",
+  },
+  planColPODate: {
+    es: "Fecha PO",
+    ca: "Data PO",
+    en: "PO Date",
+  },
+  planColAppDate: {
+    es: "Fecha Sugerida",
+    ca: "Data Suggerida",
+    en: "Suggested Date",
+  },
+  planUseSuggested: {
+    es: "Usar propuesta",
+    ca: "Usar proposta",
+    en: "Use suggested",
+  },
+  planNoSuggested: {
+    es: "Sin fecha propuesta",
+    ca: "Sense data proposta",
+    en: "No suggested date",
+  },
+  planColState: {
+    es: "Estado",
+    ca: "Estat",
+    en: "State",
+  },
+  planColAction: {
+    es: "Acción",
+    ca: "Acció",
+    en: "Action",
+  },
+  planNoPO: {
+    es: "Sin PO",
+    ca: "Sense PO",
+    en: "No PO",
+  },
+  planStateDraft: {
+    es: "Borrador",
+    ca: "Esborrany",
+    en: "Draft",
+  },
+  planStateSent: {
+    es: "Enviada",
+    ca: "Enviada",
+    en: "Sent",
+  },
+  planStatePurchase: {
+    es: "Confirmada",
+    ca: "Confirmada",
+    en: "Confirmed",
+  },
+  planStateDone: {
+    es: "Recibida",
+    ca: "Rebuda",
+    en: "Received",
+  },
+  planBtnSendToOdoo: {
+    es: "Enviar a Odoo",
+    ca: "Enviar a Odoo",
+    en: "Send to Odoo",
+  },
+  planBtnEditDate: {
+    es: "Editar fecha",
+    ca: "Editar data",
+    en: "Edit date",
+  },
+  planWarningConfirmed: {
+    es: "Esta PO ya fue confirmada al proveedor. ¿Seguro que quieres cambiar la fecha de entrega?",
+    ca: "Aquesta PO ja ha estat confirmada al proveïdor. Segur que vols canviar la data de lliurament?",
+    en: "This PO has already been confirmed with the supplier. Are you sure you want to change the delivery date?",
+  },
+  planBlockedDone: {
+    es: "PO ya recibida — no se puede modificar",
+    ca: "PO ja rebuda — no es pot modificar",
+    en: "PO already received — cannot modify",
+  },
+  planConfirmSend: {
+    es: "Confirmar",
+    ca: "Confirmar",
+    en: "Confirm",
+  },
+  planCancel: {
+    es: "Cancelar",
+    ca: "Cancel·lar",
+    en: "Cancel",
+  },
+  planUpdated: {
+    es: "Fecha actualizada correctamente",
+    ca: "Data actualitzada correctament",
+    en: "Date updated successfully",
+  },
+  planForecast: {
+    es: "Horizonte",
+    ca: "Horitzó",
+    en: "Forecast",
+  },
+  planDays: {
+    es: "{n} días",
+    ca: "{n} dies",
+    en: "{n} days",
+  },
+
+  // ── Config tabs ───────────────────────────────────────────────────────────────
+  configTabLines: {
+    es: "Líneas de galleta",
+    ca: "Línies de galeta",
+    en: "Cookie lines",
+  },
+  configTabSilos: {
+    es: "Silos",
+    ca: "Sitges",
+    en: "Silos",
+  },
+  configTabUsers: {
+    es: "Usuarios",
+    ca: "Usuaris",
+    en: "Users",
+  },
+  configTabRecipes: {
+    es: "Recetas (kg/día)",
+    ca: "Receptes (kg/dia)",
+    en: "Recipes (kg/day)",
+  },
+  configTabLineFormats: {
+    es: "Líneas ↔ Formatos",
+    ca: "Línies ↔ Formats",
+    en: "Lines ↔ Formats",
+  },
+
+  // ── Config lines tab ──────────────────────────────────────────────────────────
+  configLinesDesc: {
+    es: "Capacidad teórica de cada línea de galleta en kg/h. Afecta directamente al cálculo de entregas.",
+    ca: "Capacitat teòrica de cada línia de galeta en kg/h. Afecta directament al càlcul de lliuraments.",
+    en: "Theoretical capacity of each cookie line in kg/h. Directly affects delivery calculations.",
+  },
+  configColLine: {
+    es: "Línea",
+    ca: "Línia",
+    en: "Line",
+  },
+  configColStatus: {
+    es: "Estado",
+    ca: "Estat",
+    en: "Status",
+  },
+  configColKgH: {
+    es: "Consumo (kg/h)",
+    ca: "Consum (kg/h)",
+    en: "Consumption (kg/h)",
+  },
+
+  // ── Config silos tab ──────────────────────────────────────────────────────────
+  configSilosDesc: {
+    es: "Capacidad y stock de seguridad de cada silo. El stock de seguridad define cuándo se genera una alerta crítica.",
+    ca: "Capacitat i estoc de seguretat de cada sitja. L'estoc de seguretat defineix quan es genera una alerta crítica.",
+    en: "Capacity and safety stock for each silo. Safety stock defines when a critical alert is triggered.",
+  },
+  configColCode: {
+    es: "Código",
+    ca: "Codi",
+    en: "Code",
+  },
+  configColMaterial: {
+    es: "Material",
+    ca: "Material",
+    en: "Material",
+  },
+  configColCapacity: {
+    es: "Capacidad (kg)",
+    ca: "Capacitat (kg)",
+    en: "Capacity (kg)",
+  },
+  configColSafety: {
+    es: "Stock seguridad (kg)",
+    ca: "Estoc seguretat (kg)",
+    en: "Safety stock (kg)",
+  },
+
+  // ── Config users tab ──────────────────────────────────────────────────────────
+  usersCreateTitle: {
+    es: "Crear usuario",
+    ca: "Crear usuari",
+    en: "Create user",
+  },
+  usersPlaceholderUser: {
+    es: "Usuario",
+    ca: "Usuari",
+    en: "Username",
+  },
+  usersPlaceholderPass: {
+    es: "Contraseña (mín. 8)",
+    ca: "Contrasenya (mín. 8)",
+    en: "Password (min. 8)",
+  },
+  usersCreating: {
+    es: "Creando...",
+    ca: "Creant...",
+    en: "Creating...",
+  },
+  usersCreate2: {
+    es: "Crear",
+    ca: "Crear",
+    en: "Create",
+  },
+  configColUser: {
+    es: "Usuario",
+    ca: "Usuari",
+    en: "User",
+  },
+  configColRole: {
+    es: "Rol",
+    ca: "Rol",
+    en: "Role",
+  },
+
+  // ── Config recipes tab ────────────────────────────────────────────────────────
+  configRecipesTitle: {
+    es: "Consumos de referencia (kg/día por máquina)",
+    ca: "Consums de referència (kg/dia per màquina)",
+    en: "Reference consumption (kg/day per machine)",
+  },
+  configRecipesHint: {
+    es: "Datos del Excel CON · Clic en valor para editar (IT)",
+    ca: "Dades de l'Excel CON · Clic en valor per editar (IT)",
+    en: "Excel CON data · Click value to edit (IT)",
+  },
+  configColFormat: {
+    es: "Formato",
+    ca: "Format",
+    en: "Format",
+  },
+
+  // ── Config line-formats tab ───────────────────────────────────────────────────
+  configLineFormatsTitle: {
+    es: "Líneas ↔ Formatos",
+    ca: "Línies ↔ Formats",
+    en: "Lines ↔ Formats",
+  },
+  configLineFormatsHint: {
+    es: "Qué formatos puede producir cada línea y nº de máquinas",
+    ca: "Quins formats pot produir cada línia i nº de màquines",
+    en: "Which formats each line can produce and number of machines",
+  },
+  configColMachines: {
+    es: "Máquinas",
+    ca: "Màquines",
+    en: "Machines",
+  },
+
+  // ── Generic actions ───────────────────────────────────────────────────────────
+  actionSave: {
+    es: "Guardar",
+    ca: "Desar",
+    en: "Save",
+  },
+  actionCancel: {
+    es: "Cancelar",
+    ca: "Cancel·lar",
+    en: "Cancel",
+  },
+  actionEdit: {
+    es: "Editar",
+    ca: "Editar",
+    en: "Edit",
+  },
+  actionDeactivate: {
+    es: "Desactivar",
+    ca: "Desactivar",
+    en: "Deactivate",
+  },
+  actionSaving: {
+    es: "...",
+    ca: "...",
+    en: "...",
+  },
+
+  // ── Status labels ─────────────────────────────────────────────────────────────
+  statusActive: {
+    es: "Activo",
+    ca: "Actiu",
+    en: "Active",
+  },
+  statusInactive: {
+    es: "Inactivo",
+    ca: "Inactiu",
+    en: "Inactive",
+  },
+  statusProducing: {
+    es: "Produciendo",
+    ca: "Produint",
+    en: "Producing",
+  },
+  statusIdle: {
+    es: "Parada",
+    ca: "Aturada",
+    en: "Idle",
+  },
+  statusProducingBullet: {
+    es: "● Produciendo",
+    ca: "● Produint",
+    en: "● Producing",
+  },
+  statusIdleBullet: {
+    es: "○ Parada",
+    ca: "○ Aturada",
+    en: "○ Idle",
+  },
+
+  // ── Material labels (silo gauges & filters) ───────────────────────────────
+  matHarina: {
+    es: "HARINA",
+    ca: "FARINA",
+    en: "FLOUR",
+  },
+  matAzucar: {
+    es: "AZÚCAR",
+    ca: "SUCRE",
+    en: "SUGAR",
+  },
+  matAceite: {
+    es: "ACEITE COCO",
+    ca: "OLI DE COCO",
+    en: "COCONUT OIL",
+  },
+  matHarinaLong: {
+    es: "🌾 Harina",
+    ca: "🌾 Farina",
+    en: "🌾 Flour",
+  },
+  matAzucarLong: {
+    es: "🍚 Azúcar",
+    ca: "🍚 Sucre",
+    en: "🍚 Sugar",
+  },
+  matAceiteLong: {
+    es: "🫙 Aceite Coco",
+    ca: "🫙 Oli de Coco",
+    en: "🫙 Coconut Oil",
+  },
+
+  // ── Silo status unknown ────────────────────────────────────────────────────
+  siloStatusUnknown: {
+    es: "Sin datos",
+    ca: "Sense dades",
+    en: "No data",
+  },
+  siloSafetyStock: {
+    es: "Stock de seguridad",
+    ca: "Estoc de seguretat",
+    en: "Safety stock",
   },
 };

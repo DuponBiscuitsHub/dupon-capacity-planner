@@ -1,35 +1,67 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { API_BASE } from "@/lib/api";
 
-export type CompanyType = "iberica" | "france" | "belgica";
+export interface CompanyInfo {
+  id: number;
+  name: string;
+  short_code: string | null;
+}
 
 interface CompanyContextProps {
-  selectedCompany: CompanyType;
-  setSelectedCompany: (company: CompanyType) => void;
+  companyId: number;
+  companies: CompanyInfo[];
+  setCompanyId: (id: number) => void;
+  loading: boolean;
 }
 
 const CompanyContext = createContext<CompanyContextProps | undefined>(undefined);
 
 export function CompanyProvider({ children }: { children: React.ReactNode }) {
-  const [selectedCompany, setSelectedCompanyState] = useState<CompanyType>("iberica");
+  const [companyId, setCompanyIdState] = useState<number>(1);
+  const [companies, setCompanies] = useState<CompanyInfo[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Recuperar preferencia de compañía al cargar
-  useEffect(() => {
-    const savedCompany = localStorage.getItem("dcp-company") as CompanyType;
-    if (savedCompany && ["iberica", "france", "belgica"].includes(savedCompany)) {
-      setSelectedCompanyState(savedCompany);
+  // Cargar lista de compañías del backend
+  const loadCompanies = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/auth/companies`, {
+        credentials: "include",
+      });
+      if (res.ok) {
+        const data = (await res.json()) as CompanyInfo[];
+        setCompanies(data);
+      }
+    } catch {
+      // Sin backend o sin auth — no hacemos nada
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  // Cambiar y persistir compañía
-  const setSelectedCompany = (company: CompanyType) => {
-    setSelectedCompanyState(company);
-    localStorage.setItem("dcp-company", company);
+  useEffect(() => {
+    loadCompanies();
+  }, [loadCompanies]);
+
+  // Recuperar preferencia de compañía de localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("dcp-company-id");
+    if (saved) {
+      const parsed = parseInt(saved, 10);
+      if (!isNaN(parsed) && parsed > 0) {
+        setCompanyIdState(parsed);
+      }
+    }
+  }, []);
+
+  const setCompanyId = (id: number) => {
+    setCompanyIdState(id);
+    localStorage.setItem("dcp-company-id", String(id));
   };
 
   return (
-    <CompanyContext.Provider value={{ selectedCompany, setSelectedCompany }}>
+    <CompanyContext.Provider value={{ companyId, companies, setCompanyId, loading }}>
       {children}
     </CompanyContext.Provider>
   );

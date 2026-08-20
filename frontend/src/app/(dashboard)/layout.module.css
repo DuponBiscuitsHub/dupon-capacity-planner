@@ -1,228 +1,214 @@
-/* Estilos para el Layout del Dashboard Operativo (Estilo Synetica Premium SaaS) */
+/* layout.module.css — Shell: dark sidebar + light main (label_edge) */
 
 .container {
   display: flex;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background-color: var(--bg-base);
-  padding: 1.25rem; /* Margen general flotante estilo Synetica */
-  gap: 1.25rem; /* Separación de paneles */
+  background: #ffffff;           /* fondo blanco (label_edge) */
+  padding: 0.875rem;
+  gap: 0.875rem;
   box-sizing: border-box;
 }
 
-/* Sidebar Estilo Synetica - Tarjeta Flotante Premium y Redondeada */
+/* ── Sidebar (dark) ───────────────────────────────────────────────────────── */
 .sidebar {
   display: flex;
   flex-direction: column;
-  width: 260px;
-  min-width: 260px;
+  width: 210px;
+  min-width: 210px;
   height: 100%;
-  border: 1px solid var(--border-light);
-  border-radius: 16px; /* Súper curvado premium */
-  background: hsla(0, 0%, 100%, 0.85); /* Blanco translúcido nítido */
-  backdrop-filter: var(--blur-glass);
-  -webkit-backdrop-filter: var(--blur-glass);
-  padding: 1.75rem 1.25rem;
+  background: var(--bg-sidebar);
+  border-radius: 14px;
+  padding: 1.25rem 0.75rem;
   justify-content: space-between;
-  box-shadow: var(--shadow-premium);
-  transition: var(--transition-smooth);
-  box-sizing: border-box;
+  flex-shrink: 0;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.35);
 }
 
 .logoSection {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 2rem;
+  padding: 0.25rem 0.375rem;
+  margin-bottom: 1.75rem;
 }
 
-.logoSub {
-  font-size: 0.75rem;
-  color: var(--color-primary);
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+.logoRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.logoIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--color-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 800;
+  flex-shrink: 0;
 }
 
 .logoTitle {
-  font-size: 1.35rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--text-primary);
-  background: linear-gradient(135deg, var(--text-primary) 30%, var(--text-secondary) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
+  color: var(--sidebar-text);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
 }
 
+.logoSub {
+  font-size: 0.68rem;
+  color: var(--sidebar-text-muted);
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+/* ── Nav ──────────────────────────────────────────────────────────────────── */
 .navSection {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  flex: 1;
+  gap: 0.2rem;
+}
+
+/* Section label (MONITOR, BASE DE DATOS…) */
+.navSectionLabel {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sidebar-text-muted);
+  padding: 0.75rem 0.625rem 0.3rem;
 }
 
 .navLink {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
-  padding: 0.85rem 1.15rem;
-  border-radius: 12px; /* Esquinas suaves */
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  border: 1px solid transparent;
-  transition: var(--transition-smooth);
+  gap: 0.65rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 7px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--sidebar-text);
+  transition: var(--transition);
+  text-decoration: none;
 }
-
 .navLink:hover {
-  background: hsla(220, 20%, 93%, 0.5);
-  color: var(--text-primary);
-  transform: translateX(4px);
+  background: var(--bg-sidebar-item);
+  color: #fff;
 }
+.navLink svg { opacity: 0.55; flex-shrink: 0; }
+.navLink:hover svg { opacity: 0.85; }
 
 .activeNavLink {
-  background: hsla(210, 100%, 45%, 0.05); /* Azul sutil de Synetica */
-  color: var(--color-primary);
-  border: 1px solid hsla(210, 100%, 45%, 0.12);
-  box-shadow: 0 4px 12px -5px rgba(0, 118, 255, 0.1);
+  background: var(--bg-sidebar-active);
+  color: var(--sidebar-text-active);
+  font-weight: 600;
+  border-left: 3px solid var(--color-primary);  /* verde label_edge */
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+.activeNavLink svg { opacity: 1; color: var(--sidebar-text-active); }
+.activeNavLink:hover {
+  background: var(--bg-sidebar-active);
+  color: var(--sidebar-text-active);
 }
 
+/* ── Logout / User ────────────────────────────────────────────────────────── */
 .logoutSection {
-  margin-top: 2rem;
-  border-top: 1px solid var(--border-light);
-  padding-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid hsla(220, 30%, 100%, 0.07);
+}
+
+.userInfo {
+  font-size: 0.68rem;
+  color: var(--sidebar-text-muted);
+  padding: 0 0.625rem 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .logoutLink {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
-  padding: 0.85rem 1.15rem;
-  border-radius: 12px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--color-danger);
-  transition: var(--transition-smooth);
+  gap: 0.65rem;
+  padding: 0.55rem 0.625rem;
+  border-radius: 7px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--sidebar-text-muted);
+  transition: var(--transition);
+  width: 100%;
+  cursor: pointer;
+  border: none;
+  background: none;
+  text-align: left;
+  font-family: inherit;
 }
-
 .logoutLink:hover {
-  background: hsla(346, 84%, 45%, 0.06);
-  transform: translateX(4px);
+  background: hsla(0, 80%, 55%, 0.12);
+  color: hsl(0, 80%, 70%);
 }
+.logoutLink svg { opacity: 0.5; }
 
-/* Área Principal - Organizada en una columna flexible */
+/* ── Main area ────────────────────────────────────────────────────────────── */
 .mainArea {
   display: flex;
   flex-direction: column;
   flex: 1;
-  height: 100%;
   overflow: hidden;
-  gap: 1.25rem; /* Separación de la cabecera flotante y el contenido */
-  box-sizing: border-box;
+  min-width: 0;
+  background: var(--bg-base);    /* gris claro (label_edge content) */
+  border-radius: 14px;
+  border: 1px solid var(--border-light);
 }
 
-/* Cabecera Superior Flotante - Óvalo / Pill Minimalista */
+/* Topbar */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 70px;
-  height: 70px;
-  padding: 0 1.75rem;
-  border: 1px solid var(--border-light);
-  border-radius: 16px; /* Cabecera curvada */
-  background: hsla(0, 0%, 100%, 0.82);
-  backdrop-filter: var(--blur-glass);
-  -webkit-backdrop-filter: var(--blur-glass);
-  box-shadow: var(--shadow-premium);
-  box-sizing: border-box;
+  padding: 0 1.5rem;
+  height: 50px;
+  min-height: 50px;
+  border-bottom: 1px solid var(--border-light);
+  background: transparent;
+  flex-shrink: 0;
 }
 
 .headerTitle {
-  font-size: 1.15rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--text-primary);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 .headerStatusGroup {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 0.75rem;
 }
 
-.statusIndicator {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.8rem;
-  font-weight: 600;
+.languageSelectorWrapper { display: flex; align-items: center; }
+
+.languageSelect {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.5rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
   color: var(--text-secondary);
-  background: hsla(142, 70%, 40%, 0.06);
-  padding: 0.4rem 0.85rem;
-  border-radius: 9999px;
-  border: 1px solid hsla(142, 70%, 40%, 0.12);
+  cursor: pointer;
+  height: 26px;
 }
 
-.pulseDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--color-success);
-}
-
-/* Contenido Principal con Desplazamiento */
 .content {
   flex: 1;
   overflow-y: auto;
-  padding-right: 0.25rem; /* Espacio para el scrollbar */
-  box-sizing: border-box;
-}
-
-/* Selectores Dropdown Estilizados en Pill de Synetica */
-.languageSelectorWrapper {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
-.languageSelect {
-  background: #ffffff;
-  border: 1px solid var(--border-light);
-  border-radius: 12px; /* Redondeado Synetica */
-  color: var(--text-primary);
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.45rem 1rem;
-  cursor: pointer;
-  outline: none;
-  transition: var(--transition-smooth);
-  box-shadow: 0 4px 10px -5px rgba(100, 115, 130, 0.05);
-  appearance: none; /* Quitar flecha nativa */
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  padding-right: 2rem; /* Espacio para flecha custom si se deseara, o simple padding amplio */
-  background-image: url("data:image/svg+xml;utf8,<svg fill='none' stroke='rgb(100, 110, 120)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' height='10' width='10' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><polyline points='6 9 12 15 18 9'></polyline></svg>");
-  background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-}
-
-.languageSelect:hover {
-  border-color: var(--color-primary);
-  background-color: #ffffff;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 15px -5px rgba(100, 115, 130, 0.08);
-}
-
-.languageSelect:focus {
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 2px hsla(210, 100%, 45%, 0.15);
-}
-
-.languageSelect option {
-  background-color: #ffffff;
-  color: var(--text-primary);
-  font-weight: 600;
+  padding: 1.25rem;
 }

@@ -1,191 +1,139 @@
-/* Dupon Capacity Planner - Premium Design System (Vanilla CSS) */
+/* Dupon Capacity Planner — Design System (label_edge: dark sidebar + light content) */
 
-/* 1. Design Tokens and Global Variables */
+/* ── 1. Design Tokens ─────────────────────────────────────────────────────── */
 :root {
-  /* Light Theme (Synetica Premium SaaS Style) */
-  --bg-base: hsl(220, 24%, 96%); /* Soft pearl light grey screen background */
-  --bg-card: hsla(0, 0%, 100%, 0.82); /* Semi-transparent pure white for cards */
-  --bg-card-hover: hsla(0, 0%, 100%, 0.95);
-  --border-light: hsla(220, 20%, 88%, 0.45); /* Very thin, clean borders */
-  --border-focus: hsl(210, 100%, 45%); /* Sharp primary electric blue */
-  
-  /* Text Color Palette */
-  --text-primary: hsl(224, 40%, 12%); /* Deep slate primary text */
-  --text-secondary: hsl(224, 20%, 38%); /* Slate grey secondary text */
-  --text-muted: hsl(224, 12%, 58%); /* Muted light grey text */
+  /* Área de contenido (CLARA — igual que label_edge) */
+  --bg-base:         hsl(220, 16%, 95%);   /* fondo gris claro del content */
+  --bg-card:         #ffffff;              /* cards blancas */
+  --bg-card-hover:   hsl(220, 16%, 98%);
+  --bg-input:        hsl(220, 16%, 97%);
 
-  /* Operational Status Acentuation */
-  --color-primary: hsl(210, 100%, 45%); /* Electric Blue */
-  --color-success: hsl(142, 70%, 40%); /* Emerald Green */
-  --color-warning: hsl(38, 92%, 45%);  /* Amber Alert */
-  --color-danger: hsl(346, 84%, 45%);   /* Ruby Red */
-  
-  /* Layout Transitions & Motion Blur */
-  --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  --blur-glass: blur(16px);
-  --shadow-premium: 0 12px 30px -10px rgba(100, 115, 130, 0.08), 0 4px 12px -5px rgba(100, 115, 130, 0.03);
+  /* Sidebar oscuro */
+  --bg-sidebar:      hsl(230, 22%, 9%);
+  --bg-sidebar-item: hsla(220, 30%, 100%, 0.06);
+  --bg-sidebar-active: #ffffff;
+
+  /* Bordes (para el content claro) */
+  --border-light:    hsl(220, 16%, 88%);
+  --border-medium:   hsl(220, 16%, 80%);
+  --border-focus:    hsl(205, 100%, 48%);
+
+  /* Texto (oscuro sobre fondo claro) */
+  --text-primary:    hsl(230, 22%, 12%);
+  --text-secondary:  hsl(230, 15%, 40%);
+  --text-muted:      hsl(230, 10%, 60%);
+
+  /* Texto sidebar (claro sobre oscuro) */
+  --sidebar-text:         hsla(220, 18%, 95%, 0.85);
+  --sidebar-text-muted:   hsla(220, 18%, 95%, 0.38);
+  --sidebar-text-active:  hsl(230, 22%, 9%);
+
+  /* Colores operacionales (label_edge palette) */
+  --color-primary:   hsl(152, 69%, 41%);   /* Verde esmeralda label_edge */
+  --color-success:   hsl(152, 69%, 41%);   /* Mismo verde para OK */
+  --color-warning:   hsl(38,  90%, 50%);
+  --color-danger:    hsl(0,   72%, 55%);
+  --color-info:      hsl(205, 100%, 48%);  /* Azul solo para informativo */
+  --color-unknown:   hsl(220, 12%, 65%);
+
+  /* Backgrounds de estado */
+  --bg-success:      hsla(152, 69%, 41%, 0.10);
+  --bg-warning:      hsla(38,  90%, 50%, 0.10);
+  --bg-danger:       hsla(0,   72%, 55%, 0.10);
+  --bg-primary:      hsla(152, 69%, 41%, 0.08);
+
+  /* Borders de estado */
+  --border-success:  hsla(152, 69%, 41%, 0.30);
+  --border-warning:  hsla(38,  90%, 50%, 0.35);
+  --border-danger:   hsla(0,   72%, 55%, 0.35);
+  --border-primary:  hsla(152, 69%, 41%, 0.25);
+
+  /* Sombras */
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  /* Transiciones */
+  --transition: all 0.18s ease;
 }
 
-/* 2. Global Reset and Browser Normalization */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+/* ── 2. Reset ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
 
 html, body {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   background-color: var(--bg-base);
   color: var(--text-primary);
   font-family: var(--font-outfit), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  overflow-x: hidden;
+  font-size: 15px; line-height: 1.5; overflow-x: hidden;
 }
 
-/* Custom Scrollbar Styling */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+/* ── 3. Scrollbar ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--border-medium); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
 
-::-webkit-scrollbar-track {
-  background: var(--bg-base);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-light);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary);
-}
-
-/* 3. Base Element Typography and Controls */
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button {
-  cursor: pointer;
-  border: none;
-  background: none;
-  font-family: inherit;
-  outline: none;
-}
+/* ── 4. Base elements ─────────────────────────────────────────────────────── */
+a       { color: inherit; text-decoration: none; }
+button  { cursor: pointer; border: none; background: none; font-family: inherit; }
+h1, h2, h3, h4 { font-weight: 600; letter-spacing: -0.02em; color: var(--text-primary); }
 
 input, select, textarea {
-  font-family: inherit;
-  font-size: 1rem;
-  color: var(--text-primary);
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  outline: none;
-  transition: var(--transition-smooth);
+  font-family: inherit; font-size: 0.875rem; color: var(--text-primary);
+  background: var(--bg-input); border: 1px solid var(--border-light);
+  border-radius: 8px; padding: 0.5rem 0.875rem; outline: none; transition: var(--transition);
 }
-
-input:focus, select:focus, textarea:focus {
+input:focus, select:focus {
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 2px hsla(210, 100%, 50%, 0.2);
+  box-shadow: 0 0 0 3px hsla(152, 69%, 41%, 0.12);
 }
 
-/* 4. Global Glassmorphic Utility Classes */
-.glass-panel {
-  background: var(--bg-card);
-  backdrop-filter: var(--blur-glass);
-  -webkit-backdrop-filter: var(--blur-glass);
-  border: 1px solid var(--border-light);
-  border-radius: 16px; /* Synetica standard rounded corners */
-  box-shadow: var(--shadow-premium);
-  transition: var(--transition-smooth);
+/* ── 5. Cards ─────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--bg-card); border: 1px solid var(--border-light);
+  border-radius: 12px; box-shadow: var(--shadow-sm); transition: var(--transition);
 }
+.card:hover { box-shadow: var(--shadow-md); }
 
-.glass-panel-hover:hover {
-  background: var(--bg-card-hover);
-  border-color: hsla(210, 100%, 45%, 0.2); /* Soft blue border accent */
-  transform: translateY(-3px);
-  box-shadow: 0 20px 40px -15px rgba(100, 115, 130, 0.12), 0 5px 15px -5px rgba(100, 115, 130, 0.05);
-}
-
-/* Industrial Alarm Pulse Keyframes */
-@keyframes pulse-alert-glow {
-  0% {
-    box-shadow: 0 0 0 0 hsla(346, 84%, 49%, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 8px hsla(346, 84%, 49%, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 hsla(346, 84%, 49%, 0);
-  }
-}
-
-.pulse-danger {
-  animation: pulse-alert-glow 2s infinite;
-  background-color: var(--color-danger);
-}
-
-@keyframes pulse-warning-glow {
-  0% {
-    box-shadow: 0 0 0 0 hsla(38, 92%, 50%, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 8px hsla(38, 92%, 50%, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 hsla(38, 92%, 50%, 0);
-  }
-}
-
-.pulse-warning {
-  animation: pulse-warning-glow 2s infinite;
-  background-color: var(--color-warning);
-}
-
-/* 5. Typography and Badge Helpers */
-h1, h2, h3, h4 {
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  color: var(--text-primary);
-}
-
+/* ── 6. Badges ────────────────────────────────────────────────────────────── */
 .badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.18rem 0.6rem; border-radius: 99px;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
 }
+.badge-success { background: var(--bg-success); color: var(--color-success); border: 1px solid var(--border-success); }
+.badge-warning { background: var(--bg-warning); color: var(--color-warning); border: 1px solid var(--border-warning); }
+.badge-danger  { background: var(--bg-danger);  color: var(--color-danger);  border: 1px solid var(--border-danger); }
+.badge-primary { background: var(--bg-primary); color: var(--color-primary); border: 1px solid var(--border-primary); }
+.badge-muted   { background: hsl(220,18%,94%);  color: var(--text-muted);   border: 1px solid var(--border-light); }
 
-.badge-success {
-  background: hsla(142, 70%, 45%, 0.15);
-  color: var(--color-success);
-  border: 1px solid hsla(142, 70%, 45%, 0.3);
+/* ── 7. Buttons ───────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.45rem 0.9rem; border-radius: 8px;
+  font-size: 0.78rem; font-weight: 600; transition: var(--transition);
 }
+.btn-primary {
+  background: var(--color-primary); color: #fff;
+  box-shadow: 0 2px 8px hsla(152, 69%, 41%, 0.3);
+}
+.btn-primary:hover { filter: brightness(1.08); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
 
-.badge-warning {
-  background: hsla(38, 92%, 50%, 0.15);
-  color: var(--color-warning);
-  border: 1px solid hsla(38, 92%, 50%, 0.3);
+/* ── 8. Animations ────────────────────────────────────────────────────────── */
+@keyframes pulse-danger {
+  0%, 100% { box-shadow: 0 0 0 0 hsla(0, 80%, 55%, 0.35); }
+  50%       { box-shadow: 0 0 0 8px hsla(0, 80%, 55%, 0); }
 }
+@keyframes pulse-warning {
+  0%, 100% { box-shadow: 0 0 0 0 hsla(38, 90%, 50%, 0.35); }
+  50%       { box-shadow: 0 0 0 8px hsla(38, 90%, 50%, 0); }
+}
+@keyframes spin    { to { transform: rotate(360deg); } }
+@keyframes fadeIn  { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 
-.badge-danger {
-  background: hsla(346, 84%, 49%, 0.15);
-  color: var(--color-danger);
-  border: 1px solid hsla(346, 84%, 49%, 0.3);
-}
-
-.badge-primary {
-  background: hsla(210, 100%, 50%, 0.15);
-  color: var(--color-primary);
-  border: 1px solid hsla(210, 100%, 50%, 0.3);
-}
+.pulse-danger  { animation: pulse-danger  2.5s infinite; }
+.pulse-warning { animation: pulse-warning 2.5s infinite; }
+.spin          { animation: spin 0.8s linear infinite; }
+.fade-in       { animation: fadeIn 0.2s ease; }

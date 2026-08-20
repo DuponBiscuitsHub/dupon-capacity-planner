@@ -1,327 +1,136 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import styles from "./silos.module.css";
-import { Silo, TruckDelivery } from "@/types/silos";
-import { formatNumber } from "@/app/utils/format";
+import { useCompany } from "../../context/CompanyContext";
+import { useLanguage } from "../../i18n/context";
+import { type SiloStatus, type PlanRow, apiFetch, getMatLabelLong } from "./components/silosShared";
+import { MaterialSection } from "./components/SiloGauge";
+import DeliveryTimeline from "./components/DeliveryTimeline";
+import DeliveryPlanningTable from "./components/DeliveryPlanningTable";
+import SyncButton from "./components/SyncButton";
+import { ForecastDropdown, MaterialFilter } from "./components/TimelineControls";
+import EditDateModal from "./components/EditDateModal";
 
 export default function SilosPage() {
-  // 1. Initial Silos State (aligned with factory physical specs)
-  const [silos, setSilos] = useState<Silo[]>([
-    {
-      id: "silo-h1",
-      name: "Silo Harina #1",
-      material: "harina",
-      capacityKg: 25000,
-      currentLevelKg: 9200, // Critical silo (autonomy ~18h)
-      safetyLevelKg: 5000,
-      hourlyConsumptionKg: 500,
-    },
-    {
-      id: "silo-h2",
-      name: "Silo Harina #2",
-      material: "harina",
-      capacityKg: 25000,
-      currentLevelKg: 18500,
-      safetyLevelKg: 5000,
-      hourlyConsumptionKg: 400,
-    },
-    {
-      id: "silo-h3",
-      name: "Silo Harina #3",
-      material: "harina",
-      capacityKg: 25000,
-      currentLevelKg: 7800,
-      safetyLevelKg: 5000,
-      hourlyConsumptionKg: 300,
-    },
-    {
-      id: "silo-a1",
-      name: "Silo Azúcar #1",
-      material: "azucar",
-      capacityKg: 30000,
-      currentLevelKg: 22400,
-      safetyLevelKg: 6000,
-      hourlyConsumptionKg: 250,
-    },
-    {
-      id: "silo-c1",
-      name: "Silo Coco #1",
-      material: "aceite_coco",
-      capacityKg: 15000,
-      currentLevelKg: 11200,
-      safetyLevelKg: 3000,
-      hourlyConsumptionKg: 120,
-    },
-  ]);
+  const { companyId } = useCompany();
+  const { t } = useLanguage();
+  const [silos, setSilos]             = useState<SiloStatus[]>([]);
+  const [planRows, setPlanRows]       = useState<PlanRow[]>([]);
+  const [loading, setLoading]         = useState(true);
+  const [refreshing, setRefreshing]   = useState(false);
+  const [error, setError]             = useState<string | null>(null);
+  const [matFilter, setMatFilter]     = useState<Set<string>>(new Set());
+  const [forecastDays, setForecastDays] = useState(30);
+  const [lastSyncAt, setLastSyncAt]   = useState<string | null>(null);
+  const [editRow, setEditRow]         = useState<PlanRow | null>(null);
 
-  // 2. State of Inbound Trucks Scheduled from Odoo Logistics
-  const [trucks, setTrucks] = useState<TruckDelivery[]>([
-    {
-      id: "tr-001",
-      material: "harina",
-      quantityKg: 15000,
-      scheduledTime: "Hoy - 18:00h",
-      recommendedTime: "Hoy - 18:00h",
-      status: "scheduled",
-    },
-    {
-      id: "tr-002",
-      material: "azucar",
-      quantityKg: 20000,
-      scheduledTime: "Mañana - 09:30h",
-      recommendedTime: "Mañana - 11:00h",
-      status: "scheduled",
-    },
-    {
-      id: "tr-003",
-      material: "harina",
-      quantityKg: 15000,
-      scheduledTime: "Viernes - 14:00h",
-      recommendedTime: "Viernes - 12:30h",
-      status: "scheduled",
-    },
-  ]);
-
-  // 3. Interactive Unloading Simulation of Inbound Trucks
-  const handleSimulateUnload = (truckId: string, material: string, quantityKg: number) => {
-    // Find compatible silos based on material
-    const compatibleSilos = silos.filter((s) => s.material === material);
-    
-    if (compatibleSilos.length === 0) return;
-
-    // Logistics algorithm: Find the compatible silo with maximum headspace (available space)
-    let selectedSilo = compatibleSilos[0];
-    let maxHeadspace = selectedSilo.capacityKg - selectedSilo.currentLevelKg;
-
-    for (let i = 1; i < compatibleSilos.length; i++) {
-      const headspace = compatibleSilos[i].capacityKg - compatibleSilos[i].currentLevelKg;
-      if (headspace > maxHeadspace) {
-        selectedSilo = compatibleSilos[i];
-        maxHeadspace = headspace;
-      }
+  const load = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
+    else setRefreshing(true);
+    try {
+      const [s, plan, syncInfo] = await Promise.all([
+        apiFetch<SiloStatus[]>(`/api/v1/silos?company_id=${companyId}`),
+        apiFetch<PlanRow[]>(`/api/v1/delivery-planning?company_id=${companyId}`),
+        apiFetch<{ last_sync_at: string | null }>(`/api/v1/sync/last`),
+      ]);
+      setSilos(s);
+      setPlanRows(plan);
+      setLastSyncAt(syncInfo.last_sync_at);
+      setError(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t("errorLoading"));
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
+  }, [companyId, t]);
 
-    // Update level of selected silo without exceeding physical capacity limit
-    setSilos((prevSilos) =>
-      prevSilos.map((s) => {
-        if (s.id === selectedSilo.id) {
-          const newLevel = Math.min(s.capacityKg, s.currentLevelKg + quantityKg);
-          return { ...s, currentLevelKg: newLevel };
-        }
-        return s;
-      })
-    );
+  useEffect(() => { load(); }, [load]);
 
-    // Set truck status as completed
-    setTrucks((prevTrucks) =>
-      prevTrucks.map((t) => {
-        if (t.id === truckId) {
-          return { ...t, status: "completed" };
-        }
-        return t;
-      })
-    );
-  };
+  const byMaterial: Record<string, SiloStatus[]> = {};
+  for (const s of silos) {
+    byMaterial[s.material_type] = byMaterial[s.material_type] ?? [];
+    byMaterial[s.material_type].push(s);
+  }
 
-  // Helper: Resolve color styling according to silo autonomy
-  const getSiloStatusClasses = (currentLevel: number, capacity: number, autonomyHours: number) => {
-    const percentage = (currentLevel / capacity) * 100;
-    
-    if (autonomyHours < 12 || percentage < 25) {
-      return {
-        fluidClass: styles.tankFluidDanger,
-        badgeClass: "badge-danger",
-        pulserClass: "pulse-danger",
-        textStyle: { color: "var(--color-danger)" }
-      };
-    } else if (autonomyHours <= 24 || percentage < 45) {
-      return {
-        fluidClass: styles.tankFluidWarning,
-        badgeClass: "badge-warning",
-        pulserClass: "pulse-warning",
-        textStyle: { color: "var(--color-warning)" }
-      };
-    } else {
-      return {
-        fluidClass: styles.tankFluidGreen,
-        badgeClass: "badge-success",
-        pulserClass: "",
-        textStyle: { color: "var(--color-success)" }
-      };
-    }
-  };
+  // ── Last sync label ───────────────────────────────────────────────────────
+  const lastSyncLabel = useMemo(() => {
+    if (!lastSyncAt) return t("silosSyncNever") ?? "—";
+    const diff = Date.now() - new Date(lastSyncAt).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return t("silosSyncJustNow") ?? "< 1 min";
+    if (mins < 60) return `${mins} min`;
+    const hrs = Math.floor(mins / 60);
+    return `${hrs}h ${mins % 60}m`;
+  }, [lastSyncAt, t]);
+
+  if (loading) return <div className={styles.loading}>{t("loading")}</div>;
+  if (error)   return <div className={styles.errorMsg}>{t("errorLoading")}: {error}</div>;
 
   return (
-    <div className={styles.container}>
-      
-      {/* SECTION 1: SCADA Board - Live Silo Status */}
-      <section className={styles.silosGrid}>
-        {silos.map((silo) => {
-          const percentage = (silo.currentLevelKg / silo.capacityKg) * 100;
-          const autonomyHours = Math.max(0, silo.currentLevelKg / silo.hourlyConsumptionKg);
-          const status = getSiloStatusClasses(silo.currentLevelKg, silo.capacityKg, autonomyHours);
+    <div className={styles.page}>
 
-          return (
-            <div key={silo.id} className={`${styles.siloCard} glass-panel`}>
-              <span className={styles.siloMaterialLabel}>{silo.material.replace("_", " ")}</span>
-              <h3 className={styles.siloTitle}>{silo.name}</h3>
-              
-              {/* Animated Tank Graphic */}
-              <div className={styles.tankOuter}>
-                <div 
-                  className={`${styles.tankFluid} ${status.fluidClass}`} 
-                  style={{ height: `${percentage}%` }}
-                ></div>
-              </div>
-
-              {/* Volume metrics */}
-              <div className={styles.siloInfo}>
-                <span className={styles.siloPercentage}>{percentage.toFixed(0)}%</span>
-                <span className={styles.siloVolume}>
-                  {formatNumber(silo.currentLevelKg)} / {formatNumber(silo.capacityKg)} kg
-                </span>
-                <div style={{ marginTop: "0.25rem" }}>
-                  <span className={`badge ${status.badgeClass}`} style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}>
-                    {status.pulserClass && <span className={status.pulserClass} style={{ width: "6px", height: "6px", borderRadius: "50%" }}></span>}
-                    {autonomyHours.toFixed(1)} hrs left
-                  </span>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+      {/* ── Sección silos por material ── */}
+      <section className={styles.silosSection}>
+        {Object.entries(byMaterial).map(([mat, matSilos]) => (
+          <MaterialSection
+            key={mat}
+            label={getMatLabelLong(mat, t)}
+            silos={matSilos}
+            t={t}
+          />
+        ))}
       </section>
 
-      {/* SECTION 2: Split Layout (Predictive Decay Curve + cisterna scheduler) */}
-      <div className={styles.splitLayout}>
-        
-        {/* Left Panel: Predictive Decay Curve (SVG chart) */}
-        <section className={`${styles.chartCard} glass-panel`}>
-          <h3 className={styles.sectionTitle}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--color-primary)" }}>
-              <path d="M3 3v18h18" />
-              <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3" />
-            </svg>
-            Curva de Decaimiento Proyectada a 72h - Silo Harina #1
-          </h3>
-          
-          <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: "-0.5rem" }}>
-            Muestra el vaciado predictivo del Silo #1 en función de la velocidad y merma teórica de las líneas de galletas.
-          </p>
-
-          {/* Premium Native SVG Chart */}
-          <div className={styles.svgContainer}>
-            <svg viewBox="0 0 500 180" width="100%" height="100%">
-              {/* Grid axes */}
-              <line x1="40" y1="20" x2="40" y2="150" stroke="var(--border-light)" strokeWidth="1" />
-              <line x1="40" y1="150" x2="480" y2="150" stroke="var(--border-light)" strokeWidth="1" />
-              
-              <line x1="40" y1="60" x2="480" y2="60" stroke="var(--border-light)" strokeWidth="1" strokeDasharray="3 3" />
-              <line x1="40" y1="110" x2="480" y2="110" stroke="var(--border-light)" strokeWidth="1" strokeDasharray="3 3" />
-
-              {/* Y Axis Legend (Volume) */}
-              <text x="10" y="25" fill="var(--text-muted)" fontSize="9">100%</text>
-              <text x="15" y="85" fill="var(--text-muted)" fontSize="9">50%</text>
-              <text x="15" y="145" fill="var(--text-muted)" fontSize="9">0%</text>
-
-              {/* X Axis Labels (Time) */}
-              <text x="35" y="165" fill="var(--text-muted)" fontSize="9">Ahora</text>
-              <text x="140" y="165" fill="var(--text-muted)" fontSize="9">+12h</text>
-              <text x="250" y="165" fill="var(--text-muted)" fontSize="9">+24h (Mañana)</text>
-              <text x="360" y="165" fill="var(--text-muted)" fontSize="9">+48h</text>
-              <text x="450" y="165" fill="var(--text-muted)" fontSize="9">+72h</text>
-
-              {/* Red Line: Safety Stock threshold (20% silo capacity) */}
-              <line x1="40" y1="124" x2="480" y2="124" stroke="var(--color-danger)" strokeWidth="1.5" strokeDasharray="4 2" />
-              <text x="400" y="120" fill="var(--color-danger)" fontSize="8" fontWeight="600">Límite de Seguridad (5,000 kg)</text>
-
-              {/* Projected Decay Trendline (with dynamic offset) */}
-              {/* Silo #1: 9,200kg (37% t=0) -> Projected shutdown in ~18h */}
-              <path 
-                d="M 40 102 L 150 124 L 200 150 L 480 150" 
-                fill="none" 
-                stroke="var(--color-warning)" 
-                strokeWidth="3" 
-                strokeLinecap="round" 
-              />
-              
-              {/* Anomaly intersection node */}
-              <circle cx="150" cy="124" r="5" fill="var(--color-danger)" />
-              <text x="160" y="120" fill="var(--color-danger)" fontSize="9" fontWeight="700">Ruptura: +18.4h</text>
-            </svg>
+      {/* ── Sección timeline entregas ── */}
+      <section className={styles.timelineSection}>
+        <div className={styles.timelineHeader2}>
+          <div className={styles.timelineTitle}>
+            <span>{t("silosDeliveryPlanning")}</span>
+            <span className={styles.timelineSubtitle}>
+              {t("silosNextDays").replace("{n}", String(forecastDays))}
+            </span>
+            {lastSyncAt && (
+              <span className={styles.lastSyncLabel}>
+                🔄 {lastSyncLabel}
+              </span>
+            )}
           </div>
-
-          <div className={styles.legend}>
-            <div className={styles.legendItem}>
-              <span style={{ width: "12px", height: "4px", backgroundColor: "var(--color-warning)", borderRadius: "2px" }}></span>
-              <span>Nivel Proyectado</span>
-            </div>
-            <div className={styles.legendItem}>
-              <span style={{ width: "12px", height: "0px", borderTop: "2px dashed var(--color-danger)", display: "inline-block" }}></span>
-              <span>Límite de Rotura</span>
-            </div>
+          <div className={styles.timelineActions}>
+            <ForecastDropdown forecastDays={forecastDays} setForecastDays={setForecastDays} t={t} />
+            <MaterialFilter value={matFilter} onChange={setMatFilter} />
+            <SyncButton onDone={() => load(true)} />
           </div>
-        </section>
+        </div>
 
-        {/* Right Panel: Inbound Logistics - Tanker Trucks (Odoo POs) */}
-        <section className={`${styles.trucksCard} glass-panel`}>
-          <h3 className={styles.sectionTitle}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--color-success)" }}>
-              <rect x="1" y="3" width="15" height="13" />
-              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
-              <circle cx="5.5" cy="18.5" r="2.5" />
-              <circle cx="18.5" cy="18.5" r="2.5" />
-            </svg>
-            Planificador de Cisternas Inbound - Odoo Purchase Orders
-          </h3>
-          
-          <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: "-0.5rem" }}>
-            Recepción dinámica de compras. Al simular la descarga, el camión inyecta el material al silo con mayor espacio libre.
-          </p>
+        <div className={styles.timelineWrapper}>
+          <DeliveryTimeline
+            silos={silos}
+            planRows={planRows}
+            materialFilter={matFilter}
+            forecastDays={forecastDays}
+            onEdit={setEditRow}
+          />
+        </div>
+      </section>
 
-          <div className={styles.tableWrapper}>
-            <table className={styles.truckTable}>
-              <thead>
-                <tr>
-                  <th className={styles.th}>Materia Prima</th>
-                  <th className={styles.th}>Volumen</th>
-                  <th className={styles.th}>Odoo Est.</th>
-                  <th className={styles.th}>Recom. APS</th>
-                  <th className={styles.th}>Acción</th>
-                </tr>
-              </thead>
-              <tbody>
-                {trucks.map((truck) => (
-                  <tr key={truck.id} style={{ opacity: truck.status === "completed" ? 0.5 : 1 }}>
-                    <td className={styles.td}>
-                      <span className={truck.material === "harina" ? "badge badge-primary" : "badge badge-warning"}>
-                        {truck.material.replace("_", " ")}
-                      </span>
-                    </td>
-                    <td className={styles.td}><strong>{formatNumber(truck.quantityKg)} kg</strong></td>
-                    <td className={styles.td} style={{ color: "var(--text-secondary)" }}>{truck.scheduledTime}</td>
-                    <td className={styles.td} style={{ color: "var(--color-success)", fontWeight: 600 }}>{truck.recommendedTime}</td>
-                    <td className={styles.td}>
-                      {truck.status === "completed" ? (
-                        <span className="badge badge-success" style={{ fontSize: "0.7rem", padding: "0.2rem 0.5rem" }}>Completado</span>
-                      ) : (
-                        <button
-                          className={styles.simulateBtn}
-                          onClick={() => handleSimulateUnload(truck.id, truck.material, truck.quantityKg)}
-                        >
-                          Simular Descarga
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
+      {/* ── Sección Delivery Planning Table ── */}
+      <section className={styles.planningSection}>
+        <div className={styles.planningHeader}>
+          <h2 className={styles.planningTitle}>{t("planTitle")}</h2>
+        </div>
+        <DeliveryPlanningTable planRows={planRows} forecastDays={forecastDays} onEdit={setEditRow} />
+      </section>
 
-      </div>
+      {/* ── Edit date modal ── */}
+      {editRow && (
+        <EditDateModal
+          editRow={editRow}
+          onClose={() => setEditRow(null)}
+          onSaved={() => { setEditRow(null); load(true); }}
+        />
+      )}
 
     </div>
   );

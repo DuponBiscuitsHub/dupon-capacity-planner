@@ -1,172 +1,203 @@
-/* Styles for the General Dashboard (CSS Modules) */
+/* page.module.css — Dashboard Inicio (label_edge style) */
 
-.metricsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.kpiCard {
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.kpiHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.kpiValue {
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1;
-}
-
-.kpiSubtext {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
-/* Two-column bottom layout */
-.bottomSection {
-  display: grid;
-  grid-template-columns: 1.6fr 1fr;
-  gap: 1.5rem;
-}
-
-.sectionTitle {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-/* Line Monitoring Panel */
-.linesCard {
-  padding: 1.75rem;
-}
-
-.linesList {
+.page {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
 
-.lineRow {
+/* ── Alert bar ────────────────────────────────────────────────────────────── */
+.alertDanger,
+.alertWarning {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 1.25rem;
-  border-radius: 12px;
-  background: hsla(220, 20%, 97%, 0.85);
-  border: 1px solid var(--border-light);
-  transition: var(--transition-smooth);
-}
-
-.lineRow:hover {
-  transform: translateY(-2px);
-  background: #ffffff;
-  border-color: hsla(210, 100%, 45%, 0.15); /* Clean electric blue border accent */
-  box-shadow: 0 8px 30px rgba(100, 115, 130, 0.08); /* Premium diffuse soft shadow */
-}
-
-.lineInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.lineName {
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.lineDetails {
+  gap: 0.65rem;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  font-weight: 500;
+  animation: fadeIn 0.25s ease;
 }
+.alertDanger  { background: var(--bg-danger);  border: 1px solid var(--border-danger);  color: var(--color-danger); }
+.alertWarning { background: var(--bg-warning); border: 1px solid var(--border-warning); color: var(--color-warning); }
 
-.lineSpeedSection {
-  text-align: right;
+/* ── Gauges section ───────────────────────────────────────────────────────── */
+.gaugesSection {
   display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.lineSpeed {
-  font-size: 1.15rem;
-  font-weight: 700;
-}
-
-.lineSpeedUnit {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-/* Active Alerts Panel */
-.alertsCard {
-  padding: 1.75rem;
-  display: flex;
-  flex-direction: column;
-}
-
-.alertsList {
-  display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 1rem;
 }
 
-.alertItem {
-  display: flex;
-  gap: 0.75rem;
-  padding: 1rem;
-  border-radius: 12px;
-  background: hsla(38, 92%, 50%, 0.05);
-  border: 1px solid hsla(38, 92%, 50%, 0.15);
-  transition: var(--transition-smooth);
-}
-
-.alertItemDanger {
-  background: hsla(346, 84%, 49%, 0.05);
-  border: 1px solid hsla(346, 84%, 49%, 0.15);
-}
-
-.alertIcon {
-  flex-shrink: 0;
-  margin-top: 0.15rem;
-}
-
-.alertContent {
+/* ── Silo card ────────────────────────────────────────────────────────────── */
+.siloCard {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 1.1rem 1rem 0.875rem;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-light);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  min-width: 155px;
+  max-width: 175px;
+  transition: var(--transition);
+  cursor: default;
 }
+.siloCard:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 
-.alertTitle {
+/* status borders */
+.cardOk       { border-color: var(--border-success); }
+.cardWarning  { border-color: var(--border-warning); }
+.cardCritical { border-color: var(--border-danger); animation: pulse-danger 2.5s infinite; }
+
+/* ── Material label (colored chip at top) ─────────────────────────────────── */
+.matLabel {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.55rem;
+  border-radius: 99px;
+  border: 1px solid transparent;
+}
+.matLabelOk     { background: var(--bg-primary);  color: var(--color-primary); border-color: var(--border-primary); }
+.matLabelWarning{ background: var(--bg-warning);  color: var(--color-warning); border-color: var(--border-warning); }
+.matLabelDanger { background: var(--bg-danger);   color: var(--color-danger);  border-color: var(--border-danger); }
+
+/* ── Silo name ────────────────────────────────────────────────────────────── */
+.siloName {
+  font-size: 0.82rem;
   font-weight: 600;
-  font-size: 0.9rem;
+  color: var(--text-primary);
+  text-align: center;
+  line-height: 1.2;
 }
 
-.alertDescription {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  line-height: 1.4;
+/* ── Vertical bar ─────────────────────────────────────────────────────────── */
+.barOuter {
+  width: 48px;
+  height: 100px;
+  background: hsl(220, 18%, 93%);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border: 1px solid var(--border-medium);
 }
 
-.alertMeta {
-  font-size: 0.75rem;
+.barFill {
+  width: 100%;
+  border-radius: 6px 6px 0 0;
+  transition: height 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
+  min-height: 2px;
+}
+
+/* Safety stock marker — a thin horizontal line */
+.safetyLine {
+  position: absolute;
+  bottom: 15%;
+  left: 0; right: 0;
+  height: 2px;
+  background: hsla(0, 80%, 55%, 0.45);
+  pointer-events: none;
+}
+
+/* ── Percentage ───────────────────────────────────────────────────────────── */
+.pctValue {
+  font-size: 1.65rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+/* ── kg / capacity ────────────────────────────────────────────────────────── */
+.kgValue {
+  font-size: 0.68rem;
   color: var(--text-muted);
-  margin-top: 0.25rem;
+  text-align: center;
+}
+
+/* ── Next delivery ────────────────────────────────────────────────────────── */
+.nextDelivery {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.68rem;
+  color: var(--color-primary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  padding: 0.2rem 0.5rem;
+  white-space: nowrap;
+}
+.ndIcon { font-size: 0.65rem; }
+
+.nextDeliveryEmpty {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+/* ── Chart section ─────────────────────────────────────────────────────── */
+.chartSection {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+}
+
+.chartTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 1rem;
+}
+
+/* ── Stats row ────────────────────────────────────────────────────────────── */
+.statsRow {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.statCard {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+  min-width: 140px;
+}
+
+.statNum {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.numWarning { color: var(--color-warning); }
+.numDanger  { color: var(--color-danger); }
+
+.statLabel {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  max-width: 80px;
+  line-height: 1.35;
+}
+
+/* ── States ───────────────────────────────────────────────────────────────── */
+.loading {
+  display: flex; align-items: center; justify-content: center;
+  height: 200px; color: var(--text-muted); font-size: 0.875rem;
+}
+.errorBox {
+  padding: 1rem; background: var(--bg-danger);
+  border: 1px solid var(--border-danger); border-radius: 10px;
+  color: var(--color-danger); font-size: 0.82rem;
 }

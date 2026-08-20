@@ -17,7 +17,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   // Al inicializar en el navegador, recuperar la preferencia guardada en localStorage
   useEffect(() => {
     const savedLang = localStorage.getItem("dcp-language") as LanguageType;
-    if (savedLang && ["es", "en", "fr", "de", "be", "ca"].includes(savedLang)) {
+    if (savedLang && ["es", "ca", "en"].includes(savedLang)) {
       setLanguageState(savedLang);
     }
   }, []);

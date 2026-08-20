@@ -1,237 +1,588 @@
-/* Estilos para el Módulo de Silos y Materias Primas (CSS Modules - Estilo Synetica Modo Claro) */
+/* silos.module.css — Silos & Entregas (label_edge style: light content) */
 
-.container {
+.page {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Rejilla de los 5 Silos de Planta */
-.silosGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1.5rem;
-  margin-bottom: 0.5rem;
 }
 
-.siloCard {
-  padding: 1.75rem 1.5rem;
+/* ── Silos section ────────────────────────────────────────────────────────── */
+.silosSection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.materialBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.materialLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-muted);
+}
+
+.gaugesRow {
+  display: flex;
+  gap: 0.875rem;
+  flex-wrap: wrap;
+}
+
+/* ── Gauge card (vertical bar) ────────────────────────────────────────────── */
+.gaugeCard {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1rem 0.875rem;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-light);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  min-width: 150px;
+  transition: var(--transition);
+}
+.gaugeCard:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+.gaugeOk       { border-color: var(--border-success); }
+.gaugeWarning  { border-color: var(--border-warning); }
+.gaugeCritical { border-color: var(--border-danger); animation: pulse-danger 2.5s infinite; }
+
+.matLabel {
+  font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.15rem 0.5rem; border-radius: 99px;
+}
+.matLabelOk     { background: var(--bg-primary);  color: var(--color-primary); border: 1px solid var(--border-primary); }
+.matLabelWarning{ background: var(--bg-warning);  color: var(--color-warning); border: 1px solid var(--border-warning); }
+.matLabelDanger { background: var(--bg-danger);   color: var(--color-danger);  border: 1px solid var(--border-danger); }
+
+.gaugeName {
+  font-size: 0.8rem; font-weight: 600;
+  color: var(--text-primary); text-align: center;
+}
+
+/* Vertical bar */
+.barOuter {
+  width: 52px; height: 110px;
+  background: hsl(220, 18%, 93%);
+  border-radius: 8px; overflow: hidden;
+  position: relative; display: flex;
+  flex-direction: column; justify-content: flex-end;
+  border: 1px solid var(--border-medium);
+}
+.barFill {
+  width: 100%; border-radius: 6px 6px 0 0;
+  transition: height 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
+  min-height: 2px;
+}
+.safetyLine {
+  position: absolute; bottom: 15%; left: 0; right: 0;
+  height: 2px; background: hsla(0, 80%, 55%, 0.4); pointer-events: none;
+}
+
+.pctValue {
+  font-size: 1.5rem; font-weight: 700; line-height: 1; letter-spacing: -0.03em;
+}
+.kgValue  { font-size: 0.65rem; color: var(--text-muted); text-align: center; }
+
+.gaugeInfo { display: flex; flex-direction: column; align-items: center; gap: 0.1rem; }
+
+/* ── Timeline section ─────────────────────────────────────────────────────── */
+.timelineSection {
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
-  text-align: center;
-  position: relative;
-}
-
-.siloMaterialLabel {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--color-primary);
-  letter-spacing: 0.08em;
-}
-
-.siloTitle {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.01em;
-}
-
-/* Representación Gráfica del Tanque Industrial - Estilo Claro Synetica */
-.tankOuter {
-  width: 90px;
-  height: 160px;
+  background: var(--bg-card);
   border: 1px solid var(--border-light);
-  border-radius: 16px 16px 6px 6px;
-  background: hsla(220, 20%, 92%, 0.45); /* Fondo claro suave */
-  position: relative;
-  overflow: hidden;
-  box-shadow: inset 0 4px 12px 0 rgba(100, 110, 120, 0.12); /* Sombra interior suave */
-  margin: 0.5rem 0;
+  border-radius: 14px;
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
 }
 
-.tankFluid {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  transition: height 0.8s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.8s ease;
-}
-
-/* Colores de fluido dinámicos en base al estado */
-.tankFluidGreen {
-  background: linear-gradient(180deg, hsl(142, 70%, 45%) 0%, hsl(142, 70%, 35%) 100%);
-  box-shadow: 0 -2px 6px 0 hsla(142, 70%, 45%, 0.2);
-}
-
-.tankFluidWarning {
-  background: linear-gradient(180deg, hsl(38, 92%, 50%) 0%, hsl(38, 92%, 40%) 100%);
-  box-shadow: 0 -2px 6px 0 hsla(38, 92%, 50%, 0.2);
-}
-
-.tankFluidDanger {
-  background: linear-gradient(180deg, hsl(346, 84%, 49%) 0%, hsl(346, 84%, 39%) 100%);
-  box-shadow: 0 -2px 6px 0 hsla(346, 84%, 49%, 0.2);
-}
-
-/* Indicadores Numéricos y Tiempo de Autonomía */
-.siloInfo {
+.timelineHeader2 {
   display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
-.siloPercentage {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--text-primary);
+.timelineTitle {
+  display: flex; flex-direction: column; gap: 0.1rem;
+}
+.timelineTitle > span:first-child { font-size: 1rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.02em; }
+.timelineSubtitle { font-size: 0.7rem; color: var(--text-muted); }
+
+.timelineActions {
+  display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;
 }
 
-.siloVolume {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  font-weight: 600;
-}
-
-.siloTimeLeft {
-  margin-top: 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  display: inline-flex;
-}
-
-/* Sección Inferior - Split Layout */
-.splitLayout {
-  display: grid;
-  grid-template-columns: 1.35fr 1fr;
-  gap: 1.75rem;
-}
-
-@media (max-width: 1024px) {
-  .splitLayout {
-    grid-template-columns: 1fr;
-  }
-}
-
-.chartCard {
-  padding: 1.75rem;
-  display: flex;
-  flex-direction: column;
-}
-
-.sectionTitle {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  color: var(--text-primary);
-  letter-spacing: -0.015em;
-}
-
-/* Gráfica de decaimiento SVG - Fondo Claro Blando de Synetica */
-.svgContainer {
-  width: 100%;
-  height: 180px;
-  margin-top: 1rem;
-  background: hsla(220, 20%, 97%, 0.65); /* Fondo claro blando */
-  border: 1px solid var(--border-light);
-  border-radius: 12px; /* Redondeado Synetica */
-  padding: 0.75rem;
-  transition: var(--transition-smooth);
-  box-sizing: border-box;
-}
-
-.svgContainer:hover {
-  background: #ffffff; /* Iluminación blanca en hover */
-  border-color: hsla(210, 100%, 45%, 0.15);
-  box-shadow: var(--shadow-premium);
-}
-
-.legend {
-  display: flex;
-  gap: 1.25rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin-top: 0.85rem;
-  justify-content: center;
-  color: var(--text-secondary);
-}
-
-.legendItem {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-/* Tabla de Camiones */
-.trucksCard {
-  padding: 1.75rem;
-}
-
-.tableWrapper {
-  overflow-x: auto;
-  margin-top: 1rem;
-  border-radius: 12px;
-  border: 1px solid var(--border-light);
-}
-
-.truckTable {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.th {
-  padding: 0.85rem;
-  background-color: hsla(220, 20%, 97%, 0.8); /* Cabecera perla */
-  border-bottom: 1px solid var(--border-light);
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  text-align: left;
-}
-
-.td {
-  padding: 0.85rem;
-  border-bottom: 1px solid var(--border-light);
-  font-size: 0.85rem;
-  color: var(--text-primary);
-  vertical-align: middle;
-  font-weight: 500;
-}
-
-.truckTable tr:last-child .td {
-  border-bottom: none;
-}
-
-/* Botón interactivo de descarga */
-.simulateBtn {
-  background: hsla(210, 100%, 50%, 0.08);
-  color: var(--color-primary);
-  border: 1px solid hsla(210, 100%, 50%, 0.15);
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.45rem 0.85rem;
+/* ── Sync button ──────────────────────────────────────────────────────────── */
+.syncBtn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.42rem 0.875rem;
+  background: var(--color-primary); color: #fff;
   border-radius: 8px;
-  transition: var(--transition-smooth);
+  font-size: 0.76rem; font-weight: 700;
+  box-shadow: 0 2px 8px hsla(152, 69%, 41%, 0.30);
+  transition: var(--transition); white-space: nowrap;
+}
+.syncBtn:hover:not(:disabled) { filter: brightness(1.08); }
+.syncBtn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.syncDone {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.42rem 0.875rem;
+  background: var(--color-success); color: #fff;
+  border-radius: 8px;
+  font-size: 0.76rem; font-weight: 700;
+  transition: var(--transition); white-space: nowrap;
+}
+.syncError {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.42rem 0.875rem;
+  background: var(--color-danger); color: #fff;
+  border-radius: 8px;
+  font-size: 0.76rem; font-weight: 700;
+  transition: var(--transition); white-space: nowrap;
 }
 
-.simulateBtn:hover {
-  background: var(--color-primary);
-  color: #ffffff;
+.spinner {
+  display: inline-block; width: 11px; height: 11px;
+  border: 2px solid hsla(0,0%,100%,0.35); border-top-color: #fff;
+  border-radius: 50%; animation: spin 0.7s linear infinite;
+}
+
+/* ── Material filter ──────────────────────────────────────────────────────── */
+.filterRow { display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
+
+.filterBtn {
+  padding: 0.28rem 0.65rem;
+  border: 1px solid var(--border-medium); border-radius: 99px;
+  background: transparent; color: var(--text-secondary);
+  font-size: 0.7rem; font-weight: 600;
+  transition: var(--transition); cursor: pointer; white-space: nowrap;
+}
+.filterBtn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.filterActive {
+  background: var(--bg-primary); border-color: var(--border-primary);
+  color: var(--color-primary);
+}
+.filterClear {
+  padding: 0.28rem 0.5rem; border: none; background: transparent;
+  color: var(--text-muted); font-size: 0.7rem;
+  cursor: pointer; text-decoration: underline; transition: var(--transition);
+}
+.filterClear:hover { color: var(--text-secondary); }
+
+/* ── Timeline wrapper ─────────────────────────────────────────────────────── */
+.timelineWrapper { overflow-x: auto; border-radius: 8px; }
+
+.timeline { display: flex; flex-direction: column; min-width: 860px; }
+
+/* Header row */
+.timelineHeader {
+  display: flex; align-items: center;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.timelineYLabel {
+  width: 100px; min-width: 100px; flex-shrink: 0;
+  padding: 0.4rem 0.5rem;
+}
+
+.timelineDayCol {
+  flex: 0 0 70px; min-width: 70px; text-align: center; padding: 0.35rem 0.15rem;
+  border-left: 1px solid var(--border-light);
+}
+.timelineDayLabel { font-size: 0.64rem; color: var(--text-muted); white-space: nowrap; }
+.timelineToday .timelineDayLabel { color: var(--color-primary); font-weight: 700; }
+
+/* Data row */
+.timelineRow {
+  display: flex; align-items: flex-start;
+  min-height: 46px; border-bottom: 1px solid var(--border-light);
+}
+.timelineRow:last-child { border-bottom: none; }
+
+.timelineRowCode {
+  display: block; font-size: 0.75rem; font-weight: 700;
+  color: var(--text-primary); line-height: 1;
+}
+.timelineRowStatus {
+  display: block; font-size: 0.63rem; font-weight: 600;
+  line-height: 1; margin-top: 0.15rem;
+}
+
+/* Cell */
+.timelineCell {
+  flex: 0 0 70px; min-width: 70px; padding: 0.3rem 0.15rem;
+  border-left: 1px solid var(--border-light);
+  display: flex; flex-direction: column; gap: 0.2rem;
+  min-height: 42px;
+}
+.timelineTodayCell { background: hsla(152, 69%, 41%, 0.04); }
+
+/* ── PO pill (traffic light) ──────────────────────────────────────────────── */
+.pill {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.1rem;
+  padding: 0.25rem 0.45rem; border-radius: 5px;
+  font-size: 0.68rem; line-height: 1.35;
+  border-left: 3px solid transparent; cursor: default;
+}
+/* Background axis — timing vs app calculation */
+.pillBgGreen  { background: hsl(152, 40%, 28%); color: #fff; }
+.pillBgOrange { background: hsl(35,  50%, 30%); color: #fff; }
+.pillBgRed    { background: hsl(0,   40%, 28%); color: #fff; }
+
+/* Border-left axis — vendor confirmation */
+.pillBorderConfirmed   { border-left: 4px solid hsl(152, 65%, 52%); } /* verde */
+.pillBorderUnconfirmed { border-left: 4px solid hsl(0,   65%, 52%); } /* rojo  */
+
+
+.pillPo   { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; }
+.pillQty  { font-size: 0.6rem; opacity: 0.75; }
+
+.pillClickable {
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+}
+.pillClickable:hover {
+  transform: scale(1.06);
+  filter: brightness(1.25);
+  box-shadow: 0 2px 8px hsla(0, 0%, 0%, 0.25);
+}
+.pillClickable:active {
+  transform: scale(0.98);
+}
+
+/* ── Last sync label ─────────────────────────────────────────────────────── */
+.lastSyncLabel {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  opacity: 0.7;
+  margin-left: 0.5rem;
+}
+
+/* ── Edit modal ──────────────────────────────────────────────────────────── */
+.editOverlay {
+  position: fixed; inset: 0;
+  background: hsla(0, 0%, 0%, 0.65);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.18s ease;
+}
+.editModal {
+  background: hsl(222, 20%, 26%);
+  border: 1px solid hsl(222, 18%, 36%);
+  border-top: 3px solid hsl(200, 65%, 52%);
+  border-radius: 16px; padding: 2rem;
+  width: 100%; max-width: 520px;
+  display: flex; flex-direction: column; gap: 1.2rem;
+  box-shadow:
+    0 2px 0 hsla(200, 65%, 52%, 0.15),
+    0 20px 60px hsla(0, 0%, 0%, 0.6);
+  animation: modalIn 0.2s cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.94) translateY(8px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+.editTitle {
+  font-size: 1.2rem; font-weight: 700;
+  color: #fff; margin: 0; letter-spacing: -0.01em;
+}
+.editMeta {
+  display: flex; flex-wrap: wrap; gap: 0.5rem;
+}
+.editMetaChip {
+  background: hsla(220, 20%, 28%, 0.6);
+  border: 1px solid hsl(222, 18%, 32%);
+  border-radius: 8px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.82rem;
+  color: hsl(220, 15%, 82%);
+  display: flex; align-items: center; gap: 0.3rem;
+}
+.editWarning {
+  background: hsla(35, 80%, 50%, 0.1);
+  border: 1px solid hsla(35, 80%, 50%, 0.35);
+  border-radius: 10px; padding: 0.9rem 1rem;
+  font-size: 0.9rem; color: hsl(35, 80%, 72%); line-height: 1.55;
+}
+.editLabel {
+  display: flex; flex-direction: column; gap: 0.5rem;
+  font-size: 0.95rem; color: hsl(220, 15%, 78%); font-weight: 500;
+}
+.editSuggestedRow {
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.editSuggestedDate {
+  background: hsla(220, 20%, 28%, 0.5);
+  border: 1px solid hsl(222, 18%, 34%);
+  border-radius: 8px;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.95rem; font-weight: 400;
+  color: hsl(220, 15%, 88%);
+  flex: 1;
+}
+.editUseSuggestedBtn {
+  background: hsla(200, 60%, 45%, 0.15);
+  border: 1px solid hsl(200, 50%, 45%);
+  border-radius: 8px;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.78rem; font-weight: 600;
+  color: hsl(200, 60%, 70%);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+.editUseSuggestedBtn:hover {
+  background: hsla(200, 60%, 45%, 0.3);
+  color: hsl(200, 60%, 85%);
+}
+.editDateInput {
+  background: #fff;
+  border: 2px solid hsl(220, 15%, 85%); border-radius: 8px;
+  padding: 0.65rem 0.9rem; color: #111;
+  font-size: 1rem; font-family: inherit; outline: none;
+  transition: border-color 0.15s ease;
+  width: 100%;
+}
+.editDateInput:focus {
+  border-color: hsl(200, 70%, 50%);
+  box-shadow: 0 0 0 3px hsla(200, 70%, 50%, 0.15);
+}
+.editActions {
+  display: flex; gap: 0.9rem; justify-content: flex-end; margin-top: 0.25rem;
+}
+.editCancelBtn, .editConfirmBtn {
+  border: none; border-radius: 8px; padding: 0.6rem 1.4rem;
+  font-size: 0.9rem; font-weight: 600; cursor: pointer;
+  transition: all 0.15s ease;
+}
+.editCancelBtn {
+  background: hsla(220, 20%, 28%, 0.5);
+  border: 1px solid hsl(222, 18%, 30%);
+  color: hsl(220, 15%, 75%);
+}
+.editCancelBtn:hover {
+  background: hsla(220, 20%, 32%, 0.7);
+  color: #fff;
+}
+.editConfirmBtn {
+  background: linear-gradient(135deg, hsl(200, 70%, 45%), hsl(210, 75%, 52%));
+  color: white;
+  box-shadow: 0 4px 14px hsla(200, 70%, 45%, 0.35);
+}
+.editConfirmBtn:hover {
+  background: linear-gradient(135deg, hsl(200, 70%, 50%), hsl(210, 75%, 57%));
+  box-shadow: 0 6px 18px hsla(200, 70%, 45%, 0.45);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px 0 rgba(0, 118, 255, 0.2);
+}
+.editConfirmBtn:active { transform: translateY(0); }
+.editConfirmBtn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ── Toast ────────────────────────────────────────────────────────────────── */
+.editToast {
+  position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+  background: hsl(152, 45%, 28%);
+  border: 1px solid hsl(152, 45%, 38%);
+  color: hsl(152, 50%, 90%);
+  padding: 0.75rem 1.5rem; border-radius: 10px;
+  font-size: 0.9rem; font-weight: 500; z-index: 1100;
+  animation: slideUp 0.25s ease;
+  box-shadow: 0 6px 20px hsla(0, 0%, 0%, 0.45);
 }
 
-.simulateBtn:active {
-  transform: translateY(1px);
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp {
+  from { transform: translateX(-50%) translateY(1rem); opacity: 0; }
+  to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+
+/* ── Sync Overlay ───────────────────────────────────────────────────────── */
+.syncOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px) brightness(0.55);
+  -webkit-backdrop-filter: blur(10px) brightness(0.55);
+  background: hsla(220, 40%, 4%, 0.5);
+  animation: overlayIn 0.22s ease both;
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.syncOverlayCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  /* Fondo más sólido → mejor legibilidad */
+  background: hsla(222, 22%, 14%, 0.97);
+  border: 1px solid hsla(220, 30%, 35%, 0.4);
+  border-radius: 1.5rem;
+  padding: 2.75rem 3.5rem;
+  box-shadow:
+    0 0 0 1px hsla(220, 30%, 30%, 0.2),
+    0 32px 80px hsla(0, 0%, 0%, 0.7),
+    0 0 0 80px hsla(0, 0%, 0%, 0.05);
+  animation: cardIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+  min-width: 320px;
+  max-width: 420px;
+  text-align: center;
+}
+
+@keyframes cardIn {
+  from { transform: scale(0.9) translateY(8px); opacity: 0; }
+  to   { transform: scale(1)   translateY(0);   opacity: 1; }
+}
+
+/* ── Ring ─────────────────────────────────────────────────────────────── */
+.syncRing {
+  width: 72px;
+  height: 72px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.syncRingInner {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  /* Track */
+  border: 5px solid hsla(220, 30%, 35%, 0.35);
+  /* Arc — override below when spinning */
+  border-top-color: transparent;
+  border-right-color: transparent;
+}
+
+/* Estado activo: gira */
+.syncRingSpinning {
+  border-top-color: var(--color-primary);
+  border-right-color: hsla(152, 55%, 55%, 0.5);
+  animation: ringRotate 0.85s linear infinite;
+}
+
+/* Estado error: anillo rojo estático */
+.syncRingError .syncRingInner {
+  border-top-color: var(--color-danger);
+  border-right-color: hsla(0, 70%, 60%, 0.4);
+}
+
+@keyframes ringRotate {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Textos ──────────────────────────────────────────────────────────── */
+.syncOverlayTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #e8eaf0;          /* blanco suave — buen contraste sobre el fondo oscuro */
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.syncTitleError {
+  color: var(--color-danger);
+}
+
+.syncOverlayStep {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: hsla(220, 20%, 70%, 1);   /* gris claro legible */
+  margin: 0;
+  line-height: 1.5;
+  max-width: 280px;
+  animation: stepFadeIn 0.3s ease;
+}
+
+@keyframes stepFadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.syncOverlayErr {
+  color: hsla(0, 80%, 75%, 1);    /* rojo claro legible */
+  font-size: 0.875rem;
+}
+
+
+/* ── States ───────────────────────────────────────────────────────────────── */
+.loading {
+  display: flex; align-items: center; justify-content: center;
+  height: 200px; color: var(--text-muted); font-size: 0.875rem;
+}
+.errorMsg {
+  padding: 1rem; background: var(--bg-danger);
+  border: 1px solid var(--border-danger); border-radius: 10px;
+  color: var(--color-danger); font-size: 0.82rem;
+}
+
+/* ── Planning section ────────────────────────────────────────────────────── */
+.planningSection {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+}
+
+.planningHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.planningTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.forecastSelect {
+  background: hsl(222, 22%, 14%);
+  border: 1px solid hsl(222, 18%, 28%);
+  border-radius: 8px;
+  padding: 0.4rem 1rem 0.4rem 0.75rem;
+  color: hsl(220, 15%, 90%);
+  font-size: 0.82rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  padding-right: 1.8rem;
+}
+
+.forecastSelect:hover {
+  border-color: hsl(200, 50%, 45%);
+  background: hsl(222, 22%, 16%);
+}
+
+.forecastSelect:focus {
+  border-color: hsl(200, 70%, 50%);
+  box-shadow: 0 0 0 2px hsla(200, 70%, 50%, 0.15);
 }

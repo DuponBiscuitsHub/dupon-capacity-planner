@@ -10,6 +10,9 @@ export interface Silo {
   currentLevelKg: number;
   safetyLevelKg: number;
   hourlyConsumptionKg: number; // Consumo dinámico calculado por hora
+  calibrationFactor: number;
+  useManualOverride?: boolean;
+  manualOverrideFactor?: number;
 }
 
 export interface TruckDelivery {
