@@ -14,7 +14,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.database import get_db
 from app.core.odoo_client import OdooClient
-from app.core.security import require_auth, require_role
+from app.core.security import require_auth, require_role, validate_company_access
 from app.models.odoo_replica import PurchaseOrder
 from app.services.delivery_planning import get_delivery_plan
 
@@ -41,6 +41,7 @@ def get_plan(
     db: Session = Depends(get_db),
 ) -> list[dict]:
     """Tabla de planificación de entregas con semáforo."""
+    validate_company_access(company_id, current_user)
     return get_delivery_plan(db, company_id)
 
 

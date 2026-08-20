@@ -8,6 +8,12 @@ import { useLanguage } from "../i18n/context";
 import { LanguageType } from "../i18n/translations";
 import { useCompany } from "../context/CompanyContext";
 import { API_BASE } from "@/lib/api";
+import dynamic from "next/dynamic";
+
+const OdooStatusDot = dynamic(
+  () => import("./components/OdooStatusDot"),
+  { ssr: false }
+);
 
 interface CurrentUser {
   username: string;
@@ -160,7 +166,8 @@ export default function DashboardLayout({
         <header className={styles.header}>
           <h2 className={styles.headerTitle}>{getHeaderTitle()}</h2>
           <div className={styles.headerStatusGroup}>
-            {/* Selector compañía — solo si hay más de una */}
+            {/* Odoo connectivity indicator */}
+            <OdooStatusDot />
             {companies.length > 1 && (
               <div className={styles.languageSelectorWrapper}>
                 <select

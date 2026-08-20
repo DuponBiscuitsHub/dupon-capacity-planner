@@ -517,6 +517,29 @@ export const translations: TranslationDictionary = {
     ca: "Comprova la connexió o torna-ho a intentar més tard.",
     en: "Check your connection or try again later.",
   },
+
+  // ── Odoo Status Dot ─────────────────────────────────────────────────────────
+  odooStatusConnected: {
+    es: "Odoo: conectado ({ms}ms)",
+    ca: "Odoo: connectat ({ms}ms)",
+    en: "Odoo: connected ({ms}ms)",
+  },
+  odooStatusDisconnected: {
+    es: "Odoo: sin conexión",
+    ca: "Odoo: sense connexió",
+    en: "Odoo: disconnected",
+  },
+  odooStatusMock: {
+    es: "Odoo: modo simulación",
+    ca: "Odoo: mode simulació",
+    en: "Odoo: mock mode",
+  },
+  odooStatusChecking: {
+    es: "Verificando conexión…",
+    ca: "Verificant connexió…",
+    en: "Checking connection…",
+  },
+
   silosDeliveryStatusDraft: {
     es: "Borrador",
     ca: "Esborrany",

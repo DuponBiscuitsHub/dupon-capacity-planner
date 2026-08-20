@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.security import require_auth, require_role
+from app.core.security import require_auth, require_role, validate_company_access
 from app.models.odoo_replica import MrpProduction, Workcenter
 from app.models.planner import LineCapacity, SiloConfig
 
@@ -57,6 +57,7 @@ def get_lines(
     db: Session = Depends(get_db),
 ) -> list[LineCapacityOut]:
     """Lista todas las líneas con su capacidad configurada y si están activas."""
+    validate_company_access(company_id, current_user)
     lines = (
         db.query(LineCapacity)
         .filter(LineCapacity.company_id == company_id)
@@ -120,6 +121,7 @@ def get_silo_configs(
     db: Session = Depends(get_db),
 ) -> list[SiloConfigOut]:
     """Lista la configuración de todos los silos."""
+    validate_company_access(company_id, current_user)
     silos = db.query(SiloConfig).filter(SiloConfig.company_id == company_id).all()
     return [
         SiloConfigOut(

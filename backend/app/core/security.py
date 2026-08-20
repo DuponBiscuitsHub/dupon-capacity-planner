@@ -148,3 +148,23 @@ def require_role(role: str):
             )
         return current_user
     return _check
+
+
+def validate_company_access(company_id: int, current_user: dict) -> None:
+    """Valida que el usuario tiene acceso a la compañía solicitada.
+
+    Reglas:
+      - IT puede acceder a cualquier compañía (admin multicompany).
+      - User solo puede acceder a su default_company_id.
+
+    Raises:
+        HTTPException 403: Si el usuario no tiene acceso.
+    """
+    if current_user["role"] == "it":
+        return
+    if current_user.get("default_company_id") != company_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied for this company.",
+        )
+

@@ -20,7 +20,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.security import require_auth, require_role
+from app.core.security import require_auth, require_role, validate_company_access
 from app.models.planner import CorrectionFactor, LineFormat, RefConsumptionRate
 from app.services.correction_engine import get_active_factor
 
@@ -131,12 +131,13 @@ def list_corrections(
 def get_current_factors(
     company_id: int = 1,
     db: Session = Depends(get_db),
-    _user=Depends(require_auth),
+    current_user=Depends(require_auth),
 ):
     """Retorna el factor de corrección activo para cada material.
 
     Usado por el dashboard para mostrar el indicador de desviación.
     """
+    validate_company_access(company_id, current_user)
     materials = ["harina", "azucar", "aceite"]
     return [
         ActiveFactorOut(
@@ -154,12 +155,13 @@ def get_current_factors(
 def list_recipes(
     company_id: int = 1,
     db: Session = Depends(get_db),
-    _user=Depends(require_auth),
+    current_user=Depends(require_auth),
 ):
     """Lista todos los consumos de referencia (tabla CON).
 
     Devuelve ~170 filas: formato × material → kg/día por máquina.
     """
+    validate_company_access(company_id, current_user)
     rows = db.query(RefConsumptionRate).filter(
         RefConsumptionRate.company_id == company_id
     ).order_by(RefConsumptionRate.format_code, RefConsumptionRate.material_type).all()
@@ -291,9 +293,10 @@ def delete_recipe_rate(
 def list_line_formats(
     company_id: int = 1,
     db: Session = Depends(get_db),
-    _user=Depends(require_auth),
+    current_user=Depends(require_auth),
 ):
     """Lista todos los mappings línea → formato con nº de máquinas."""
+    validate_company_access(company_id, current_user)
     rows = db.query(LineFormat).filter(
         LineFormat.company_id == company_id
     ).order_by(LineFormat.line_code, LineFormat.format_code).all()

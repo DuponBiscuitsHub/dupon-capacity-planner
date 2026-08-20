@@ -13,7 +13,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.security import require_auth
+from app.core.security import require_auth, validate_company_access
 from app.models.odoo_replica import StockQuant
 from app.models.planner import DeliverySuggestion, SiloConfig
 from app.services.delivery_calculator import recalculate_deliveries
@@ -56,6 +56,7 @@ def get_silos(
     db: Session = Depends(get_db),
 ) -> list[SiloStatus]:
     """Retorna el estado actual de todos los silos de la planta."""
+    validate_company_access(company_id, current_user)
     silos = db.query(SiloConfig).filter(SiloConfig.company_id == company_id).all()
     return [_build_silo_status(db, silo) for silo in silos]
 
@@ -122,6 +123,7 @@ def get_stock_projection(
     db: Session = Depends(get_db),
 ) -> list[dict]:
     """Proyección de stock a N días para todos los silos."""
+    validate_company_access(company_id, current_user)
     clamped_days = max(1, min(days, 30))
     return project_stock(db, company_id, clamped_days)
 
@@ -135,6 +137,7 @@ def get_deliveries(
     db: Session = Depends(get_db),
 ) -> list[DeliverySuggestionOut]:
     """Lista todas las sugerencias de entrega activas, ordenadas por fecha."""
+    validate_company_access(company_id, current_user)
     suggestions = (
         db.query(DeliverySuggestion)
         .filter(
@@ -169,6 +172,7 @@ def trigger_recalculate(
 
     No toca entregas con status='confirmed' (bloqueadas por PO confirmada).
     """
+    validate_company_access(company_id, current_user)
     _logger.info(
         "Recalculate triggered",
         extra={"triggered_by": current_user["username"], "company_id": company_id},

@@ -89,7 +89,7 @@ backend/app/
 ├── core/
 │   ├── config.py        ← Solo: Settings (Pydantic). Sin defaults de negocio
 │   ├── database.py      ← Solo: engine, SessionLocal, get_db
-│   ├── security.py      ← JWT, bcrypt, require_auth, require_role
+│   ├── security.py      ← JWT, bcrypt, require_auth, require_role, validate_company_access
 │   ├── odoo_client.py   ← JSON-RPC client. OOP (tiene estado: uid, sesión)
 │   └── sync_engine.py   ← Orquestador sync. OOP (tiene estado: db session)
 ├── models/              ← SQLAlchemy ORM. Sin lógica de negocio
@@ -227,7 +227,7 @@ logger.debug(f"Odoo auth: {'configured' if settings.ODOO_API_KEY else 'MISSING'}
 - **Secretos**: solo en `.env` (dev) o GCP Secret Manager (prod). Nunca en código.
 - **Validación**: toda entrada externa se valida en el router (Pydantic), no en el interior.
 - **SQL**: siempre SQLAlchemy ORM, nunca concatenación de strings.
-- **Auth**: todo endpoint protegido con `require_auth()`. Endpoints IT con `require_role("it")`.
+- **Auth**: todo endpoint protegido con `require_auth()`. Endpoints IT con `require_role("it")`. Endpoints con `company_id` deben llamar a `validate_company_access(company_id, current_user)` (IT ve todas, user solo su `default_company_id`).
 - **Cookies**: `HttpOnly; Secure; SameSite=Strict`. Nunca `document.cookie` en frontend.
 
 ---

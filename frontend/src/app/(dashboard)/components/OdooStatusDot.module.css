@@ -1,0 +1,67 @@
+/* OdooStatusDot.module.css — Odoo connectivity indicator */
+
+.wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: default;
+  padding: 4px;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+/* ── States ─────────────────────────────────────────────── */
+.dotConnected {
+  background: var(--color-success, #34d399);
+  box-shadow: 0 0 6px hsla(152, 69%, 50%, 0.55);
+  animation: pulse 2.5s ease-in-out infinite;
+}
+
+.dotDisconnected {
+  background: var(--color-danger, #f87171);
+  box-shadow: 0 0 6px hsla(0, 90%, 65%, 0.5);
+}
+
+.dotMock {
+  background: var(--text-muted, #94a3b8);
+  opacity: 0.6;
+}
+
+.dotUnknown {
+  background: var(--text-muted, #94a3b8);
+  opacity: 0.4;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ── Tooltip ────────────────────────────────────────────── */
+.tooltip {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  white-space: nowrap;
+  padding: 5px 10px;
+  background: var(--bg-card, #1e293b);
+  color: var(--text-primary, #e2e8f0);
+  border: 1px solid var(--border-light, #334155);
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  z-index: 100;
+  pointer-events: none;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
