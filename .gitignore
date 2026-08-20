@@ -59,3 +59,17 @@ logs/
 .project
 .pydevproject
 .settings/
+
+# Spreadsheets / data files (may contain sensitive production data)
+*.ods
+*.xlsx
+*.xls
+
+# Frontend build
+frontend/.next/
+frontend/out/
+
+# Coverage reports
+htmlcov/
+.coverage
+coverage.xml
