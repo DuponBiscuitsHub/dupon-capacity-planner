@@ -39,6 +39,18 @@ node_modules/
 .DS_Store
 *.pem
 
+# SQLite (dev fallback)
+*.db
+
+# Backend secrets
+backend/.env
+
+# Pytest
+.pytest_cache/
+
+# Logs
+logs/
+
 # IDEs
 .idea/
 .vscode/

@@ -7,35 +7,34 @@ class Settings(BaseSettings):
     Lee y valida las variables desde el archivo .env local.
     En producción, las variables se inyectan desde GCP Secret Manager.
     """
-    # -------------------------------------------------------------------------
-    # Base de Datos PostgreSQL
-    # -------------------------------------------------------------------------
-    DB_USER: str
-    DB_PASSWORD: str
+    APP_NAME: str = "DCP Raw Material Planner"
+    APP_ENV: str = "development"  # development | production
+
+    # ── Base de Datos PostgreSQL ──────────────────────────────────────────────
+    DB_USER: str = ""
+    DB_PASSWORD: str = ""
     DATABASE_URL: str
 
-    # -------------------------------------------------------------------------
-    # Conexión XML-RPC a Odoo ERP
-    # -------------------------------------------------------------------------
-    ODOO_URL: str
-    ODOO_DB: str
-    ODOO_USER: str
-    ODOO_API_KEY: str
+    # ── Conexión JSON-RPC a Odoo ERP ──────────────────────────────────────────
+    # ODOO_MODE=mock → usa datos de prueba sin conectar a Odoo (dev/CI)
+    # ODOO_MODE=real → conecta a Odoo real (beta/producción)
+    ODOO_MODE: str = "mock"
+    ODOO_URL: str = ""
+    ODOO_DB: str = ""
+    ODOO_USER: str = ""
+    ODOO_API_KEY: str = ""
+    ODOO_TIMEOUT_SECONDS: int = 15
 
-    # -------------------------------------------------------------------------
-    # Seguridad JWT
-    # CS-SECRETS-002: TTL reducido a 60 min (24h es excesivo para datos industriales).
-    # Para producción, migrar a RS256 con par de claves asimétrico según architecture_plan.md §6.2.
-    # El JWT_SECRET debe generarse con: openssl rand -hex 32 (256 bits mínimo).
-    # -------------------------------------------------------------------------
+    # ── Seguridad JWT ─────────────────────────────────────────────────────────
+    # CS-SECRETS-002: TTL reducido a 60 min. Usar RS256 en producción.
+    # Generar secreto con: openssl rand -hex 32
     JWT_SECRET: str
     JWT_ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60  # 24h → 60 min (CS-SECRETS-002)
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 
-    # -------------------------------------------------------------------------
-    # Motor de Sincronización Odoo
-    # -------------------------------------------------------------------------
-    SYNC_INTERVAL_MINUTES: int = 30
+    # ── Sincronización con Odoo ───────────────────────────────────────────────
+    # Intervalo en segundos (900 = 15 min)
+    SYNC_INTERVAL_SECONDS: int = 900
 
     # Pydantic Settings: lee variables de entorno desde .env
     model_config = SettingsConfigDict(
@@ -45,7 +44,6 @@ class Settings(BaseSettings):
     )
 
 
-# Singleton de configuración — importar desde cualquier módulo con:
+# Singleton de configuración — importar con:
 # from app.core.config import settings
 settings = Settings()
-

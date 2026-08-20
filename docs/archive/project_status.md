@@ -57,6 +57,7 @@ Este documento es la bitácora viva del proyecto. Debe ser actualizado al finali
 - [x] Inicializar la estructura física del módulo `/backend` y configurar dependencias en `requirements.txt`.
 - [x] Diseñar y crear los modelos ORM de SQLAlchemy para la réplica de Odoo y configuraciones locales.
 - [x] Configurar las migraciones automáticas con Alembic y aplicarlas a la base de datos PostgreSQL local.
+- [x] Diseñar e implementar prototipo en Frontend para la calibración diaria adaptativa de silos basada en correcciones SCADA/Odoo.
 - [ ] Implementar el motor de sincronización `sync_engine.py` vía XML-RPC conectando a Odoo Staging mediante API Key.
 - [ ] Crear el script validador recursivo de consistencia de BOMs y stock (*BOM Integrity Checker*).
 - [ ] Configurar los endpoints REST en FastAPI expuestos a través de la API v1.
@@ -194,10 +195,44 @@ Este documento es la bitácora viva del proyecto. Debe ser actualizado al finali
 
 ---
 
+### Sesión 6: 4 de Junio de 2026
+*   **Operador:** Antigravity (AI Architect)
+*   **Hitos:**
+    *   Diseño del algoritmo adaptativo de calibración de silos e ingredientes basado en la sincronización de los ajustes de inventario de Odoo (ventana de 6:00 a 9:00 AM) y su atenuación por EMA ($\alpha=0.15$).
+    *   Adición de traducciones multilingües i18n para la interfaz de calibración en los 6 idiomas.
+    *   Implementación interactiva en el Frontend Next.js del banner de alerta para discrepancias extremas y del modal de configuración por silo (selección de modo automático/manual e historial de discrepancias).
+    *   **Cronograma Gráfico de Descargas en Cuadrícula (Grid)**: Reemplazo del gráfico de decaimiento SVG por una cuadrícula de calendario donde el eje X son días del mes (conmutador interactivo para horizonte de 30 o 60 días) y el eje Y son los silos seleccionados.
+    *   **Selección Integrada en Tarjetas**: Las tarjetas del tablero SCADA superior actúan como selectores del cronograma (clic en cualquier silo de harina muestra las 3 curvas de harina juntas; clic en azúcar muestra azúcar; clic en coco muestra coco), eliminando el selector de la cabecera.
+    *   **Optimización de Dimensiones e Interfaz**: Se hicieron las tarjetas de silos más compactas y el tanque ilustrativo más pequeño. La cuadrícula de calendario se expandió a `62px` de altura de celda y se inyectó una lógica para renderizar los tooltips de la primera fila hacia abajo (`gridTruckTooltipDown`), evitando recortes por desbordamiento del contenedor scrollable.
+    *   Validación completa de la suite de pruebas unitarias (`npm run test`) y compilación exitosa del bundle de producción con Next.js Turbopack (`npm run build`).
+*   **Decisiones Clave:**
+    *   Se pospone la implementación en backend de forma deliberada a solicitud del usuario hasta validar y consolidar la interfaz y comportamiento en el frontend.
+    *   La simulación de descargas a 30 y 60 días se realiza dinámicamente en el cliente utilizando el factor de calibración activo ($K_{calib, i}$), actualizando el mapa de camiones de forma reactiva al modificar parámetros.
+*   **Bloqueos / Riesgos Detectados:**
+    *   Ninguno. La interfaz del frontend es completamente funcional para simular las aprobaciones y cambios del factor de consumo teórico en el horizonte mensual.
+
+---
+
+### Sesión 7: 4 de Junio de 2026
+*   **Operador:** Antigravity (AI Architect & UX Engineer)
+*   **Hitos:**
+    *   **Cronograma Interactivo de Entregas de Aluminios**: Diseño y desarrollo de una cuadrícula de calendario interactivo para la sección de entregas en `/aluminum` (eje Y: las 5 plantas del grupo; eje X: horizonte de 30 o 60 días).
+    *   **Semáforo de Preparación de Órdenes**: Representación visual de los pedidos mediante iconos de cajas (`📦`) con colores reactivos (verde para listo, amarillo para en progreso, rojo para a cero).
+    *   **Tooltips DCP Glass**: Inserción de tooltips frosted glass oscuros de alto contraste con z-index dinámico y reposicionamiento vertical para evitar recortes por desbordamiento de scroll.
+    *   **Simulación Reactiva Coherente**: Acoplamiento del simulador de pico de demanda (+35%) para recalcular y degradar automáticamente los estados de preparación de los formatos F3 y F5, y reducir el OTD proyectado al 81.5%.
+    *   **Internacionalización i18n Completa**: Inyección de más de 30 nuevas traducciones en los 6 idiomas en `translations.ts` para eliminar todo texto estático hardcodeado del simulador y el grid.
+    *   **Limpieza de CSS**: Remoción de los estilos huérfanos del antiguo Mapa de Calor en `aluminum.module.css`.
+    *   Compilación de Next.js exitosa sin fallos (`npm run build`) y ejecución limpia de tests (`npm run test`).
+*   **Decisiones Clave:**
+    *   Reutilizar el patrón y experiencia de usuario (UX) del calendario de silos para homogeneizar la navegación y lectura de plazos en todo el planificador.
+*   **Bloqueos / Riesgos Detectados:**
+    *   El subagente de navegador (`open_browser_url`) falló en la verificación visual debido a restricciones en el entorno CDP del sandbox local. La verificación visual manual queda a cargo del usuario.
+
+---
+
 
 Si acabas de entrar al proyecto, por favor sigue estos pasos rigurosamente:
 1.  Lee el archivo [architecture_plan.md](file:///home/pakipy/dupon-dev/dupon-capacity-planner/architecture_plan.md) para comprender la arquitectura de la solución, los módulos de negocio y el stack tecnológico.
 2.  Revisa la sección **Checklist de Tareas Activas** de este documento (`project_status.md`) para saber en qué tarea debes trabajar.
 3.  Una vez termines tus cambios, marca las casillas completadas `[x]`, actualiza el **Historial de Sesiones** añadiendo una nueva entrada al final y sube el commit.
 4.  *Regla de Oro:* **No introduzcas lógica de optimización compleja o escritura en Odoo sin antes verificar la calidad de datos y asegurar el desacoplamiento.**
-

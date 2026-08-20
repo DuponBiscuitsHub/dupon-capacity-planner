@@ -1,30 +1,79 @@
-# =============================================================================
-# SOLO ENTORNO DE DESARROLLO LOCAL — NO USAR EN STAGING/PRODUCCIÓN
-# En producción, usar Cloud SQL con IAM Auth (sin contraseñas) o
-# inyectar secretos desde GCP Secret Manager mediante Cloud Run.
-# =============================================================================
-version: '3.8'
+version: "3.9"
+
+# docker-compose.yml — Stack local de desarrollo DCP
+# Levanta: PostgreSQL + Backend FastAPI (mock) + Frontend Next.js
+#
+# Uso:
+#   docker compose up           → arrancar todo
+#   docker compose up db        → solo base de datos
+#   docker compose logs -f      → ver logs
+#
+# NOTA: No usar en producción. Cloud Run deploy es independiente.
 
 services:
-  dcp_db:
+
+  # ── PostgreSQL (dev local) ───────────────────────────────────────────────
+  db:
     image: postgres:15-alpine
     container_name: dcp_postgres_local
-    # Las credenciales se leen desde el archivo .env local (no versionado).
-    # Asegúrate de haber copiado .env.example como .env y rellenado los valores.
-    env_file:
-      - .env
+    restart: unless-stopped
     environment:
-      # Mapear variables del .env a las esperadas por la imagen de PostgreSQL
-      POSTGRES_USER: ${DB_USER:-dcp_admin}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:?La variable DB_PASSWORD es obligatoria en .env}
       POSTGRES_DB: dcp_db_dev
+      POSTGRES_USER: dcp_user
+      POSTGRES_PASSWORD: dcp_pass_dev
     ports:
       - "5435:5432"
     volumes:
       - dcp_postgres_data:/var/lib/postgresql/data
-    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dcp_user -d dcp_db_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Backend FastAPI ──────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: dcp_backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://dcp_user:dcp_pass_dev@db:5432/dcp_db_dev"
+      JWT_SECRET: "dev_secret_change_in_production_32c"
+      JWT_ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 60
+      ODOO_MODE: mock
+      APP_ENV: development
+      SYNC_INTERVAL_SECONDS: 900
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Frontend Next.js ─────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # La URL del backend debe ser accesible desde el BROWSER del usuario,
+        # no desde dentro de la red Docker → se usa localhost, no 'backend'.
+        NEXT_PUBLIC_API_URL: "http://localhost:8000"
+    container_name: dcp_frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
 
 volumes:
   dcp_postgres_data:
     name: dcp_postgres_data
-
